@@ -4,8 +4,6 @@ import { useNavigate, Link} from "react-router-dom";
 const RegisterPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
-
     const onFinish = async (values) =>{
         // call apivalues.
         const res =  await registerUserAPI(

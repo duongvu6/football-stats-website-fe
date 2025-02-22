@@ -2,7 +2,7 @@ import './footer.css'
 const Footer = () => {
     return (
         <div className="footer">
-            <p>Transfermarkt-Lite by Duong Vu</p>
+            <p>Football Stats Website By Duong Vu and Tung Nguyen</p>
         </div>
     )
 }
