@@ -19,7 +19,7 @@ const Header = () => {
       icon: <HomeOutlined />,
     },
     {
-      label: <Link to={"/login"}>Đăng nhập</Link>,
+      label: <Link to={"/login"}>Login</Link>,
       key: 'login',
       icon:<LoginOutlined />
     },
@@ -29,7 +29,7 @@ const Header = () => {
       icon:<AliwangwangOutlined />,
       children: [
         {
-          label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
+          label: <span onClick={() => handleLogout()}>Logout</span>,
           key: 'logout',
         },
       ]
