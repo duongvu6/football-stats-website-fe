@@ -1,4 +1,4 @@
-import PlayerTable from "../components/admin/player/player.table.jsx";
+import PlayerTable from "../../components/admin/player/player.table.jsx";
 
 const PlayerPage = () => {
     return (

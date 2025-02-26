@@ -1,8 +1,8 @@
-const PlayerTable = () => {
+const AdminPlayerTable = () => {
     return (
         <>
 
         </>
     )
 }
-export default PlayerTable;
+export default AdminPlayerTable;

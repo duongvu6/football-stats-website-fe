@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { logoutAPI } from "../../services/api.service.js";
 import { AuthContext } from "../context/auth.context.jsx";
-import {AdminIcon, ClubIcon, CoachIcon, PlayerIcon} from "../icons/icons.jsx";
+import { AdminIcon, ClubIcon, CoachIcon, PlayerIcon } from "../icons/icons.jsx";
 
 const Header = () => {
   const [current, setCurrent] = useState("");
@@ -49,50 +49,47 @@ const Header = () => {
       icon: <HomeOutlined />,
     },
     {
-      label: <Link to={"/players"}>Player</Link>,
+      label: <Link to={user.role === "ADMIN" ? "/admin/players" : "/players"}>Player</Link>,
       key: "players",
       icon: <PlayerIcon />,
     },
     {
       label: <Link to={"/clubs"}>Club</Link>,
       key: "clubs",
-      icon: <ClubIcon/>,
+      icon: <ClubIcon />,
     },
     {
       label: <Link to={"/coaches"}>Head Coach</Link>,
       key: "coaches",
-      icon: <CoachIcon/>,
+      icon: <CoachIcon />,
     },
-      ...(user.role === "ADMIN" ? [
-        {
-          label: <Link to={"/admin"}>Admin Dashboard</Link>,
-          key: "admin",
-          icon: <AdminIcon/>
-        }
-
-      ]: []),
-      ...(!user.id ? [
-        {
-          label: <Link to={"/login"}>Login</Link>,
-          key: "login",
-          icon: <LoginOutlined />,
-        },
-      ]: []),
-
-      ...(user.id ? [
-        {
-          label: `Welcome ${user.name}`,
-          key: "setting",
-          icon: <AliwangwangOutlined />,
-          children: [
-            {
-              label: <span onClick={() => handleLogout()}>Logout</span>,
-              key: "logout",
-            },
-          ],
-        },
-      ]:[])
-
+    ...(user.role === "ADMIN" ? [
+      {
+        label: <Link to={"/admin"}>Admin Dashboard</Link>,
+        key: "admin",
+        icon: <AdminIcon />
+      }
+    ] : []),
+    ...(!user.id ? [
+      {
+        label: <Link to={"/login"}>Login</Link>,
+        key: "login",
+        icon: <LoginOutlined />,
+      },
+    ] : []),
+    ...(user.id ? [
+      {
+        label: `Welcome ${user.name}`,
+        key: "setting",
+        icon: <AliwangwangOutlined />,
+        children: [
+          {
+            label: <span onClick={() => handleLogout()}>Logout</span>,
+            key: "logout",
+          },
+        ],
+      },
+    ] : [])
   ];
   return (
       <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
