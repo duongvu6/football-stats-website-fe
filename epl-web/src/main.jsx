@@ -10,6 +10,9 @@ import RegisterPage from './pages/register.jsx';
 import ErrorPage from "./pages/error.jsx";
 import { AuthWrapper } from './components/context/auth.context.jsx';
 import PlayerPage from "./pages/players.jsx";
+import ClubPage from "./pages/clubs.jsx";
+import CoachPage from "./pages/coaches.jsx";
+import AdminPage from "./pages/admin.jsx";
 // import './style/global.css'
 
 const router = createBrowserRouter([
@@ -29,6 +32,18 @@ const router = createBrowserRouter([
       {
         path: "players",
         element: <PlayerPage />,
+      },
+      {
+        path: "clubs",
+        element: <ClubPage />,
+      },
+      {
+        path: "coaches",
+        element: <CoachPage />,
+      },
+      {
+        path: "admin",
+        element: <AdminPage />,
       },
     ],
   },

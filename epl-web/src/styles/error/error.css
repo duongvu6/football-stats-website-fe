@@ -1,0 +1,24 @@
+/* epl-web/src/pages/error.css */
+#error-page {
+    text-align: center;
+    padding: 50px;
+}
+
+#error-page h1 {
+    font-size: 3em;
+    color: #ff0000;
+}
+
+#error-page p {
+    font-size: 1.5em;
+    color: #333;
+}
+
+#error-page a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+#error-page a:hover {
+    text-decoration: underline;
+}

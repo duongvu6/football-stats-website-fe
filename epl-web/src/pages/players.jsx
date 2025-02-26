@@ -1,8 +1,10 @@
+import PlayerTable from "../components/admin/player/player.table.jsx";
+
 const PlayerPage = () => {
     return (
         <>
-            <div>
-                Player Page
+            <div style={{padding:"30px"}}>
+                <PlayerTable/>
             </div>
         </>
     )
