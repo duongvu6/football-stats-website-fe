@@ -13,6 +13,7 @@ import PlayerPage from "./pages/players.jsx";
 import ClubPage from "./pages/clubs.jsx";
 import CoachPage from "./pages/coaches.jsx";
 import AdminPage from "./pages/admin.jsx";
+import PrivateRoute from "./pages/private.route.jsx";
 // import './style/global.css'
 
 const router = createBrowserRouter([
@@ -43,7 +44,12 @@ const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <AdminPage />,
+
+        element:
+        <PrivateRoute>
+          <AdminPage />
+        </PrivateRoute>
+
       },
     ],
   },

@@ -19,6 +19,11 @@ const registerUserAPI = (fullName,email,password) =>{
     return  axios.post(URL_BACKEND,data);
 }
 
+const getAccountAPI = () => {
+    const URL_BACKEND = "/api/v1/auth/account";
+    return axios.get(URL_BACKEND);
+}
+
 const logoutAPI = () => {
     const URL_BACKEND = "/api/v1/auth/logout";
     return axios.post(URL_BACKEND);
@@ -27,7 +32,8 @@ const logoutAPI = () => {
 export {
     loginAPI,
     registerUserAPI,
-    logoutAPI
+    logoutAPI,
+    getAccountAPI
 
 }
 
