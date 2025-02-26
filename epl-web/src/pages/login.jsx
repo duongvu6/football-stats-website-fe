@@ -24,7 +24,6 @@ const LoginPage = () => {
             message.success("Login successfully");
             localStorage.setItem("access_token", res.data.access_token);
             setUser(res.data.user);
-            debugger;
             navigate("/");
         } else {
             notification.error({

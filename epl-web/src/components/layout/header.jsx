@@ -1,16 +1,46 @@
-
-import { Menu} from "antd";
-import {AliwangwangOutlined, HomeOutlined, LoginOutlined} from "@ant-design/icons";
-import {Link} from "react-router-dom";
-import {useState} from "react";
+import { Menu, message, notification } from "antd";
+import { AliwangwangOutlined, HomeOutlined, LoginOutlined } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { logoutAPI } from "../../services/api.service.js";
+import { AuthContext } from "../context/auth.context.jsx";
+import { PlayerIcon } from "../icons/icons.jsx";
 
 const Header = () => {
-  const handleLogout = () => {
-
-  };
   const [current, setCurrent] = useState("");
+  const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const onClick = (e) => {
     setCurrent(e.key);
+  };
+  const handleLogout = async () => {
+    const res = await logoutAPI();
+    console.log(res);
+    if (res.data) {
+      // clear data
+      localStorage.removeItem("access_token");
+      let logoutUser = {
+        email: "",
+        name: "",
+        role: "",
+        id: "",
+      };
+      setUser(logoutUser);
+      message.success("Logout successfully");
+      // redirect to home
+      navigate("/");
+    } else {
+      if (res.message) {
+        notification.error({
+          message: "Log out failed!",
+          description: JSON.stringify(res.message),
+        });
+      } else {
+        notification.error({
+          message: "Log out failed!",
+        });
+      }
+    }
   };
   const items = [
     {
@@ -19,29 +49,35 @@ const Header = () => {
       icon: <HomeOutlined />,
     },
     {
-      label: <Link to={"/login"}>Login</Link>,
-      key: 'login',
-      icon:<LoginOutlined />
+      label: <Link to={"/players"}>Player</Link>,
+      key: "players",
+      icon: <PlayerIcon />,
     },
-    {
-      label: `Welcome Duong`,
-      key: "setting",
-      icon:<AliwangwangOutlined />,
-      children: [
+      ...(!user.id ? [
         {
-          label: <span onClick={() => handleLogout()}>Logout</span>,
-          key: 'logout',
+          label: <Link to={"/login"}>Login</Link>,
+          key: "login",
+          icon: <LoginOutlined />,
         },
-      ]
-    }
+      ]: []),
+
+      ...(user.id ? [
+        {
+          label: `Welcome ${user.name}`,
+          key: "setting",
+          icon: <AliwangwangOutlined />,
+          children: [
+            {
+              label: <span onClick={() => handleLogout()}>Logout</span>,
+              key: "logout",
+            },
+          ],
+        },
+      ]:[])
+
   ];
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="horizontal"
-      items={items}
-    />
+      <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
   );
 };
 export default Header;

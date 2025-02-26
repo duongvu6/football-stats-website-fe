@@ -19,8 +19,15 @@ const registerUserAPI = (fullName,email,password) =>{
     return  axios.post(URL_BACKEND,data);
 }
 
+const logoutAPI = () => {
+    const URL_BACKEND = "/api/v1/auth/logout";
+    return axios.post(URL_BACKEND);
+}
+
 export {
     loginAPI,
-    registerUserAPI
+    registerUserAPI,
+    logoutAPI
+
 }
 
