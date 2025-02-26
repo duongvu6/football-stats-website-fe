@@ -18,6 +18,8 @@ import ClubPage from "./pages/client/clubs.jsx";
 import CoachPage from "./pages/client/coaches.jsx";
 import AdminPage from "./pages/admin/admin.jsx";
 import AdminPlayerPage from "./pages/admin/players.jsx";
+import AdminClubPage from "./pages/admin/clubs.jsx";
+import AdminCoachPage from "./pages/admin/coaches.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -45,20 +47,68 @@ const router = createBrowserRouter([
       {
         path: "admin/players",
         element: (
-            <AuthContext.Consumer>
-              {({ user }) => (
-                  user.role === "ADMIN" ? <AdminPlayerPage /> : <Navigate to="/players" />
-              )}
-            </AuthContext.Consumer>
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <AdminPlayerPage /> : <Navigate to="/players" />
+            //   )}
+            // </AuthContext.Consumer>
+
+            //another way
+            <PrivateRoute>
+              <AdminPlayerPage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/clubs",
+        element: (
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <AdminClubPage /> : <Navigate to="/clubs" />
+            //   )}
+            // </AuthContext.Consumer>
+
+            <PrivateRoute>
+              <AdminClubPage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/coaches",
+        element: (
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <AdminCoachPage /> : <Navigate to="/coaches" />
+            //   )}
+            // </AuthContext.Consumer>
+
+            <PrivateRoute>
+              <AdminCoachPage/>
+            </PrivateRoute>
         ),
       },
       {
         path: "clubs",
-        element: <ClubPage />,
+        element: (
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <Navigate to="/admin/clubs" /> : <ClubPage />
+            //   )}
+            // </AuthContext.Consumer>
+
+            <ClubPage/>
+        ),
       },
       {
         path: "coaches",
-        element: <CoachPage />,
+        element:(
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <Navigate to="/admin/coaches" /> :  <CoachPage />
+            //   )}
+            // </AuthContext.Consumer>
+            <CoachPage/>
+        )
       },
       {
         path: "admin",

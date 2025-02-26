@@ -54,12 +54,12 @@ const Header = () => {
       icon: <PlayerIcon />,
     },
     {
-      label: <Link to={"/clubs"}>Club</Link>,
+      label: <Link to={user.role === "ADMIN" ? "/admin/clubs" : "/clubs"}>Club</Link>,
       key: "clubs",
       icon: <ClubIcon />,
     },
     {
-      label: <Link to={"/coaches"}>Head Coach</Link>,
+      label: <Link to={user.role === "ADMIN" ? "/admin/coaches" : "/coaches"}>Head Coach</Link>,
       key: "coaches",
       icon: <CoachIcon />,
     },
