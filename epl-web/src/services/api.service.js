@@ -19,6 +19,11 @@ const registerUserAPI = (fullName,email,password) =>{
     return  axios.post(URL_BACKEND,data);
 }
 
+const fetchAllPlayersAPI = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/players?page=${current}&size=${pageSize}&sortTransferHistory=true`;
+    return axios.get(URL_BACKEND);
+}
+
 const getAccountAPI = () => {
     const URL_BACKEND = "/api/v1/auth/account";
     return axios.get(URL_BACKEND);
@@ -33,7 +38,9 @@ export {
     loginAPI,
     registerUserAPI,
     logoutAPI,
-    getAccountAPI
+    getAccountAPI,
+    fetchAllPlayersAPI
+
 
 }
 
