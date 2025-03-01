@@ -4,12 +4,12 @@ import App from './App.jsx';
 import {
   createBrowserRouter,
   RouterProvider,
-  Navigate,
+
 } from "react-router-dom";
 import LoginPage from './pages/login.jsx';
 import RegisterPage from './pages/register.jsx';
 import ErrorPage from "./pages/error.jsx";
-import { AuthWrapper, AuthContext } from './components/context/auth.context.jsx';
+import { AuthWrapper } from './components/context/auth.context.jsx';
 
 import PrivateRoute from "./pages/private.route.jsx";
 import PlayerPage from "./pages/client/players.jsx";
@@ -20,6 +20,8 @@ import AdminPage from "./pages/admin/admin.jsx";
 import AdminPlayerPage from "./pages/admin/players.jsx";
 import AdminClubPage from "./pages/admin/clubs.jsx";
 import AdminCoachPage from "./pages/admin/coaches.jsx";
+import PlayerDetail from "./components/admin/player/player.detail.jsx";
+import ClientPlayerDetail from "./components/client/player/player.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,11 +39,13 @@ const router = createBrowserRouter([
       {
         path: "players",
         element: (
-            <AuthContext.Consumer>
-              {({ user }) => (
-                  user.role === "ADMIN" ? <Navigate to="/admin/players" /> : <PlayerPage />
-              )}
-            </AuthContext.Consumer>
+            <PlayerPage/>
+        ),
+      },
+      {
+        path: "players/:id",
+        element: (
+            <ClientPlayerDetail/>
         ),
       },
       {
@@ -56,6 +60,14 @@ const router = createBrowserRouter([
             //another way
             <PrivateRoute>
               <AdminPlayerPage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/players/:id",
+        element: (
+            <PrivateRoute>
+              <PlayerDetail/>
             </PrivateRoute>
         ),
       },

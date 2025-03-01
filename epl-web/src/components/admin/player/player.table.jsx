@@ -1,6 +1,7 @@
 import { Button, Table } from "antd";
 import { useEffect, useState } from "react";
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
+import {Link} from "react-router-dom";
 
 const AdminPlayerTable = () => {
     const [playerData, setPlayerData] = useState([]);
@@ -58,6 +59,9 @@ const AdminPlayerTable = () => {
         {
             title: "Name",
             dataIndex: "name",
+            render: (text, record) => (
+                <Link to={`${record.id}`}>{text}</Link>
+            ),
         },
         {
             title: "Age",
