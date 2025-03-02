@@ -1,10 +1,11 @@
-import PlayerTable from "../../components/admin/player/player.table.jsx";
+// epl-web/src/pages/client/players.jsx
+import ClientPlayerTable from "../../components/client/player/player.table.jsx";
 
 const PlayerPage = () => {
     return (
         <>
             <div style={{padding:"30px"}}>
-                <PlayerTable/>
+                <ClientPlayerTable/>
             </div>
         </>
     )

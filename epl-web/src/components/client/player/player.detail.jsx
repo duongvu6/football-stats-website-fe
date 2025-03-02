@@ -1,36 +1,19 @@
-import { useEffect, useState } from "react";
+// epl-web/src/components/client/player/player.detail.jsx
+import { Descriptions, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
-import { Descriptions, Spin, Table } from "antd";
-import { fetchPlayerDetailAPI } from "../../../services/api.service.js";
+import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
 
 const ClientPlayerDetail = () => {
     const { id } = useParams();
-    const [player, setPlayer] = useState(null);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadPlayerDetail();
-    }, [id]);
-
-    const loadPlayerDetail = async () => {
-        setLoading(true);
-        const res = await fetchPlayerDetailAPI(id);
-        if (res.data) {
-            setPlayer(res.data);
-        }
-        setLoading(false);
-    };
-
-    // Function to format dates
-    const formatDate = (dateString) => {
-        if (!dateString) return "-";
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
+    const {
+        loading,
+        transferHistories,
+        descriptionItems,
+        transferColumns
+    } = PlayerBaseDetail({
+        playerId: id
+    });
 
     if (loading) {
         return (
@@ -40,60 +23,12 @@ const ClientPlayerDetail = () => {
         );
     }
 
-    // Process transfer history to add fromClub
-    const transferHistories = [...player.transferHistories].map((transfer, index, array) => {
-        // If it's the last item in the array (oldest transfer), fromClub is "-"
-        // Otherwise, fromClub is the club of the next item (previous transfer chronologically)
-        const fromClub = index === array.length - 1 ? "-" : array[index + 1].club;
-        return {
-            ...transfer,
-            fromClub,
-            formattedDate: formatDate(transfer.date)
-        };
-    });
-
-    const transferColumns = [
-        {
-            title: "Date",
-            dataIndex: "formattedDate", // Use the formatted date
-            key: "date",
-        },
-        {
-            title: "From Club",
-            dataIndex: "fromClub",
-            key: "fromClub",
-        },
-        {
-            title: "To Club",
-            dataIndex: "club",
-            key: "club",
-        },
-        {
-            title: "Type of transfer",
-            dataIndex: "type",
-            key: "type",
-        },
-        {
-            title: "Market Value",
-            dataIndex: "playerValue",
-            key: "playerValue",
-        },
-        {
-            title: "Transfer Fee",
-            dataIndex: "fee",
-            key: "transferFee",
-        },
-    ];
-
     return (
         <div style={{ padding: "30px" }}>
             <Descriptions title="Player Details" bordered>
-                <Descriptions.Item label="Name">{player.name}</Descriptions.Item>
-                <Descriptions.Item label="Age">{player.age}</Descriptions.Item>
-                <Descriptions.Item label="Shirt Number">{player.shirtNumber}</Descriptions.Item>
-                <Descriptions.Item label="Citizenship">{player.citizenships.join(', ')}</Descriptions.Item>
-                <Descriptions.Item label="Position">{player.positions.join(', ')}</Descriptions.Item>
-                <Descriptions.Item label="Current Club">{player.transferHistories[0]?.club || "No information"}</Descriptions.Item>
+                {descriptionItems.map((item, index) => (
+                    <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
+                ))}
             </Descriptions>
             <div style={{ marginTop: "30px" }}>
                 <h3>Transfer History</h3>
