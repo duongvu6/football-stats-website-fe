@@ -59,7 +59,11 @@ const fetchAllClubsAPI = () => {
 }
 const updateTransferAPI = (data) => {
     const URL_BACKEND = `/api/v1/transfers`;
-    return axios.post(URL_BACKEND, data);
+    return axios.put(URL_BACKEND, data);
+};
+const deleteTransferAPI = (id) => {
+    const URL_BACKEND = `/api/v1/transfers/${id}`;
+    return axios.delete(URL_BACKEND);
 }
 export {
     loginAPI,
@@ -72,7 +76,8 @@ export {
     updatePlayerAPI,
     deletePlayerAPI,
     fetchAllClubsAPI,
-    updateTransferAPI
+    updateTransferAPI,
+    deleteTransferAPI
 
 
 }
