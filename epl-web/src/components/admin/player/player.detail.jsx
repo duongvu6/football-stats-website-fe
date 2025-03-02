@@ -1,7 +1,6 @@
 // epl-web/src/components/admin/player/player.detail.jsx
-import { Descriptions, Table, Button, message, Spin } from "antd";
+import { Descriptions, Spin } from "antd";
 import { useParams } from "react-router-dom";
-import { PlusOutlined } from '@ant-design/icons';
 import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
 import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
 import CreateTransferButton from "../transfer-history/create.transfer.button.jsx";
@@ -23,10 +22,6 @@ const PlayerDetail = () => {
         ]
     });
 
-    const handleAddTransfer = () => {
-        message.info("Add Transfer functionality would go here");
-    };
-
     if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -47,7 +42,13 @@ const PlayerDetail = () => {
                     <h3 style={{ margin: 0 }}>Transfer History</h3>
                     <CreateTransferButton player={player} onSuccess={loadPlayerDetail}/>
                 </div>
-                <TransferHistoryTable transferColumns={transferColumns} transferHistories={transferHistories} />
+                <TransferHistoryTable
+                    transferColumns={transferColumns}
+                    transferHistories={transferHistories}
+                    player={player}
+                    onSuccess={loadPlayerDetail}
+                    isAdmin={true}
+                />
             </div>
         </div>
     );

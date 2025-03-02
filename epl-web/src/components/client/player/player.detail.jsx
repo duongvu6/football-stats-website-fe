@@ -1,5 +1,5 @@
 // epl-web/src/components/client/player/player.detail.jsx
-import { Descriptions, Table, Spin } from "antd";
+import { Descriptions, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
 import TransferHistoryTable from "../../admin/transfer-history/transfer.history.table.jsx";
@@ -37,6 +37,7 @@ const ClientPlayerDetail = () => {
                 <TransferHistoryTable
                     transferColumns={transferColumns}
                     transferHistories={transferHistories}
+                    isAdmin={false} // No admin actions for client view
                 />
             </div>
         </div>

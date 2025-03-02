@@ -57,6 +57,10 @@ const fetchAllClubsAPI = () => {
     const URL_BACKEND = `/api/v1/clubs`;
     return axios.get(URL_BACKEND);
 }
+const updateTransferAPI = (data) => {
+    const URL_BACKEND = `/api/v1/transfers`;
+    return axios.post(URL_BACKEND, data);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -67,7 +71,8 @@ export {
     createPlayerAPI,
     updatePlayerAPI,
     deletePlayerAPI,
-    fetchAllClubsAPI
+    fetchAllClubsAPI,
+    updateTransferAPI
 
 
 }
