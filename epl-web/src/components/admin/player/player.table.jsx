@@ -1,7 +1,11 @@
-import { Button, Table } from "antd";
+import { Button, Table, Space } from "antd";
 import { useEffect, useState } from "react";
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import CreatePlayerModal from "./player.create.jsx";
+import EditPlayerModal from "./player.edit.jsx";
+import DeletePlayerButton from "./player.delete.jsx";
 
 const AdminPlayerTable = () => {
     const [playerData, setPlayerData] = useState([]);
@@ -9,6 +13,11 @@ const AdminPlayerTable = () => {
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [loadingTable, setLoadingTable] = useState(false);
+
+    // Modal states
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
 
     useEffect(() => {
         loadPlayers();
@@ -18,17 +27,38 @@ const AdminPlayerTable = () => {
         if (current && pageSize) {
             setLoadingTable(true);
             const res = await fetchAllPlayersAPI(current, pageSize);
-            console.log(res);
             if (res.data) {
                 setPlayerData(res.data.result);
-                setCurrent(res.data.meta.page);
-                setPageSize(res.data.meta.pageSize);
-                setTotal(res.data.meta.total);
+                setCurrent(res.data.meta?.page || current);
+                setPageSize(res.data.meta?.pageSize || pageSize);
+                setTotal(res.data.meta?.total || 0);
             }
             setLoadingTable(false);
         }
-
     }
+
+    const showCreateModal = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    const showEditModal = (player) => {
+        setCurrentPlayer(player);
+        setIsEditModalOpen(true);
+    };
+
+    const handleCreateSuccess = () => {
+        setIsCreateModalOpen(false);
+        loadPlayers();
+    };
+
+    const handleEditSuccess = () => {
+        setIsEditModalOpen(false);
+        loadPlayers();
+    };
+
+    const handleDeleteSuccess = () => {
+        loadPlayers();
+    };
 
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current) {
@@ -40,6 +70,7 @@ const AdminPlayerTable = () => {
         if (pagination && pagination.pageSize) {
             if (Number(pagination.pageSize) !== Number(pageSize)) {
                 setPageSize(Number(pagination.pageSize));
+                setCurrent(1); // Reset to first page when changing page size
             }
         }
     };
@@ -91,18 +122,47 @@ const AdminPlayerTable = () => {
                 return record.transferHistories && record.transferHistories[0] ?
                     record.transferHistories[0].club : "No information"
             }
-        }
-    ]
+        },
+        {
+            title: "Market Value(millions Euro)",
+            dataIndex: "marketValue",
+        },
+        {
+            title: "Actions",
+            render: (_, record) => (
+                <Space size="small">
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        size="small"
+                        onClick={() => showEditModal(record)}
+                    />
+                    <DeletePlayerButton
+                        playerId={record.id}
+                        onSuccess={handleDeleteSuccess}
+                    />
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <>
             <div style={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "space-between",
+                alignItems: "center",
                 marginTop: "10px",
                 marginBottom: "10px"
             }}>
                 <h3>Player Table</h3>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={showCreateModal}
+                >
+                    Add Player
+                </Button>
             </div>
             <Table
                 columns={columns}
@@ -117,12 +177,28 @@ const AdminPlayerTable = () => {
                     showTotal: (total, range) => {
                         return (<div>{range[0]}-{range[1]} of {total} rows</div>)
                     },
-                    pageSizeOptions: ['5', '10', '20', '50', '100'] // Allow more than 20 elements per page
+                    pageSizeOptions: ['5', '10', '20', '50', '100']
                 }}
                 onChange={onChange}
                 loading={loadingTable}
             />
+
+            {/* Create Player Modal */}
+            <CreatePlayerModal
+                isOpen={isCreateModalOpen}
+                onCancel={() => setIsCreateModalOpen(false)}
+                onSuccess={handleCreateSuccess}
+            />
+
+            {/* Edit Player Modal */}
+            <EditPlayerModal
+                isOpen={isEditModalOpen}
+                onCancel={() => setIsEditModalOpen(false)}
+                onSuccess={handleEditSuccess}
+                player={currentPlayer}
+            />
         </>
     )
 }
+
 export default AdminPlayerTable;

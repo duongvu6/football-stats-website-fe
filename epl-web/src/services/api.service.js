@@ -24,6 +24,22 @@ const fetchAllPlayersAPI = (current, pageSize) => {
     return axios.get(URL_BACKEND);
 }
 
+// Add these to existing export functions
+const createPlayerAPI = (playerData) => {
+    const URL_BACKEND = "/api/v1/players";
+    return axios.post(URL_BACKEND, playerData);
+}
+
+const updatePlayerAPI = (id, playerData) => {
+    const URL_BACKEND = `/api/v1/players`;
+    return axios.put(URL_BACKEND, playerData);
+}
+
+const deletePlayerAPI = (id) => {
+    const URL_BACKEND = `/api/v1/players/${id}`;
+    return axios.delete(URL_BACKEND);
+}
+
 const getAccountAPI = () => {
     const URL_BACKEND = "/api/v1/auth/account";
     return axios.get(URL_BACKEND);
@@ -43,7 +59,10 @@ export {
     logoutAPI,
     getAccountAPI,
     fetchAllPlayersAPI,
-    fetchPlayerDetailAPI
+    fetchPlayerDetailAPI,
+    createPlayerAPI,
+    updatePlayerAPI,
+    deletePlayerAPI
 
 
 }
