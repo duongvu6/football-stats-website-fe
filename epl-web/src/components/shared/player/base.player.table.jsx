@@ -23,11 +23,11 @@ const PlayerBaseTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
                 setPlayerData(res.data.result || []);
                 // Don't update state values that would trigger another fetch
                 if (!isInitialized) {
-                    setCurrent(res.data.page || current);
-                    setPageSize(res.data.pageSize || pageSize);
+                    setCurrent(res.data.meta.page || current);
+                    setPageSize(res.data.meta.pageSize || pageSize);
                     setIsInitialized(true);
                 }
-                setTotal(res.data.total || 0);
+                setTotal(res.data.meta.total || 0);
             }
         } catch (error) {
             console.error("Error loading players:", error);

@@ -3,6 +3,8 @@ import { Descriptions, Table, Button, message, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import { PlusOutlined } from '@ant-design/icons';
 import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
+import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
+import CreateTransferButton from "../transfer-history/create.transfer.button.jsx";
 
 const PlayerDetail = () => {
     const { id } = useParams();
@@ -43,20 +45,9 @@ const PlayerDetail = () => {
             <div style={{ marginTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                     <h3 style={{ margin: 0 }}>Transfer History</h3>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleAddTransfer}
-                    >
-                        Add Transfer
-                    </Button>
+                    <CreateTransferButton player={player} onSuccess={loadPlayerDetail}/>
                 </div>
-                <Table
-                    columns={transferColumns}
-                    dataSource={transferHistories}
-                    rowKey="date"
-                    pagination={false}
-                />
+                <TransferHistoryTable transferColumns={transferColumns} transferHistories={transferHistories} />
             </div>
         </div>
     );

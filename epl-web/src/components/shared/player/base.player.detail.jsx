@@ -71,27 +71,27 @@ const PlayerBaseDetail = ({
             key: "date",
         },
         {
-            title: "From Club",
+            title: "Left",
             dataIndex: "fromClub",
             key: "fromClub",
         },
         {
-            title: "To Club",
+            title: "Joined",
             dataIndex: "club",
             key: "club",
         },
         {
-            title: "Type of transfer",
+            title: "Transfer Type",
             dataIndex: "type",
             key: "type",
         },
         {
-            title: "Market Value",
+            title: "Market Value (millions Euro)",
             dataIndex: "playerValue",
             key: "playerValue",
         },
         {
-            title: "Transfer Fee",
+            title: "Transfer Fee(millions Euro)",
             dataIndex: "fee",
             key: "transferFee",
         },
@@ -104,13 +104,16 @@ const PlayerBaseDetail = ({
         value: typeof item.value === 'function' ? item.value(player) : item.value
     }));
 
+    // Enhanced base description items with more player information
     const baseDescriptionItems = [
         { label: "Name", value: player.name },
         { label: "Age", value: player.age },
+        { label: "Date of Birth", value: formatDate(player.dob) },
         { label: "Shirt Number", value: player.shirtNumber },
         { label: "Citizenship", value: Array.isArray(player.citizenships) ? player.citizenships.join(', ') : player.citizenships },
         { label: "Position", value: Array.isArray(player.positions) ? player.positions.join(', ') : player.positions },
         { label: "Current Club", value: player.transferHistories && player.transferHistories[0] ? player.transferHistories[0].club : "No information" },
+        { label: "Market Value (millions Euro)", value: player.marketValue },
         ...processedExtraItems
     ];
 

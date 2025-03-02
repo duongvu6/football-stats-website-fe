@@ -28,7 +28,7 @@ const EditPlayerModal = ({ isOpen, onCancel, onSuccess, player }) => {
 
             console.log('Submitting player update:', formattedValues);
 
-            const res = await updatePlayerAPI(player.id, formattedValues);
+            const res = await updatePlayerAPI(formattedValues);
             if (res.data) {
                 message.success("Player updated successfully");
                 onSuccess();

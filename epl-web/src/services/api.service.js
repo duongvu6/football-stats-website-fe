@@ -30,7 +30,7 @@ const createPlayerAPI = (playerData) => {
     return axios.post(URL_BACKEND, playerData);
 }
 
-const updatePlayerAPI = (id, playerData) => {
+const updatePlayerAPI = (playerData) => {
     const URL_BACKEND = `/api/v1/players`;
     return axios.put(URL_BACKEND, playerData);
 }
@@ -53,6 +53,10 @@ const fetchPlayerDetailAPI = (id) => {
     const URL_BACKEND = `/api/v1/players/${id}?sortTransferHistory=true`;
     return axios.get(URL_BACKEND);
 }
+const fetchAllClubsAPI = () => {
+    const URL_BACKEND = `/api/v1/clubs`;
+    return axios.get(URL_BACKEND);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -62,7 +66,8 @@ export {
     fetchPlayerDetailAPI,
     createPlayerAPI,
     updatePlayerAPI,
-    deletePlayerAPI
+    deletePlayerAPI,
+    fetchAllClubsAPI
 
 
 }

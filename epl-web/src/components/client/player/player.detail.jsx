@@ -2,12 +2,14 @@
 import { Descriptions, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
+import TransferHistoryTable from "../../admin/transfer-history/transfer.history.table.jsx";
 
 const ClientPlayerDetail = () => {
     const { id } = useParams();
 
     const {
         loading,
+        player,
         transferHistories,
         descriptionItems,
         transferColumns
@@ -32,11 +34,9 @@ const ClientPlayerDetail = () => {
             </Descriptions>
             <div style={{ marginTop: "30px" }}>
                 <h3>Transfer History</h3>
-                <Table
-                    columns={transferColumns}
-                    dataSource={transferHistories}
-                    rowKey="date"
-                    pagination={false}
+                <TransferHistoryTable
+                    transferColumns={transferColumns}
+                    transferHistories={transferHistories}
                 />
             </div>
         </div>
