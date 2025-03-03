@@ -1,5 +1,6 @@
-import { Table } from "antd";
+// epl-web/src/components/admin/club/club.table.jsx
 import BaseClubTable from "../../shared/club/base.club.table";
+import GenericTableContainer from "../../shared/generic/generic.table.container.jsx";
 
 const AdminClubTable = () => {
     const adminColumns = [
@@ -8,27 +9,18 @@ const AdminClubTable = () => {
             dataIndex: "id",
         }
     ];
+
     const baseTableProps = BaseClubTable({
         extraColumns: adminColumns,
-        urlPrefix: '/admin/clubs/',  // Note the trailing slash to ensure proper URL formatting
+        urlPrefix: '/admin/clubs/',
     });
+
     return (
-        <>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "10px",
-                marginBottom: "10px"
-            }}>
-                <h3>Club Table</h3>
-                
-            </div>
-
-            <Table {...baseTableProps.tableProps} />
-
-            
-        </>
-    )
+        <GenericTableContainer
+            tableProps={baseTableProps.tableProps}
+            title="Club Table"
+        />
+    );
 };
+
 export default AdminClubTable;

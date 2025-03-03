@@ -1,11 +1,12 @@
 // epl-web/src/components/admin/player/player.table.jsx
-import { Button, Table, Space } from "antd";
 import { useState } from "react";
-import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Space } from "antd";
+import { EditOutlined } from '@ant-design/icons';
 import CreatePlayerModal from "./player.create.jsx";
 import EditPlayerModal from "./player.edit.jsx";
 import DeletePlayerButton from "./player.delete.jsx";
 import PlayerBaseTable from "../../shared/player/base.player.table.jsx";
+import GenericTableContainer from "../../shared/generic/generic.table.container.jsx";
 
 const AdminPlayerTable = () => {
     // Modal states
@@ -24,16 +25,16 @@ const AdminPlayerTable = () => {
 
     const handleCreateSuccess = () => {
         setIsCreateModalOpen(false);
-        baseTableProps.loadPlayers();
+        baseTableProps.loadData();
     };
 
     const handleEditSuccess = () => {
         setIsEditModalOpen(false);
-        baseTableProps.loadPlayers();
+        baseTableProps.loadData();
     };
 
     const handleDeleteSuccess = () => {
-        baseTableProps.loadPlayers();
+        baseTableProps.loadData();
     };
 
     const adminColumns = [
@@ -63,29 +64,18 @@ const AdminPlayerTable = () => {
     // Use the base table with correct URL prefix for admin
     const baseTableProps = PlayerBaseTable({
         extraColumns: adminColumns,
-        urlPrefix: '/admin/players/',  // Note the trailing slash to ensure proper URL formatting
+        urlPrefix: '/admin/players/',
     });
 
     return (
         <>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "10px",
-                marginBottom: "10px"
-            }}>
-                <h3>Player Table</h3>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={showCreateModal}
-                >
-                    Add Player
-                </Button>
-            </div>
-
-            <Table {...baseTableProps.tableProps} />
+            <GenericTableContainer
+                tableProps={baseTableProps.tableProps}
+                title="Player Table"
+                showAddButton={true}
+                onAddClick={showCreateModal}
+                addButtonText="Add Player"
+            />
 
             {/* Create Player Modal */}
             <CreatePlayerModal
@@ -102,7 +92,7 @@ const AdminPlayerTable = () => {
                 player={currentPlayer}
             />
         </>
-    )
-}
+    );
+};
 
 export default AdminPlayerTable;

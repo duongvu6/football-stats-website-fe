@@ -1,76 +1,14 @@
 // epl-web/src/components/shared/player/base.player.table.jsx
-import { Table } from "antd";
-import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
-import {fetchAllPlayersAPI} from "../../../services/api.service.js";
+import { fetchAllPlayersAPI } from "../../../services/api.service.js";
+import GenericTable from "../generic/generic.table.jsx";
 
 const PlayerBaseTable = ({ renderActions, urlPrefix = '', extraColumns = [], showAddButton = false }) => {
-    const [playerData, setPlayerData] = useState([]);
-    const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [total, setTotal] = useState(0);
-    const [loadingTable, setLoadingTable] = useState(false);
-    const [isInitialized, setIsInitialized] = useState(false);
-
-    // Use useCallback to memoize the loadPlayers function
-    const loadPlayers = useCallback(async () => {
-        if (loadingTable) return; // Prevent concurrent requests
-
-        setLoadingTable(true);
-        try {
-            const res = await fetchAllPlayersAPI(current, pageSize);
-            if (res && res.data) {
-                setPlayerData(res.data.result || []);
-                // Don't update state values that would trigger another fetch
-                if (!isInitialized) {
-                    setCurrent(res.data.meta.page || current);
-                    setPageSize(res.data.meta.pageSize || pageSize);
-                    setIsInitialized(true);
-                }
-                setTotal(res.data.meta.total || 0);
-            }
-        } catch (error) {
-            console.error("Error loading players:", error);
-        } finally {
-            setLoadingTable(false);
-        }
-    }, [current, pageSize, loadingTable, isInitialized]);
-
-    // Load data only on initial render and when pagination changes
-    useEffect(() => {
-        loadPlayers();
-    }, [current, pageSize]);
-
-    const onChange = (pagination) => {
-        if (pagination && pagination.current) {
-            if (Number(pagination.current) !== Number(current)) {
-                setCurrent(Number(pagination.current));
-            }
-        }
-
-        if (pagination && pagination.pageSize) {
-            if (Number(pagination.pageSize) !== Number(pageSize)) {
-                setPageSize(Number(pagination.pageSize));
-                setCurrent(1); // Reset to first page when changing page size
-            }
-        }
-    };
-
+    // Define the base columns for players
     const baseColumns = [
-        {
-            title: "#",
-            render: (_, record, index) => {
-                const calculatedIndex = (Number(current) - 1) * Number(pageSize) + index + 1;
-                return isNaN(calculatedIndex) ? index + 1 : calculatedIndex;
-            }
-        },
         {
             title: "Name",
             dataIndex: "name",
-            render: (text, record) => (
-                // Fix URL path construction by ensuring proper formatting
-                <Link to={`${urlPrefix}${record.id}`}>{text}</Link>
-            ),
+            linkField: true, // This property indicates that this column should render as a link
         },
         {
             title: "Age",
@@ -105,35 +43,19 @@ const PlayerBaseTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
             title: "Market Value(millions Euro)",
             dataIndex: "marketValue",
         },
-        ...extraColumns
     ];
 
-    return {
-        playerData,
-        loadPlayers,
-        current,
-        pageSize,
-        total,
-        loadingTable,
-        tableProps: {
-            columns: baseColumns,
-            dataSource: playerData,
-            rowKey: "id",
-            pagination: {
-                current: current,
-                pageSize: pageSize,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                total: total,
-                showTotal: (total, range) => {
-                    return (<div>{range[0]}-{range[1]} of {total} rows</div>)
-                },
-                pageSizeOptions: ['5', '10', '20', '50', '100']
-            },
-            onChange: onChange,
-            loading: loadingTable
-        }
-    };
+    // Use the generic table component
+    return GenericTable({
+        fetchDataFunction: fetchAllPlayersAPI,
+        baseColumns: baseColumns,
+        extraColumns: extraColumns,
+        urlPrefix: urlPrefix,
+        tableTitle: 'Player Table',
+        idField: 'id',
+        renderActions: renderActions,
+        showAddButton: showAddButton
+    });
 };
 
 export default PlayerBaseTable;
