@@ -65,6 +65,10 @@ const deleteTransferAPI = (id) => {
     const URL_BACKEND = `/api/v1/transfers/${id}`;
     return axios.delete(URL_BACKEND);
 }
+const fetchAllClubsWithPaginationAPI = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/clubs?page=${current}&size=${pageSize}`;
+    return axios.get(URL_BACKEND);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -77,7 +81,8 @@ export {
     deletePlayerAPI,
     fetchAllClubsAPI,
     updateTransferAPI,
-    deleteTransferAPI
+    deleteTransferAPI,
+    fetchAllClubsWithPaginationAPI
 
 
 }

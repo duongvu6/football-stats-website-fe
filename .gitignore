@@ -130,3 +130,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+epl-web/package-lock.json
+epl-web/.env.development
+epl-web/.env.development
