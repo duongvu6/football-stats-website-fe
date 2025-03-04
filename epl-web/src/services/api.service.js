@@ -69,6 +69,10 @@ const fetchAllClubsWithPaginationAPI = (current, pageSize) => {
     const URL_BACKEND = `/api/v1/clubs?page=${current}&size=${pageSize}`;
     return axios.get(URL_BACKEND);
 }
+const fetchAllCoachesAPI = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/coaches?page=${current}&size=${pageSize}&sortTransferHistory=true`;
+    return axios.get(URL_BACKEND);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -82,7 +86,8 @@ export {
     fetchAllClubsAPI,
     updateTransferAPI,
     deleteTransferAPI,
-    fetchAllClubsWithPaginationAPI
+    fetchAllClubsWithPaginationAPI,
+    fetchAllCoachesAPI
 
 
 }

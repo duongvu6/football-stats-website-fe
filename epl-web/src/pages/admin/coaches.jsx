@@ -1,8 +1,10 @@
+import AdminCoachTable from "../../components/admin/coach/coach.table";
+
 const AdminCoachPage = () => {
     return (
         <>
-            <div>
-                Coach Page
+            <div style={{padding:"30px"}}>
+                <AdminCoachTable/>
             </div>
         </>
     )
