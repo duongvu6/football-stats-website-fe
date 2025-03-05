@@ -1,9 +1,9 @@
+// epl-web/src/components/admin/coach/coach.detail.jsx
 import {useParams} from "react-router-dom";
-import BasePlayerDetail from "../../shared/player/base.player.detail.jsx";
-import {Descriptions, Spin} from "antd";
-import CreateTransferButton from "../transfer-history/create.transfer.button.jsx";
-import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
 import BaseCoachDetail from "../../shared/coach/base.coach.detail.jsx";
+import {Descriptions, Spin} from "antd";
+import CreateCoachClubButton from "../coach-club/create.coach-club.button.jsx"; // Fixed path
+import CoachClubHistoryTable from "../coach-club/coach-club.history.table.jsx"; // Fixed path
 
 const AdminCoachDetail = () => {
     const { id } = useParams();
@@ -40,9 +40,15 @@ const AdminCoachDetail = () => {
             <div style={{ marginTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                     <h3 style={{ margin: 0 }}>Clubs History</h3>
-                    <CreateTransferButton coach={coach} onSuccess={loadCoachDetail}/>
+                    <CreateCoachClubButton coach={coach} onSuccess={loadCoachDetail}/>
                 </div>
-
+                <CoachClubHistoryTable
+                    coachClubColumns={transferColumns}
+                    coachClubs={coachClubs}
+                    coach={coach}
+                    onSuccess={loadCoachDetail}
+                    isAdmin={true}
+                />
             </div>
         </div>
     );

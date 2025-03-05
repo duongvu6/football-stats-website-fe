@@ -1,6 +1,8 @@
+// epl-web/src/components/client/coach/coach.detail.jsx
 import {useParams} from "react-router-dom";
 import {Descriptions, Spin} from "antd";
 import BaseCoachDetail from "../../shared/coach/base.coach.detail.jsx";
+import CoachClubHistoryTable from "../../admin/coach-club/coach-club.history.table.jsx"; // Fixed path
 
 const ClientCoachDetail = () => {
     const { id } = useParams();
@@ -25,18 +27,19 @@ const ClientCoachDetail = () => {
 
     return (
         <div style={{ padding: "30px" }}>
-            <Descriptions title="Player Details" bordered>
+            <Descriptions title="Coach Details" bordered>
                 {descriptionItems.map((item, index) => (
                     <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
                 ))}
             </Descriptions>
             <div style={{ marginTop: "30px" }}>
-                <h3>Transfer History</h3>
-                {/*<TransferHistoryTable*/}
-                {/*    transferColumns={transferColumns}*/}
-                {/*    transferHistories={transferHistories}*/}
-                {/*    isAdmin={false} // No admin actions for client view*/}
-                {/*/>*/}
+                <h3>Club History</h3>
+                <CoachClubHistoryTable
+                    coachClubColumns={transferColumns}
+                    coachClubs={coachClubs}
+                    coach={coach}
+                    isAdmin={false} // No admin actions for client view
+                />
             </div>
         </div>
     );

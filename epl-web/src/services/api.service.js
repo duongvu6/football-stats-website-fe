@@ -74,7 +74,7 @@ const fetchAllCoachesAPI = (current, pageSize) => {
     return axios.get(URL_BACKEND);
 }
 const fetchCoachDetailAPI = (id) => {
-    const URL_BACKEND = `/api/v1/coaches/${id}`;
+    const URL_BACKEND = `/api/v1/coaches/${id}?sortCoachClubs=true`;
     return axios.get(URL_BACKEND);
 }
 const createTransferHistoryAPI = (data) => {
@@ -93,6 +93,22 @@ const deleteCoachAPI = (id) => {
     const URL_BACKEND = `/api/v1/coaches/${id}`;
     return axios.delete(URL_BACKEND);
 }
+// Coach Club API endpoints
+const createCoachClubAPI = (data) => {
+    const URL_BACKEND = `/api/v1/coach-clubs`;
+    return axios.post(URL_BACKEND, data);
+};
+
+const updateCoachClubAPI = (data) => {
+    const URL_BACKEND = `/api/v1/coach-clubs`;
+    return axios.put(URL_BACKEND, data);
+};
+
+const deleteCoachClubAPI = (id) => {
+    const URL_BACKEND = `/api/v1/coach-clubs/${id}`;
+    return axios.delete(URL_BACKEND);
+};
+
 export {
     loginAPI,
     registerUserAPI,
@@ -112,7 +128,10 @@ export {
     createCoachAPI,
     updateCoachAPI,
     deleteCoachAPI,
-    createTransferHistoryAPI
+    createTransferHistoryAPI,
+    createCoachClubAPI,
+    updateCoachClubAPI,
+    deleteCoachClubAPI,
 
 
 }
