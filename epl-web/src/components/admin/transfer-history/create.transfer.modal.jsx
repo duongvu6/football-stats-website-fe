@@ -2,7 +2,7 @@
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState } from "react";
 import TransferForm from "./transfer.form.jsx";
-import { updatePlayerAPI } from "../../../services/api.service.js";
+import {createTransferHistoryAPI} from "../../../services/api.service.js";
 
 const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
     const [form] = Form.useForm();
@@ -27,19 +27,8 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
                 fee: values.fee,
                 playerValue: values.playerValue || player.playerValue // Use form value or player's current value
             };
-
-            // Create a copy of the player object to modify
-            const updatedPlayer = {
-                ...player,
-                // Add the new transfer to the beginning of the array
-                transferHistories: [
-                    newTransfer,
-                    // ...(player.transferHistories || [])
-                ]
-            };
-
             // Add API call to create transfer
-            const res = await updatePlayerAPI(updatedPlayer);
+            const res = await createTransferHistoryAPI(newTransfer);
 
             if (res && res.data) {
                 message.success("Transfer added successfully");

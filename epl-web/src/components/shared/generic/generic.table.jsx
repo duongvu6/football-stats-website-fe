@@ -18,6 +18,8 @@ const GenericTable = ({
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    // Add a reload trigger state
+    const [reloadTrigger, setReloadTrigger] = useState(0);
 
     // Use refs to track state changes without triggering re-renders
     const fetchController = useRef({
@@ -30,11 +32,8 @@ const GenericTable = ({
     // Define loadData inside useEffect to avoid dependencies issues
     useEffect(() => {
         const loadData = async () => {
-            // Don't fetch if we're already fetching or if pagination hasn't changed
-            if (fetchController.current.fetchInProgress ||
-                (fetchController.current.initialized &&
-                    fetchController.current.prevPage === current &&
-                    fetchController.current.prevPageSize === pageSize)) {
+            // Don't fetch if we're already fetching
+            if (fetchController.current.fetchInProgress) {
                 return;
             }
 
@@ -78,9 +77,8 @@ const GenericTable = ({
         // Execute loadData
         loadData();
 
-        // We don't include any dependencies other than what's explicitly needed
-        // This will prevent the excessive API calls
-    }, [current, pageSize, fetchDataFunction]);
+        // Add reloadTrigger to dependency array to force reload when triggered
+    }, [current, pageSize, fetchDataFunction, reloadTrigger]);
 
     const onChange = (pagination) => {
         const newCurrent = Number(pagination.current);
@@ -125,12 +123,19 @@ const GenericTable = ({
     // Combine all columns
     const allColumns = [indexColumn, ...processedColumns, ...extraColumns];
 
-    // Create a loadData function for external use that respects our state tracking
-    const publicLoadData = () => {
-        // Reset the "initialized" state to force a fresh load
+    // Create a loadData function for external use that forces a reload
+    // Add keepCurrentPage parameter to control whether to reset to page 1
+    const publicLoadData = (keepCurrentPage = false) => {
+        // Reset the "initialized" state
         fetchController.current.initialized = false;
-        // Reset pagination to first page when manually reloading
-        setCurrent(1);
+        fetchController.current.fetchInProgress = false;
+        // Increment reload trigger to force the useEffect to run again
+        setReloadTrigger(prev => prev + 1);
+
+        // Only reset pagination to first page when specifically requested
+        if (!keepCurrentPage) {
+            setCurrent(1);
+        }
     };
 
     return {

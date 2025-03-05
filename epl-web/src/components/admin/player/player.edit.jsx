@@ -1,3 +1,4 @@
+// epl-web/src/components/admin/player/player.edit.jsx
 import { Modal, Form, Button, message } from "antd";
 import { useState, useEffect } from "react";
 import { updatePlayerAPI } from "../../../services/api.service.js";
@@ -31,7 +32,9 @@ const EditPlayerModal = ({ isOpen, onCancel, onSuccess, player }) => {
             const res = await updatePlayerAPI(formattedValues);
             if (res.data) {
                 message.success("Player updated successfully");
+                // Call onSuccess to trigger table reload
                 onSuccess();
+                onCancel(); // Close the modal
             } else {
                 message.error("Failed to update player");
             }

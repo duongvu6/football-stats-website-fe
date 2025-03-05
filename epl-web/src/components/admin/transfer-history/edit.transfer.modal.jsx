@@ -2,9 +2,8 @@
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState, useEffect } from "react";
 import TransferForm from "./transfer.form.jsx";
-import axios from "../../../services/axios.customize.js";
+import { updateTransferAPI } from "../../../services/api.service.js";
 import dayjs from "dayjs";
-import {updateTransferAPI} from "../../../services/api.service.js";
 
 const EditTransferModal = ({ player, transfer, isOpen, setIsOpen, onSuccess }) => {
     const [form] = Form.useForm();
@@ -13,9 +12,22 @@ const EditTransferModal = ({ player, transfer, isOpen, setIsOpen, onSuccess }) =
     // Initialize form with transfer data when modal opens
     useEffect(() => {
         if (isOpen && transfer) {
+            console.log("Transfer to edit:", transfer);
+
+            // Reset form first
+            form.resetFields();
+
+            // Explicitly use club ID, not name
+            const clubId = typeof transfer.club === 'object' ?
+                transfer.club.id :
+                (transfer.clubId || transfer.club);
+
+            console.log("Club ID to use:", clubId);
+
+            // Set form values
             form.setFieldsValue({
                 date: transfer.date ? dayjs(transfer.date) : null,
-                club: transfer.club,
+                club: clubId,
                 type: transfer.type,
                 fee: transfer.fee,
                 playerValue: transfer.playerValue
@@ -41,8 +53,11 @@ const EditTransferModal = ({ player, transfer, isOpen, setIsOpen, onSuccess }) =
                 playerValue: values.playerValue,
                 fee: values.fee,
                 player: player.id,
-                club: values.club
+                club: Number(values.club) // Explicitly convert to number to ensure it's a numeric ID
             };
+
+            console.log("Submitting transfer data:", transferData);
+
             // Call API to update transfer
             const res = await updateTransferAPI(transferData);
 

@@ -57,9 +57,22 @@ const BasePlayerDetail = ({
         // If it's the last item in the array (oldest transfer), fromClub is "-"
         // Otherwise, fromClub is the club of the next item (previous transfer chronologically)
         const fromClub = index === array.length - 1 ? "-" : array[index + 1].club;
+
+        // Extract club information properly
+        let clubName = transfer.club;
+        let clubId = transfer.club;
+
+        // If club is an object with name and id properties
+        if (typeof transfer.club === 'object' && transfer.club !== null) {
+            clubName = transfer.club.name || '';
+            clubId = transfer.club.id;
+        }
+
         return {
             ...transfer,
             fromClub,
+            clubName,  // Store club name for display
+            clubId,    // Store club ID for form operations
             formattedDate: formatDate(transfer.date)
         };
     }) : [];

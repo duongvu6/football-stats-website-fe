@@ -77,6 +77,10 @@ const fetchCoachDetailAPI = (id) => {
     const URL_BACKEND = `/api/v1/coaches/${id}`;
     return axios.get(URL_BACKEND);
 }
+const createTransferHistoryAPI = (data) => {
+    const URL_BACKEND = `/api/v1/transfers`;
+    return axios.post(URL_BACKEND, data);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -92,7 +96,8 @@ export {
     deleteTransferAPI,
     fetchAllClubsWithPaginationAPI,
     fetchAllCoachesAPI,
-    fetchCoachDetailAPI
+    fetchCoachDetailAPI,
+    createTransferHistoryAPI
 
 
 }

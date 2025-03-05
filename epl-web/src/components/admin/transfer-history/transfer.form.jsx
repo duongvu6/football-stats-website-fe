@@ -26,27 +26,18 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
             fetchClubs();
             initialized.current = true;
         }
+    }, []);
 
-        // Set initial values if provided
+    // Set initial values when they change
+    useEffect(() => {
         if (initialValues && Object.keys(initialValues).length > 0) {
             const type = initialValues.type;
             setTransferType(type);
 
             const date = initialValues.date ? dayjs(initialValues.date) : null;
             setSelectedDate(date);
-
-            form.setFieldsValue({
-                date: date,
-                type: type,
-                fee: initialValues.fee,
-                club: initialValues.club,
-                playerValue: initialValues.playerValue || (player?.marketValue)
-            });
-        } else if (player) {
-            // Set default market value from player when form initializes
-            form.setFieldValue('playerValue', player.marketValue);
         }
-    }, [initialValues, player]); // Remove form from dependencies
+    }, [initialValues]);
 
     // Update fee when transfer type changes
     useEffect(() => {
@@ -70,11 +61,40 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
                 // Make sure clubs data is an array before mapping
                 const clubsArray = Array.isArray(res.data) ? res.data :
                     (res.data.result ? res.data.result : []);
+
+                // ALWAYS use ID as value - never use club name as value
                 const clubOptions = clubsArray.map(club => ({
                     label: club.name,
-                    value: club.id || club.name
+                    value: club.id // Always use numeric ID as value
                 }));
+
                 setClubs(clubOptions);
+
+                // After fetching clubs, set form values
+                if (initialValues && Object.keys(initialValues).length > 0) {
+                    // When club is a string (name) instead of ID, try to find matching club ID
+                    if (typeof initialValues.club === 'string') {
+                        const matchingClub = clubsArray.find(c => c.name === initialValues.club);
+                        if (matchingClub) {
+                            console.log(`Found club ID: ${matchingClub.id} for club name: ${initialValues.club}`);
+                            form.setFieldValue('club', matchingClub.id);
+                        } else {
+                            console.warn(`Could not find club ID for name: ${initialValues.club}`);
+                        }
+                    } else {
+                        form.setFieldValue('club', initialValues.club);
+                    }
+
+                    form.setFieldsValue({
+                        date: initialValues.date ? dayjs(initialValues.date) : null,
+                        type: initialValues.type,
+                        fee: initialValues.fee,
+                        playerValue: initialValues.playerValue || (player?.marketValue)
+                    });
+                } else if (player) {
+                    // Set default market value from player when form initializes
+                    form.setFieldValue('playerValue', player.marketValue);
+                }
             }
         } catch (error) {
             notification.error({
@@ -138,7 +158,6 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
                 />
             </Form.Item>
 
-            {/* Market Value field - renamed to playerValue but shown as "Market Value" */}
             <Form.Item
                 name="playerValue"
                 label="Market Value(millions Euro)"
@@ -154,7 +173,6 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
                 />
             </Form.Item>
 
-            {/* Fee field - only shown for transfers that require a fee */}
             {!isZeroFeeTransfer && (
                 <Form.Item
                     name="fee"
@@ -165,7 +183,6 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
                 </Form.Item>
             )}
 
-            {/* Hidden form item to ensure fee is submitted even when field is hidden */}
             {isZeroFeeTransfer && (
                 <Form.Item
                     name="fee"

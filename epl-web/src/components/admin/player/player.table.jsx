@@ -25,18 +25,24 @@ const AdminPlayerTable = () => {
 
     const handleCreateSuccess = () => {
         setIsCreateModalOpen(false);
-        baseTableProps.loadData();
+        // For create, we might want to go to the last page where new item is added
+        // But since we don't know which page that is, let's just reload current page
+        baseTableProps.loadData(true); // true means keep current page
     };
 
     const handleEditSuccess = () => {
         setIsEditModalOpen(false);
-        baseTableProps.loadData();
+        // For edit, we definitely want to keep the user on the same page
+        baseTableProps.loadData(true); // true means keep current page
     };
 
     const handleDeleteSuccess = () => {
-        baseTableProps.loadData();
+        // For delete, we might want to go to previous page if this was the last item
+        // But for simplicity, just stay on current page
+        baseTableProps.loadData(true); // true means keep current page
     };
 
+    // Define adminColumns BEFORE using it in BasePlayerTable
     const adminColumns = [
         {
             title: "ID",
@@ -61,7 +67,7 @@ const AdminPlayerTable = () => {
         },
     ];
 
-    // Use the base table with correct URL prefix for admin
+    // Use the base table with correct URL prefix for admin - AFTER adminColumns is defined
     const baseTableProps = BasePlayerTable({
         extraColumns: adminColumns,
         urlPrefix: '/admin/players/',
