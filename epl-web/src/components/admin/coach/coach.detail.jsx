@@ -1,24 +1,24 @@
-// epl-web/src/components/admin/player/player.detail.jsx
-import { Descriptions, Spin } from "antd";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import BasePlayerDetail from "../../shared/player/base.player.detail.jsx";
-import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
+import {Descriptions, Spin} from "antd";
 import CreateTransferButton from "../transfer-history/create.transfer.button.jsx";
+import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
+import BaseCoachDetail from "../../shared/coach/base.coach.detail.jsx";
 
-const AdminPlayerDetail = () => {
+const AdminCoachDetail = () => {
     const { id } = useParams();
 
     const {
         loading,
-        player,
-        transferHistories,
+        coach,
+        coachClubs,
         descriptionItems,
         transferColumns,
-        loadPlayerDetail
-    } = BasePlayerDetail({
-        playerId: id,
+        loadCoachDetail
+    } = BaseCoachDetail({
+        coachId: id,
         extraDescriptionItems: [
-            { label: "ID", value: player => player?.id }
+            { label: "ID", value: coach => coach?.id }
         ]
     });
 
@@ -32,26 +32,20 @@ const AdminPlayerDetail = () => {
 
     return (
         <div style={{ padding: "30px" }}>
-            <Descriptions title="Player Details" bordered>
+            <Descriptions title="Head Coach Details" bordered>
                 {descriptionItems.map((item, index) => (
                     <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
                 ))}
             </Descriptions>
             <div style={{ marginTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                    <h3 style={{ margin: 0 }}>Transfer History</h3>
-                    <CreateTransferButton player={player} onSuccess={loadPlayerDetail}/>
+                    <h3 style={{ margin: 0 }}>Clubs History</h3>
+                    <CreateTransferButton coach={coach} onSuccess={loadCoachDetail}/>
                 </div>
-                <TransferHistoryTable
-                    transferColumns={transferColumns}
-                    transferHistories={transferHistories}
-                    player={player}
-                    onSuccess={loadPlayerDetail}
-                    isAdmin={true}
-                />
+
             </div>
         </div>
     );
 };
 
-export default AdminPlayerDetail;
+export default AdminCoachDetail;

@@ -12,10 +12,16 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
     const [selectedDate, setSelectedDate] = useState(initialValues.date ? dayjs(initialValues.date) : null);
 
     // List of transfer types that should have fee set to 0
-    const zeroFeeTransferTypes = ["Free Transfer", "End of loan", "Youth Promote"];
+    const zeroFeeTransferTypes = ["Free Transfer", "End of loan", "Youth Promote", "End of contract", "Retired", "Contract terminated"];
+
+    // List of special transfer types that don't require a club
+    const noClubTransferTypes = ["End of contract", "Retired", "Contract terminated"];
 
     // Check if current transfer type should have zero fee
     const isZeroFeeTransfer = zeroFeeTransferTypes.includes(transferType);
+
+    // Check if current transfer type doesn't require a club
+    const isNoClubTransfer = noClubTransferTypes.includes(transferType);
 
     // Check if selected date is today
     const isToday = selectedDate && dayjs().format('YYYY-MM-DD') === selectedDate.format('YYYY-MM-DD');
@@ -43,6 +49,11 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
     useEffect(() => {
         if (isZeroFeeTransfer) {
             form.setFieldValue('fee', 0);
+        }
+
+        // Reset club field when selecting a "no club" transfer type
+        if (isNoClubTransfer) {
+            form.setFieldValue('club', null);
         }
     }, [transferType, form]);
 
@@ -154,6 +165,9 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
                         { value: "Loan", label: "Loan" },
                         { value: "End of loan", label: "End of loan" },
                         { value: "Youth Promote", label: "Youth Promote" },
+                        { value: "End of contract", label: "End of contract" },
+                        { value: "Retired", label: "Retired" },
+                        { value: "Contract terminated", label: "Contract terminated" },
                     ]}
                 />
             </Form.Item>
@@ -196,13 +210,16 @@ const TransferForm = ({ form, initialValues = {}, formName = "transferForm", pla
             <Form.Item
                 name="club"
                 label="Joined Club"
-                rules={[{ required: true, message: 'Please select a club' }]}
+                rules={[{ required: !isNoClubTransfer, message: 'Please select a club' }]}
+                tooltip={isNoClubTransfer ? "No club required for this transfer type" : ""}
             >
                 <Select
-                    placeholder="Select club"
+                    placeholder={isNoClubTransfer ? "No club required" : "Select club"}
                     loading={loading}
                     options={clubs}
                     showSearch
+                    allowClear={isNoClubTransfer}
+                    disabled={isNoClubTransfer}
                     filterOption={(input, option) =>
                         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                     }

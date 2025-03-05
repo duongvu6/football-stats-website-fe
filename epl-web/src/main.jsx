@@ -20,9 +20,10 @@ import AdminPage from "./pages/admin/admin.jsx";
 import AdminPlayerPage from "./pages/admin/players.jsx";
 import AdminClubPage from "./pages/admin/clubs.jsx";
 import AdminCoachPage from "./pages/admin/coaches.jsx";
-import PlayerDetail from "./components/admin/player/player.detail.jsx";
+import AdminPlayerDetail from "./components/admin/player/player.detail.jsx";
 import ClientPlayerDetail from "./components/client/player/player.detail.jsx";
 import ClientCoachDetail from "./components/client/coach/coach.detail.jsx";
+import AdminCoachDetail from "./components/admin/coach/coach.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
         path: "admin/players/:id",
         element: (
             <PrivateRoute>
-              <PlayerDetail/>
+              <AdminPlayerDetail/>
             </PrivateRoute>
         ),
       },
@@ -97,6 +98,20 @@ const router = createBrowserRouter([
 
             <PrivateRoute>
               <AdminCoachPage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/coaches/:id",
+        element: (
+            // <AuthContext.Consumer>
+            //   {({ user }) => (
+            //       user.role === "ADMIN" ? <AdminCoachPage /> : <Navigate to="/coaches" />
+            //   )}
+            // </AuthContext.Consumer>
+
+            <PrivateRoute>
+              <AdminCoachDetail/>
             </PrivateRoute>
         ),
       },

@@ -2,7 +2,7 @@
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState } from "react";
 import TransferForm from "./transfer.form.jsx";
-import {createTransferHistoryAPI} from "../../../services/api.service.js";
+import { createTransferHistoryAPI } from "../../../services/api.service.js";
 
 const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
     const [form] = Form.useForm();
@@ -18,11 +18,14 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
+            // Check if this is a special transfer type
+            const isSpecialTransferType = ["End of contract", "Retired", "Contract terminated"].includes(values.type);
+
             // Create a new transfer object
             const newTransfer = {
                 player: player.id,
                 date: values.date.format('YYYY-MM-DD'),
-                club: values.club,
+                club: isSpecialTransferType ? null : values.club, // Set club to null for special types
                 type: values.type,
                 fee: values.fee,
                 playerValue: values.playerValue || player.playerValue // Use form value or player's current value
