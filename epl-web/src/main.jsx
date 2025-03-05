@@ -22,6 +22,7 @@ import AdminClubPage from "./pages/admin/clubs.jsx";
 import AdminCoachPage from "./pages/admin/coaches.jsx";
 import PlayerDetail from "./components/admin/player/player.detail.jsx";
 import ClientPlayerDetail from "./components/client/player/player.detail.jsx";
+import ClientCoachDetail from "./components/client/coach/coach.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -120,6 +121,12 @@ const router = createBrowserRouter([
             //   )}
             // </AuthContext.Consumer>
             <CoachPage/>
+        )
+      },
+      {
+        path: "coaches/:id",
+        element: (
+            <ClientCoachDetail/>
         )
       },
       {

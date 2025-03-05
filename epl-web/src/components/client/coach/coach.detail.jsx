@@ -1,20 +1,18 @@
-// epl-web/src/components/client/player/player.detail.jsx
-import { Descriptions, Spin } from "antd";
-import { useParams } from "react-router-dom";
-import BasePlayerDetail from "../../shared/player/base.player.detail.jsx";
-import TransferHistoryTable from "../../admin/transfer-history/transfer.history.table.jsx";
+import {useParams} from "react-router-dom";
+import {Descriptions, Spin} from "antd";
+import BaseCoachDetail from "../../shared/coach/base.coach.detail.jsx";
 
-const ClientPlayerDetail = () => {
+const ClientCoachDetail = () => {
     const { id } = useParams();
 
     const {
         loading,
-        player,
-        transferHistories,
+        coach,
+        coachClubs,
         descriptionItems,
         transferColumns
-    } = BasePlayerDetail({
-        playerId: id
+    } = BaseCoachDetail({
+        coachId: id
     });
 
     if (loading) {
@@ -34,14 +32,14 @@ const ClientPlayerDetail = () => {
             </Descriptions>
             <div style={{ marginTop: "30px" }}>
                 <h3>Transfer History</h3>
-                <TransferHistoryTable
-                    transferColumns={transferColumns}
-                    transferHistories={transferHistories}
-                    isAdmin={false} // No admin actions for client view
-                />
+                {/*<TransferHistoryTable*/}
+                {/*    transferColumns={transferColumns}*/}
+                {/*    transferHistories={transferHistories}*/}
+                {/*    isAdmin={false} // No admin actions for client view*/}
+                {/*/>*/}
             </div>
         </div>
     );
 };
 
-export default ClientPlayerDetail;
+export default ClientCoachDetail;

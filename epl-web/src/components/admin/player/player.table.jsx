@@ -5,7 +5,7 @@ import { EditOutlined } from '@ant-design/icons';
 import CreatePlayerModal from "./player.create.jsx";
 import EditPlayerModal from "./player.edit.jsx";
 import DeletePlayerButton from "./player.delete.jsx";
-import PlayerBaseTable from "../../shared/player/base.player.table.jsx";
+import BasePlayerTable from "../../shared/player/base.player.table.jsx";
 import GenericTableContainer from "../../shared/generic/generic.table.container.jsx";
 
 const AdminPlayerTable = () => {
@@ -62,7 +62,7 @@ const AdminPlayerTable = () => {
     ];
 
     // Use the base table with correct URL prefix for admin
-    const baseTableProps = PlayerBaseTable({
+    const baseTableProps = BasePlayerTable({
         extraColumns: adminColumns,
         urlPrefix: '/admin/players/',
     });

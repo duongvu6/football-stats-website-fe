@@ -2,7 +2,7 @@
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
 import GenericTable from "../generic/generic.table.jsx";
 
-const PlayerBaseTable = ({ renderActions, urlPrefix = '', extraColumns = [], showAddButton = false }) => {
+const BasePlayerTable = ({ renderActions, urlPrefix = '', extraColumns = [], showAddButton = false }) => {
     // Define the base columns for players
     const baseColumns = [
         {
@@ -58,4 +58,4 @@ const PlayerBaseTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
     });
 };
 
-export default PlayerBaseTable;
+export default BasePlayerTable;

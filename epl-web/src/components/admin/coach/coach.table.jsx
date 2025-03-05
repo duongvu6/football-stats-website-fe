@@ -10,13 +10,13 @@ const AdminCoachTable = () => {
     ];
     const baseTableProps = BaseCoachTable({
         extraColumns: adminColumns,
-        urlPrefix: '/admin/clubs/',
+        urlPrefix: '/admin/coaches/',
     });
 
     return (
         <GenericTableContainer
             tableProps={baseTableProps.tableProps}
-            title="Club Table"
+            title="Head Coach Table"
         />
     );
 };

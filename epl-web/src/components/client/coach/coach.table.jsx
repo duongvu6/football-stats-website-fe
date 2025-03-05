@@ -1,19 +1,19 @@
 // epl-web/src/components/client/player/player.table.jsx
-import BasePlayerTable from "../../shared/player/base.player.table.jsx";
 import GenericTableContainer from "../../shared/generic/generic.table.container.jsx";
+import BaseCoachTable from "../../shared/coach/base.coach.table.jsx";
 
-const ClientPlayerTable = () => {
+const ClientCoachTable = () => {
     // Use the base table with correct URL prefix for client
-    const baseTableProps = BasePlayerTable({
-        urlPrefix: '/players/',
+    const baseTableProps = BaseCoachTable({
+        urlPrefix: '/coaches/',
     });
 
     return (
         <GenericTableContainer
             tableProps={baseTableProps.tableProps}
-            title="Player Table"
+            title="Head Coach Table"
         />
     );
 };
 
-export default ClientPlayerTable;
+export default ClientCoachTable;

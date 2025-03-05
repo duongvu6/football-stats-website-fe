@@ -1,7 +1,7 @@
 // epl-web/src/components/admin/player/player.detail.jsx
 import { Descriptions, Spin } from "antd";
 import { useParams } from "react-router-dom";
-import PlayerBaseDetail from "../../shared/player/base.player.detail.jsx";
+import BasePlayerDetail from "../../shared/player/base.player.detail.jsx";
 import TransferHistoryTable from "../transfer-history/transfer.history.table.jsx";
 import CreateTransferButton from "../transfer-history/create.transfer.button.jsx";
 
@@ -15,7 +15,7 @@ const PlayerDetail = () => {
         descriptionItems,
         transferColumns,
         loadPlayerDetail
-    } = PlayerBaseDetail({
+    } = BasePlayerDetail({
         playerId: id,
         extraDescriptionItems: [
             { label: "ID", value: player => player?.id }

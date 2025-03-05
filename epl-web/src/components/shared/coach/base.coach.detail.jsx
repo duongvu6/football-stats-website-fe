@@ -1,29 +1,33 @@
-// epl-web/src/components/shared/player/base.player.detail.jsx
-import { useEffect, useState } from "react";
-import { fetchPlayerDetailAPI } from "../../../services/api.service.js";
+import {useEffect, useState} from "react";
+import {fetchCoachDetailAPI} from "../../../services/api.service.js";
+import {notification} from "antd";
 
-const BasePlayerDetail = ({
-                              playerId,
+const BaseCoachDetail = ({
+                              coachId,
                               extraDescriptionItems = [],
                               renderTransferHeader,
                               extraTransferColumns = []
                           }) => {
-    const [player, setPlayer] = useState(null);
+    const [coach, setCoach] = useState(null);
     const [loading, setLoadingData] = useState(true);
 
     useEffect(() => {
-        loadPlayerDetail();
-    }, [playerId]);
+        loadCoachDetail();
+    }, [coachId]);
 
-    const loadPlayerDetail = async () => {
+    const loadCoachDetail = async () => {
         setLoadingData(true);
         try {
-            const res = await fetchPlayerDetailAPI(playerId);
+            const res = await fetchCoachDetailAPI(coachId);
             if (res.data) {
-                setPlayer(res.data);
+                setCoach(res.data);
             }
         } catch (error) {
-            console.error("Error loading player detail:", error);
+            console.error("Error loading coach detail:", error);
+            notification.error({
+                message: "Error loading coach detail:",
+                description: error
+            })
         } finally {
             setLoadingData(false);
         }
@@ -41,19 +45,19 @@ const BasePlayerDetail = ({
     };
 
     // Return loading state and player data
-    if (loading || !player) {
+    if (loading || !coach) {
         return {
             loading: true,
-            player: null,
-            transferHistories: [],
+            coach: null,
+            coachClubs: [],
             descriptionItems: [],
             transferColumns: [],
-            loadPlayerDetail
+            loadCoachDetail
         };
     }
 
     // Process transfer history to add fromClub
-    const transferHistories = player.transferHistories ? [...player.transferHistories].map((transfer, index, array) => {
+    const coachClubs = coach.coachClubs ? [...coach.coachClubs].map((transfer, index, array) => {
         // If it's the last item in the array (oldest transfer), fromClub is "-"
         // Otherwise, fromClub is the club of the next item (previous transfer chronologically)
         const fromClub = index === array.length - 1 ? "-" : array[index + 1].club;
@@ -85,46 +89,33 @@ const BasePlayerDetail = ({
             dataIndex: "type",
             key: "type",
         },
-        {
-            title: "Market Value (millions Euro)",
-            dataIndex: "playerValue",
-            key: "playerValue",
-        },
-        {
-            title: "Transfer Fee(millions Euro)",
-            dataIndex: "fee",
-            key: "transferFee",
-        },
         ...extraTransferColumns
     ];
 
     // Process extraDescriptionItems to safely handle functions
     const processedExtraItems = extraDescriptionItems.map(item => ({
         label: item.label,
-        value: typeof item.value === 'function' ? item.value(player) : item.value
+        value: typeof item.value === 'function' ? item.value(coach) : item.value
     }));
 
     // Enhanced base description items with more player information
     const baseDescriptionItems = [
-        { label: "Name", value: player.name },
-        { label: "Age", value: player.age },
-        { label: "Date of Birth", value: formatDate(player.dob) },
-        { label: "Shirt Number", value: player.shirtNumber },
-        { label: "Citizenship", value: Array.isArray(player.citizenships) ? player.citizenships.join(', ') : player.citizenships },
-        { label: "Position", value: Array.isArray(player.positions) ? player.positions.join(', ') : player.positions },
-        { label: "Current Club", value: player.transferHistories && player.transferHistories[0] ? player.transferHistories[0].club : "No information" },
-        { label: "Market Value (millions Euro)", value: player.marketValue },
+        { label: "Name", value: coach.name },
+        { label: "Age", value: coach.age },
+        { label: "Date of Birth", value: formatDate(coach.dob) },
+        { label: "Citizenship", value: Array.isArray(coach.citizenships) ? coach.citizenships.join(', ') : coach.citizenships },
+        { label: "Current Club", value: coach.coachClubs && coach.coachClubs[0] ? coach.coachClubs[0].club : "No information" },
         ...processedExtraItems
     ];
 
     return {
         loading: false,
-        player,
-        transferHistories,
-        loadPlayerDetail,
+        coach,
+        coachClubs,
+        loadCoachDetail,
         descriptionItems: baseDescriptionItems,
         transferColumns: baseTransferColumns
     };
 };
 
-export default BasePlayerDetail;
+export default BaseCoachDetail;
