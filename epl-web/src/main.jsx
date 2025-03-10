@@ -24,6 +24,10 @@ import AdminPlayerDetail from "./components/admin/player/player.detail.jsx";
 import ClientPlayerDetail from "./components/client/player/player.detail.jsx";
 import ClientCoachDetail from "./components/client/coach/coach.detail.jsx";
 import AdminCoachDetail from "./components/admin/coach/coach.detail.jsx";
+import AdminLeaguePage from "./pages/admin/leagues.jsx";
+import ClientLeaguePage from "./pages/client/leagues.jsx";
+import LeagueDetailPage from "./components/client/league/league.detail.jsx";
+import AdminLeagueDetailPage from "./components/admin/league/league.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -149,6 +153,34 @@ const router = createBrowserRouter([
         element: (
             <PrivateRoute>
               <AdminPage />
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "leagues",
+        element: (
+            <ClientLeaguePage/>
+        ),
+      },
+      {
+        path: "admin/leagues",
+        element: (
+            <PrivateRoute>
+              <AdminLeaguePage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "leagues/:id",
+        element: (
+            <LeagueDetailPage/>
+        ),
+      },
+      {
+        path: "admin/leagues/:id",
+        element: (
+            <PrivateRoute>
+              <AdminLeagueDetailPage/>
             </PrivateRoute>
         ),
       },

@@ -109,6 +109,31 @@ const deleteCoachClubAPI = (id) => {
     return axios.delete(URL_BACKEND);
 };
 
+const fetchAllLeaguesAPI = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/leagues?page=${current}&size=${pageSize}`;
+    return axios.get(URL_BACKEND);
+}
+
+const createLeagueAPI = (leagueData) => {
+    const URL_BACKEND = "/api/v1/leagues";
+    return axios.post(URL_BACKEND, leagueData);
+}
+
+const updateLeagueAPI = (leagueData) => {
+    const URL_BACKEND = `/api/v1/leagues`;
+    return axios.put(URL_BACKEND, leagueData);
+}
+
+const deleteLeagueAPI = (id) => {
+    const URL_BACKEND = `/api/v1/leagues/${id}`;
+    return axios.delete(URL_BACKEND);
+}
+
+const fetchLeagueDetailAPI = (id) => {
+    const URL_BACKEND = `/api/v1/leagues/${id}`;
+    return axios.get(URL_BACKEND);
+}
+
 export {
     loginAPI,
     registerUserAPI,
@@ -132,6 +157,11 @@ export {
     createCoachClubAPI,
     updateCoachClubAPI,
     deleteCoachClubAPI,
+    fetchAllLeaguesAPI,
+    createLeagueAPI,
+    updateLeagueAPI,
+    deleteLeagueAPI,
+    fetchLeagueDetailAPI,
 
 
 }

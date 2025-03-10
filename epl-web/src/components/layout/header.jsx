@@ -1,5 +1,5 @@
 import { Menu, message, notification } from "antd";
-import { AliwangwangOutlined, HomeOutlined, LoginOutlined } from "@ant-design/icons";
+import {AliwangwangOutlined, HomeOutlined, LoginOutlined, TrophyOutlined} from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { logoutAPI } from "../../services/api.service.js";
@@ -63,13 +63,18 @@ const Header = () => {
       key: "coaches",
       icon: <CoachIcon />,
     },
-    ...(user.role === "ADMIN" ? [
-      {
-        label: <Link to={"/admin"}>Admin Dashboard</Link>,
-        key: "admin",
-        icon: <AdminIcon />
-      }
-    ] : []),
+    // ...(user.role === "ADMIN" ? [
+    //   {
+    //     label: <Link to={"/admin"}>Admin Dashboard</Link>,
+    //     key: "admin",
+    //     icon: <AdminIcon />
+    //   }
+    // ] : []),
+    {
+      label: <Link to={user.role === "ADMIN" ? "/admin/leagues" : "/leagues"}>Leagues</Link>,
+      key: "leagues",
+      icon: <TrophyOutlined />,
+    },
     ...(!user.id ? [
       {
         label: <Link to={"/login"}>Login</Link>,
