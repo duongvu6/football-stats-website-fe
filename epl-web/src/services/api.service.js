@@ -133,6 +133,20 @@ const fetchLeagueDetailAPI = (id) => {
     const URL_BACKEND = `/api/v1/leagues/${id}`;
     return axios.get(URL_BACKEND);
 }
+const createLeagueSeasonAPI = (data) => {
+    const URL_BACKEND = `/api/v1/league-seasons`;
+    return axios.post(URL_BACKEND, data);
+}
+
+const updateLeagueSeasonAPI = (data) => {
+    const URL_BACKEND = `/api/v1/league-seasons`;
+    return axios.put(URL_BACKEND, data);
+}
+
+const deleteLeagueSeasonAPI = (id) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${id}`;
+    return axios.delete(URL_BACKEND);
+}
 
 export {
     loginAPI,
@@ -162,6 +176,9 @@ export {
     updateLeagueAPI,
     deleteLeagueAPI,
     fetchLeagueDetailAPI,
+    createLeagueSeasonAPI,
+    updateLeagueSeasonAPI,
+    deleteLeagueSeasonAPI
 
 
 }
