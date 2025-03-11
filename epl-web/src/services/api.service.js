@@ -148,6 +148,69 @@ const deleteLeagueSeasonAPI = (id) => {
     return axios.delete(URL_BACKEND);
 }
 
+// League Season detailed API endpoints
+const fetchLeagueSeasonDetailAPI = (id) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${id}`;
+    return axios.get(URL_BACKEND);
+};
+
+const createClubSeasonTableAPI = (data) => {
+    const URL_BACKEND = `/api/v1/club-season-tables`;
+    return axios.post(URL_BACKEND, data);
+};
+
+const updateClubSeasonTableAPI = (data) => {
+    const URL_BACKEND = `/api/v1/club-season-tables`;
+    return axios.put(URL_BACKEND, data);
+};
+
+// Match API endpoints
+const fetchMatchesBySeasonAPI = (seasonId) => {
+    const URL_BACKEND = `/api/v1/matches/season/${seasonId}`;
+    return axios.get(URL_BACKEND);
+};
+
+const fetchMatchDetailAPI = (id) => {
+    const URL_BACKEND = `/api/v1/matches/${id}`;
+    return axios.get(URL_BACKEND);
+};
+
+const createMatchAPI = (data) => {
+    const URL_BACKEND = `/api/v1/matches`;
+    return axios.post(URL_BACKEND, data);
+};
+
+const updateMatchAPI = (data) => {
+    const URL_BACKEND = `/api/v1/matches`;
+    return axios.put(URL_BACKEND, data);
+};
+
+const deleteMatchAPI = (id) => {
+    const URL_BACKEND = `/api/v1/matches/${id}`;
+    return axios.delete(URL_BACKEND);
+};
+
+// Match Action API endpoints
+const fetchMatchActionsAPI = (matchId) => {
+    const URL_BACKEND = `/api/v1/match-actions/match/${matchId}`;
+    return axios.get(URL_BACKEND);
+};
+
+const createMatchActionAPI = (data) => {
+    const URL_BACKEND = `/api/v1/match-actions`;
+    return axios.post(URL_BACKEND, data);
+};
+
+const updateMatchActionAPI = (data) => {
+    const URL_BACKEND = `/api/v1/match-actions`;
+    return axios.put(URL_BACKEND, data);
+};
+
+const deleteMatchActionAPI = (id) => {
+    const URL_BACKEND = `/api/v1/match-actions/${id}`;
+    return axios.delete(URL_BACKEND);
+};
+
 export {
     loginAPI,
     registerUserAPI,
@@ -178,7 +241,20 @@ export {
     fetchLeagueDetailAPI,
     createLeagueSeasonAPI,
     updateLeagueSeasonAPI,
-    deleteLeagueSeasonAPI
+    deleteLeagueSeasonAPI,
+    fetchLeagueSeasonDetailAPI,
+    createClubSeasonTableAPI,
+    updateClubSeasonTableAPI,
+    fetchMatchesBySeasonAPI,
+    fetchMatchDetailAPI,
+    createMatchAPI,
+    updateMatchAPI,
+    deleteMatchAPI,
+    fetchMatchActionsAPI,
+    createMatchActionAPI,
+    updateMatchActionAPI,
+    deleteMatchActionAPI,
+
 
 
 }
