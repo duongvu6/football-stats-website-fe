@@ -1,20 +1,35 @@
-// epl-web/src/components/admin/league-season/match/create.match-action.button.jsx
+// epl-web/src/components/admin/match/edit.match-action.button.jsx
 import { Button, Form, Modal, Select, InputNumber, message, notification } from "antd";
-import { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { createMatchActionAPI, fetchAllPlayersNoPaginationAPI } from "../../../../services/api.service.js";
+import { EditOutlined } from "@ant-design/icons";
+import { useState, useEffect } from "react";
+import {
+    updateMatchActionAPI,
+    fetchAllPlayersAPI,
+    fetchAllPlayersNoPaginationAPI
+} from "../../../../services/api.service.js";
 
-const CreateMatchActionButton = ({ match, onSuccess }) => {
+const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [players, setPlayers] = useState([]);
     const [loadingPlayers, setLoadingPlayers] = useState(false);
 
-    const showModal = async () => {
+    const showModal = () => {
         setIsOpen(true);
         loadPlayers();
     };
+
+    useEffect(() => {
+        if (isOpen && matchAction) {
+            // Set form values
+            form.setFieldsValue({
+                action: matchAction.action,
+                minute: matchAction.minute,
+                player: matchAction.player.id
+            });
+        }
+    }, [isOpen, matchAction, form]);
 
     const loadPlayers = async () => {
         setLoadingPlayers(true);
@@ -108,7 +123,6 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
 
     const handleCancel = () => {
         setIsOpen(false);
-        form.resetFields();
     };
 
     const handleSubmit = async () => {
@@ -116,21 +130,22 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
             const values = await form.validateFields();
             setLoading(true);
 
-            const matchAction = {
+            const updatedAction = {
+                id: matchAction.id,
                 match: match.id,
                 player: values.player,
                 action: values.action,
                 minute: values.minute
             };
 
-            const res = await createMatchActionAPI(matchAction);
+            const res = await updateMatchActionAPI(updatedAction);
 
             if (res.data) {
-                message.success("Match action added successfully");
-                handleCancel();
+                message.success("Match action updated successfully");
+                setIsOpen(false);
                 onSuccess();
             } else {
-                message.error("Failed to add match action");
+                message.error("Failed to update match action");
             }
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -147,13 +162,12 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
         <>
             <Button
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<EditOutlined />}
+                size="small"
                 onClick={showModal}
-            >
-                Add Action
-            </Button>
+            />
             <Modal
-                title="Add Match Action"
+                title="Edit Match Action"
                 open={isOpen}
                 onCancel={handleCancel}
                 footer={[
@@ -166,7 +180,7 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
                         loading={loading}
                         onClick={handleSubmit}
                     >
-                        Add
+                        Update
                     </Button>,
                 ]}
             >
@@ -205,7 +219,6 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
                             filterOption={(input, option) =>
                                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                             }
-                            notFoundContent={loadingPlayers ? "Loading..." : (players.length === 0 ? "No players found for these teams" : "No match")}
                         />
                     </Form.Item>
                 </Form>
@@ -214,4 +227,4 @@ const CreateMatchActionButton = ({ match, onSuccess }) => {
     );
 };
 
-export default CreateMatchActionButton;
+export default EditMatchActionButton;

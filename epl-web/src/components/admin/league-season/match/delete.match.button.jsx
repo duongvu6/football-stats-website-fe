@@ -1,7 +1,7 @@
 // epl-web/src/components/admin/league-season/match/delete.match.button.jsx
 import { Button, Popconfirm, message, notification } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
-import { deleteMatchAPI } from "../../../../services/api.service.js";
+import {deleteMatchAPI} from "../../../../services/api.service.js";
 
 const DeleteMatchButton = ({ match, onSuccess }) => {
     const handleDelete = async () => {

@@ -23,6 +23,10 @@ const fetchAllPlayersAPI = (current, pageSize) => {
     const URL_BACKEND = `/api/v1/players?page=${current}&size=${pageSize}&sortTransferHistory=true`;
     return axios.get(URL_BACKEND);
 }
+const fetchAllPlayersNoPaginationAPI = () => {
+    const URL_BACKEND = `/api/v1/players`;
+    return axios.get(URL_BACKEND);
+}
 
 // Add these to existing export functions
 const createPlayerAPI = (playerData) => {
@@ -196,7 +200,7 @@ const deleteMatchAPI = (id) => {
 
 // Match Action API endpoints
 const fetchMatchActionsAPI = (matchId) => {
-    const URL_BACKEND = `/api/v1/match-actions/match/${matchId}`;
+    const URL_BACKEND = `/api/v1/match-actions?filter=match.id:${matchId}`;
     return axios.get(URL_BACKEND);
 };
 
@@ -259,6 +263,7 @@ export {
     createMatchActionAPI,
     updateMatchActionAPI,
     deleteMatchActionAPI,
+    fetchAllPlayersNoPaginationAPI
 
 
 
