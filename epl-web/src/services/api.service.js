@@ -170,7 +170,7 @@ const deleteClubSeasonTableAPI = (id) => {
 
 // Match API endpoints
 const fetchMatchesBySeasonAPI = (seasonId) => {
-    const URL_BACKEND = `/api/v1/matches/season/${seasonId}`;
+    const URL_BACKEND = `/api/v1/matches?filter=season.id:${seasonId}&sort=round,asc`;
     return axios.get(URL_BACKEND);
 };
 
