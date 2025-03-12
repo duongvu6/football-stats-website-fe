@@ -8,6 +8,7 @@ const BaseLeagueTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
             title: "Name",
             dataIndex: "name",
             linkField: true,
+            sorter: (a, b) => a.name.localeCompare(b.name)
         }
     ];
 

@@ -1,4 +1,3 @@
-// epl-web/src/components/client/league/league.detail.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal } from "antd";
@@ -10,9 +9,10 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 const LeagueDetailPage = () => {
+    // State variables remain the same
     const [league, setLeague] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [seasons, setSeasons] = useState(['2023/2024', '2022/2023', '2021/2022']); // Sample seasons
+    const [seasons, setSeasons] = useState(['2023/2024', '2022/2023', '2021/2022']);
     const [selectedSeason, setSelectedSeason] = useState('2023/2024');
     const [clubs, setClubs] = useState([]);
     const [matches, setMatches] = useState([]);
@@ -25,14 +25,13 @@ const LeagueDetailPage = () => {
     const [standingsModalVisible, setStandingsModalVisible] = useState(false);
     const [scorersModalVisible, setScorersModalVisible] = useState(false);
 
+    // The useEffect hooks remain the same
     useEffect(() => {
         const fetchLeagueDetail = async () => {
             try {
                 const res = await fetchLeagueDetailAPI(id);
                 setLeague(res.data);
                 // In a real implementation, fetch seasons here
-                // const seasonsRes = await fetchLeagueSeasons(id);
-                // setSeasons(seasonsRes.data);
             } catch (error) {
                 console.error("Failed to fetch league details:", error);
             } finally {
@@ -43,17 +42,12 @@ const LeagueDetailPage = () => {
         fetchLeagueDetail();
     }, [id]);
 
-    // Fetch season-specific data when season changes
     useEffect(() => {
         const fetchSeasonData = async () => {
             if (!league) return;
 
             try {
-                // Simulate API calls - replace with actual API calls
-                // const clubsRes = await fetchLeagueClubs(id, selectedSeason);
-                // setClubs(clubsRes.data);
-
-                // Simulate data for the UI
+                // Simulate data loading...
                 setClubs([
                     { id: 1, name: 'Manchester United', stadium: 'Old Trafford', manager: 'Erik ten Hag' },
                     { id: 2, name: 'Liverpool', stadium: 'Anfield', manager: 'Jürgen Klopp' },
@@ -91,6 +85,7 @@ const LeagueDetailPage = () => {
         fetchSeasonData();
     }, [league, selectedSeason, id]);
 
+    // Loading and null checks remain the same
     if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -107,52 +102,207 @@ const LeagueDetailPage = () => {
         );
     }
 
-    // Define table columns
+    // Define table columns with sorters
     const clubColumns = [
-        { title: 'Club', dataIndex: 'name', key: 'name' },
-        { title: 'Stadium', dataIndex: 'stadium', key: 'stadium' },
-        { title: 'Manager', dataIndex: 'manager', key: 'manager' },
+        {
+            title: "Club",
+            dataIndex: "name",
+            key: "name",
+            sorter: (a, b) => a.name.localeCompare(b.name)
+        },
+        {
+            title: "Stadium",
+            dataIndex: "stadium",
+            key: "stadium",
+            sorter: (a, b) => a.stadium.localeCompare(b.stadium)
+        },
+        {
+            title: "Manager",
+            dataIndex: "manager",
+            key: "manager",
+            sorter: (a, b) => a.manager.localeCompare(b.manager)
+        },
     ];
 
     const matchColumns = [
-        { title: 'Date', dataIndex: 'date', key: 'date' },
-        { title: 'Home Team', dataIndex: 'homeTeam', key: 'homeTeam' },
-        { title: 'Score', dataIndex: 'score', key: 'score' },
-        { title: 'Away Team', dataIndex: 'awayTeam', key: 'awayTeam' },
+        {
+            title: "Date",
+            dataIndex: "date",
+            key: "date",
+            sorter: (a, b) => new Date(a.date) - new Date(b.date)
+        },
+        {
+            title: "Home Team",
+            dataIndex: "homeTeam",
+            key: "homeTeam",
+            sorter: (a, b) => a.homeTeam.localeCompare(b.homeTeam)
+        },
+        {
+            title: "Score",
+            dataIndex: "score",
+            key: "score",
+            sorter: (a, b) => {
+                const [aHome, aAway] = a.score.split('-').map(n => parseInt(n.trim(), 10));
+                const [bHome, bAway] = b.score.split('-').map(n => parseInt(n.trim(), 10));
+                return (aHome - aAway) - (bHome - bAway);
+            }
+        },
+        {
+            title: "Away Team",
+            dataIndex: "awayTeam",
+            key: "awayTeam",
+            sorter: (a, b) => a.awayTeam.localeCompare(b.awayTeam)
+        },
     ];
 
     const scorerColumns = [
-        { title: 'Rank', dataIndex: 'id', key: 'id' },
-        { title: 'Player', dataIndex: 'name', key: 'name' },
-        { title: 'Team', dataIndex: 'team', key: 'team' },
-        { title: 'Goals', dataIndex: 'goals', key: 'goals' },
+        {
+            title: "Rank",
+            dataIndex: "id",
+            key: "id",
+            sorter: (a, b) => a.id - b.id
+        },
+        {
+            title: "Player",
+            dataIndex: "name",
+            key: "name",
+            sorter: (a, b) => a.name.localeCompare(b.name)
+        },
+        {
+            title: "Team",
+            dataIndex: "team",
+            key: "team",
+            sorter: (a, b) => a.team.localeCompare(b.team)
+        },
+        {
+            title: "Goals",
+            dataIndex: "goals",
+            key: "goals",
+            sorter: (a, b) => a.goals - b.goals,
+            defaultSortOrder: 'descend'
+        },
     ];
 
     const standingColumns = [
-        { title: 'Pos', dataIndex: 'position', key: 'position', width: 50 },
-        { title: 'Team', dataIndex: 'team', key: 'team' },
-        { title: 'P', dataIndex: 'played', key: 'played', width: 50 },
-        { title: 'Pts', dataIndex: 'points', key: 'points', width: 50 }
+        {
+            title: "Pos",
+            dataIndex: "position",
+            key: "position",
+            width: 50,
+            sorter: (a, b) => a.position - b.position,
+            defaultSortOrder: 'ascend'
+        },
+        {
+            title: "Team",
+            dataIndex: "team",
+            key: "team",
+            sorter: (a, b) => a.team.localeCompare(b.team)
+        },
+        {
+            title: "P",
+            dataIndex: "played",
+            key: "played",
+            width: 50,
+            sorter: (a, b) => a.played - b.played
+        },
+        {
+            title: "Pts",
+            dataIndex: "points",
+            key: "points",
+            width: 50,
+            sorter: (a, b) => a.points - b.points,
+            defaultSortOrder: 'descend'
+        }
     ];
 
     // Extended columns for detailed views
     const detailedStandingColumns = [
-        { title: 'Pos', dataIndex: 'position', key: 'position' },
-        { title: 'Team', dataIndex: 'team', key: 'team' },
-        { title: 'P', dataIndex: 'played', key: 'played' },
-        { title: 'W', dataIndex: 'won', key: 'won' },
-        { title: 'D', dataIndex: 'drawn', key: 'drawn' },
-        { title: 'L', dataIndex: 'lost', key: 'lost' },
-        { title: 'GF', dataIndex: 'goalsFor', key: 'goalsFor', render: () => Math.floor(Math.random() * 30) + 10 },
-        { title: 'GA', dataIndex: 'goalsAgainst', key: 'goalsAgainst', render: () => Math.floor(Math.random() * 20) + 5 },
-        { title: 'GD', dataIndex: 'goalDifference', key: 'goalDifference', render: (_, record) => {
+        {
+            title: "Pos",
+            dataIndex: "position",
+            key: "position",
+            sorter: (a, b) => a.position - b.position,
+            defaultSortOrder: 'ascend'
+        },
+        {
+            title: "Team",
+            dataIndex: "team",
+            key: "team",
+            sorter: (a, b) => a.team.localeCompare(b.team)
+        },
+        {
+            title: "P",
+            dataIndex: "played",
+            key: "played",
+            sorter: (a, b) => a.played - b.played
+        },
+        {
+            title: "W",
+            dataIndex: "won",
+            key: "won",
+            sorter: (a, b) => a.won - b.won
+        },
+        {
+            title: "D",
+            dataIndex: "drawn",
+            key: "drawn",
+            sorter: (a, b) => a.drawn - b.drawn
+        },
+        {
+            title: "L",
+            dataIndex: "lost",
+            key: "lost",
+            sorter: (a, b) => a.lost - b.lost
+        },
+        {
+            title: "GF",
+            dataIndex: "goalsFor",
+            key: "goalsFor",
+            render: () => Math.floor(Math.random() * 30) + 10,
+            sorter: (a, b) => {
+                const aGF = Math.floor(Math.random() * 30) + 10;
+                const bGF = Math.floor(Math.random() * 30) + 10;
+                return aGF - bGF;
+            }
+        },
+        {
+            title: "GA",
+            dataIndex: "goalsAgainst",
+            key: "goalsAgainst",
+            render: () => Math.floor(Math.random() * 20) + 5,
+            sorter: (a, b) => {
+                const aGA = Math.floor(Math.random() * 20) + 5;
+                const bGA = Math.floor(Math.random() * 20) + 5;
+                return aGA - bGA;
+            }
+        },
+        {
+            title: "GD",
+            dataIndex: "goalDifference",
+            key: "goalDifference",
+            render: (_, record) => {
                 const gf = Math.floor(Math.random() * 30) + 10;
                 const ga = Math.floor(Math.random() * 20) + 5;
                 return gf - ga;
-            }},
-        { title: 'Pts', dataIndex: 'points', key: 'points' }
+            },
+            sorter: (a, b) => {
+                const aGF = Math.floor(Math.random() * 30) + 10;
+                const aGA = Math.floor(Math.random() * 20) + 5;
+                const bGF = Math.floor(Math.random() * 30) + 10;
+                const bGA = Math.floor(Math.random() * 20) + 5;
+                return (aGF - aGA) - (bGF - bGA);
+            }
+        },
+        {
+            title: "Pts",
+            dataIndex: "points",
+            key: "points",
+            sorter: (a, b) => a.points - b.points,
+            defaultSortOrder: 'descend'
+        }
     ];
 
+    // The JSX return remains mostly the same, just ensuring we're using the updated column definitions
     return (
         <div style={{ padding: "30px" }}>
             <Row gutter={[16, 16]}>
@@ -257,7 +407,7 @@ const LeagueDetailPage = () => {
             {/* Modals for detailed views */}
             <Modal
                 title={`${league.name} - All Matchdays (${selectedSeason})`}
-                visible={matchdayModalVisible}
+                open={matchdayModalVisible}
                 onCancel={() => setMatchdayModalVisible(false)}
                 width={800}
                 footer={null}
@@ -300,7 +450,7 @@ const LeagueDetailPage = () => {
 
             <Modal
                 title={`${league.name} - Full Standings (${selectedSeason})`}
-                visible={standingsModalVisible}
+                open={standingsModalVisible}
                 onCancel={() => setStandingsModalVisible(false)}
                 width={1000}
                 footer={null}
@@ -333,7 +483,7 @@ const LeagueDetailPage = () => {
 
             <Modal
                 title={`${league.name} - Top Scorers (${selectedSeason})`}
-                visible={scorersModalVisible}
+                open={scorersModalVisible}
                 onCancel={() => setScorersModalVisible(false)}
                 width={800}
                 footer={null}

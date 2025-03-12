@@ -8,15 +8,19 @@ const BaseClubTable = ({ renderActions, urlPrefix = '', extraColumns = [], showA
         {
             title: "Name",
             dataIndex: "name",
-            linkField: true, // This property indicates that this column should render as a link
+            linkField: true,
+            sorter: (a, b) => a.name.localeCompare(b.name)
         },
         {
             title: "Country",
             dataIndex: "country",
+            sorter: (a, b) => a.country.localeCompare(b.country)
         },
         {
             title: "Stadium name",
             dataIndex: "stadiumName",
+            sorter: (a, b) => a.stadiumName.localeCompare(b.stadiumName)
+
         },
     ];
 
