@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchLeagueSeasonDetailAPI } from "../../../services/api.service.js";
 import ClubSeasonTable from "./club-season/club.season.table.jsx";
-import MatchTable from "./match/match.table.jsx";
+// import MatchTable from "./match/match.table.jsx";
 
 const LeagueSeasonDetail = () => {
     const { id } = useParams();
@@ -48,9 +48,9 @@ const LeagueSeasonDetail = () => {
                 <Tabs.TabPane tab="Clubs" key="clubs">
                     <ClubSeasonTable leagueSeason={leagueSeason} />
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="Matches" key="matches">
-                    <MatchTable leagueSeason={leagueSeason} />
-                </Tabs.TabPane>
+                {/*<Tabs.TabPane tab="Matches" key="matches">*/}
+                {/*    <MatchTable leagueSeason={leagueSeason} />*/}
+                {/*</Tabs.TabPane>*/}
             </Tabs>
         </div>
     );

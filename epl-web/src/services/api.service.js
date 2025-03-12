@@ -163,6 +163,10 @@ const updateClubSeasonTableAPI = (data) => {
     const URL_BACKEND = `/api/v1/club-season-tables`;
     return axios.put(URL_BACKEND, data);
 };
+const deleteClubSeasonTableAPI = (id) => {
+    const URL_BACKEND = `/api/v1/club-season-tables/${id}`;
+    return axios.delete(URL_BACKEND);
+}
 
 // Match API endpoints
 const fetchMatchesBySeasonAPI = (seasonId) => {
@@ -245,6 +249,7 @@ export {
     fetchLeagueSeasonDetailAPI,
     createClubSeasonTableAPI,
     updateClubSeasonTableAPI,
+    deleteClubSeasonTableAPI,
     fetchMatchesBySeasonAPI,
     fetchMatchDetailAPI,
     createMatchAPI,

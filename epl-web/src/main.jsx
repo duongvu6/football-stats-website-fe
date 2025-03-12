@@ -29,7 +29,6 @@ import ClientLeaguePage from "./pages/client/leagues.jsx";
 import LeagueDetailPage from "./components/client/league/league.detail.jsx";
 import AdminLeagueDetailPage from "./components/admin/league/league.detail.jsx";
 import LeagueSeasonDetail from "./pages/admin/league-season.detail.jsx";
-import MatchActionPage from "./components/admin/league-season/match/match.actions.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -194,14 +193,14 @@ const router = createBrowserRouter([
             </PrivateRoute>
         ),
       },
-      {
-        path: "admin/match-actions/:id",
-        element: (
-            <PrivateRoute>
-              <MatchActionPage />
-            </PrivateRoute>
-        ),
-      }
+      // {
+      //   path: "admin/match-actions/:id",
+      //   element: (
+      //       <PrivateRoute>
+      //         <MatchActionPage />
+      //       </PrivateRoute>
+      //   ),
+      // }
     ],
   },
 ]);
