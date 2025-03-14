@@ -54,9 +54,7 @@ const BasePlayerDetail = ({
 
     // Process transfer history to add fromClub
     const transferHistories = player.transferHistories ? [...player.transferHistories].map((transfer, index, array) => {
-        // If it's the last item in the array (oldest transfer), fromClub is "-"
-        // Otherwise, fromClub is the club of the next item (previous transfer chronologically)
-        const fromClub = index === array.length - 1 ? "-" : array[index + 1].club;
+        const fromClub = transfer.previousClub;
 
         // Extract club information properly
         let clubName = transfer.club;
