@@ -132,15 +132,18 @@ const MatchTable = ({ leagueSeason }) => {
 
     return (
         <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
+            <div style={{display: "flex", justifyContent: "space-between", marginBottom: "16px"}}>
                 <h3>Matches</h3>
-                <CreateMatchButton leagueSeason={leagueSeason} onSuccess={loadMatches} />
+                <CreateMatchButton
+                    leagueSeason={leagueSeason}
+                    onSuccess={loadMatches} // Make sure this is correctly passed
+                />
             </div>
 
             {roundTabs.length > 0 ? (
-                <Tabs defaultActiveKey="1" items={roundTabs} />
+                <Tabs defaultActiveKey="1" items={roundTabs}/>
             ) : (
-                <div style={{ textAlign: "center", padding: "20px" }}>
+                <div style={{textAlign: "center", padding: "20px"}}>
                     No matches available. Add the first match using the button above.
                 </div>
             )}

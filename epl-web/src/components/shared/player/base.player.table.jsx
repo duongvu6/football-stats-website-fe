@@ -58,19 +58,6 @@ const BasePlayerTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
                 const bStr = Array.isArray(b.positions) ? b.positions.join(', ') : b.positions || '';
                 return aStr.localeCompare(bStr);
             },
-            filters: [
-                { text: 'GK', value: 'GK' },
-                { text: 'CB', value: 'CB' },
-                { text: 'LB', value: 'LB' },
-                { text: 'RB', value: 'RB' },
-                { text: 'CDM', value: 'CDM' },
-                { text: 'CM', value: 'CM' },
-                { text: 'CAM', value: 'CAM' },
-                { text: 'LW', value: 'LW' },
-                { text: 'RW', value: 'RW' },
-                { text: 'ST', value: 'ST' },
-                // Add more positions as needed
-            ],
             onFilter: (value, record) => {
                 return Array.isArray(record.positions)
                     ? record.positions.includes(value)
@@ -80,18 +67,11 @@ const BasePlayerTable = ({ renderActions, urlPrefix = '', extraColumns = [], sho
         },
         {
             title: "Current Club",
-            render: (_, record) => {
-                return record.transferHistories && record.transferHistories[0] ?
-                    (typeof record.transferHistories[0].club === 'object' ?
-                        record.transferHistories[0].club.name : record.transferHistories[0].club) : "No information"
-            },
+            dataIndex: "currentClub",
             sorter: (a, b) => {
-                const aClub = a.transferHistories && a.transferHistories[0] ?
-                    (typeof a.transferHistories[0].club === 'object' ?
-                        a.transferHistories[0].club.name : a.transferHistories[0].club) : "No information";
-                const bClub = b.transferHistories && b.transferHistories[0] ?
-                    (typeof b.transferHistories[0].club === 'object' ?
-                        b.transferHistories[0].club.name : b.transferHistories[0].club) : "No information";
+                // Safely compare the currentClub values
+                const aClub = a.currentClub || '';
+                const bClub = b.currentClub || '';
                 return aClub.localeCompare(bClub);
             }
         },

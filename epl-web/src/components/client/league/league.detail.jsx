@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal } from "antd";
+import { Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal, notification } from "antd";
 import { BarChartOutlined, CalendarOutlined, TrophyOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import { fetchLeagueDetailAPI } from "../../../services/api.service.js";
+import { fetchLeagueDetailAPI, fetchLeagueSeasonDetailAPI, fetchMatchesBySeasonAPI } from "../../../services/api.service.js";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 const LeagueDetailPage = () => {
-    // State variables remain the same
     const [league, setLeague] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [seasons, setSeasons] = useState(['2023/2024', '2022/2023', '2021/2022']);
-    const [selectedSeason, setSelectedSeason] = useState('2023/2024');
+    const [seasons, setSeasons] = useState([]);
+    const [selectedSeason, setSelectedSeason] = useState(null);
+    const [seasonData, setSeasonData] = useState(null);
     const [clubs, setClubs] = useState([]);
     const [matches, setMatches] = useState([]);
     const [topScorers, setTopScorers] = useState([]);
     const [standings, setStandings] = useState([]);
+    const [seasonLoading, setSeasonLoading] = useState(false);
     const { id } = useParams();
 
     // Modal states
@@ -25,15 +26,36 @@ const LeagueDetailPage = () => {
     const [standingsModalVisible, setStandingsModalVisible] = useState(false);
     const [scorersModalVisible, setScorersModalVisible] = useState(false);
 
-    // The useEffect hooks remain the same
+    // Fetch league details when component mounts
     useEffect(() => {
         const fetchLeagueDetail = async () => {
+            setLoading(true);
             try {
                 const res = await fetchLeagueDetailAPI(id);
-                setLeague(res.data);
-                // In a real implementation, fetch seasons here
+
+                if (res.data) {
+                    setLeague(res.data);
+
+                    // Extract seasons from league data
+                    if (res.data.leagueSeasons && res.data.leagueSeasons.length > 0) {
+                        const seasonsList = res.data.leagueSeasons.map(season => ({
+                            id: season.id,
+                            name: season.name
+                        }));
+                        setSeasons(seasonsList);
+
+                        // Select the first season by default
+                        if (seasonsList.length > 0) {
+                            setSelectedSeason(seasonsList[0]);
+                        }
+                    }
+                }
             } catch (error) {
                 console.error("Failed to fetch league details:", error);
+                notification.error({
+                    message: "Error",
+                    description: "Failed to load league details"
+                });
             } finally {
                 setLoading(false);
             }
@@ -42,50 +64,108 @@ const LeagueDetailPage = () => {
         fetchLeagueDetail();
     }, [id]);
 
+    // Fetch season data when selected season changes
     useEffect(() => {
         const fetchSeasonData = async () => {
-            if (!league) return;
+            if (!selectedSeason) return;
 
+            setSeasonLoading(true);
             try {
-                // Simulate data loading...
-                setClubs([
-                    { id: 1, name: 'Manchester United', stadium: 'Old Trafford', manager: 'Erik ten Hag' },
-                    { id: 2, name: 'Liverpool', stadium: 'Anfield', manager: 'Jürgen Klopp' },
-                    { id: 3, name: 'Arsenal', stadium: 'Emirates Stadium', manager: 'Mikel Arteta' },
-                    { id: 4, name: 'Manchester City', stadium: 'Etihad Stadium', manager: 'Pep Guardiola' },
-                    { id: 5, name: 'Chelsea', stadium: 'Stamford Bridge', manager: 'Mauricio Pochettino' }
-                ]);
+                // Fetch the league season details
+                const res = await fetchLeagueSeasonDetailAPI(selectedSeason.id);
 
-                setMatches([
-                    { id: 1, homeTeam: 'Manchester United', awayTeam: 'Liverpool', score: '2-1', date: '2023-10-15' },
-                    { id: 2, homeTeam: 'Arsenal', awayTeam: 'Chelsea', score: '1-1', date: '2023-10-15' },
-                    { id: 3, homeTeam: 'Manchester City', awayTeam: 'Tottenham', score: '3-0', date: '2023-10-14' },
-                ]);
+                if (res.data) {
+                    const seasonDetail = res.data;
+                    setSeasonData(seasonDetail);
 
-                setTopScorers([
-                    { id: 1, name: 'Erling Haaland', team: 'Manchester City', goals: 15 },
-                    { id: 2, name: 'Mohamed Salah', team: 'Liverpool', goals: 12 },
-                    { id: 3, name: 'Son Heung-min', team: 'Tottenham', goals: 10 },
-                    { id: 4, name: 'Bruno Fernandes', team: 'Manchester United', goals: 9 },
-                    { id: 5, name: 'Bukayo Saka', team: 'Arsenal', goals: 8 },
-                ]);
+                    // Process clubs data
+                    if (seasonDetail.clubSeasonTables && seasonDetail.clubSeasonTables.length > 0) {
+                        // Format club data for display
+                        const clubData = seasonDetail.clubSeasonTables.map(clubTable => ({
+                            id: clubTable.club.id,
+                            name: clubTable.club.name,
+                            stadium: clubTable.club.stadiumName || 'Unknown Stadium',
+                            manager: 'TBD' // This might need to be fetched from another API
+                        }));
+                        setClubs(clubData);
 
-                setStandings([
-                    { position: 1, team: 'Manchester City', played: 10, won: 8, drawn: 1, lost: 1, points: 25 },
-                    { position: 2, team: 'Arsenal', played: 10, won: 7, drawn: 2, lost: 1, points: 23 },
-                    { position: 3, team: 'Liverpool', played: 10, won: 7, drawn: 1, lost: 2, points: 22 },
-                    { position: 4, team: 'Tottenham', played: 10, won: 6, drawn: 2, lost: 2, points: 20 },
-                    { position: 5, team: 'Manchester United', played: 10, won: 5, drawn: 3, lost: 2, points: 18 },
-                ]);
+                        // Format standings data
+                        const standingsData = [...seasonDetail.clubSeasonTables]
+                            .sort((a, b) => b.points - a.points || b.diff - a.diff)
+                            .map((clubTable, index) => ({
+                                position: index + 1,
+                                team: clubTable.club.name,
+                                played: clubTable.numWins + clubTable.numDraws + clubTable.numLosses,
+                                won: clubTable.numWins,
+                                drawn: clubTable.numDraws,
+                                lost: clubTable.numLosses,
+                                goalsFor: clubTable.goalScores,
+                                goalsAgainst: clubTable.goalConceded,
+                                goalDifference: clubTable.diff,
+                                points: clubTable.points
+                            }));
+                        setStandings(standingsData);
+                    } else {
+                        setClubs([]);
+                        setStandings([]);
+                    }
+
+                    // Fetch matches data for the season using dedicated matches API
+                    try {
+                        const matchesRes = await fetchMatchesBySeasonAPI(selectedSeason.id);
+                        if (matchesRes.data && (matchesRes.data.result || Array.isArray(matchesRes.data))) {
+                            const matchesData = Array.isArray(matchesRes.data)
+                                ? matchesRes.data
+                                : matchesRes.data.result;
+
+                            const formattedMatches = matchesData.map(match => ({
+                                id: match.id,
+                                round: match.round || 1,
+                                homeTeam: match.host.name,
+                                awayTeam: match.away.name,
+                                score: `${match.hostScore ?? 0}-${match.awayScore ?? 0}`,
+                                date: new Date(match.date).toLocaleDateString(),
+                                rawDate: match.date
+                            }));
+
+                            // Sort matches by date (newest first) for initial display
+                            const sortedMatches = [...formattedMatches].sort((a, b) =>
+                                new Date(b.rawDate) - new Date(a.rawDate)
+                            );
+
+                            setMatches(sortedMatches);
+                        } else {
+                            setMatches([]);
+                        }
+                    } catch (matchError) {
+                        console.error("Failed to fetch matches:", matchError);
+                        setMatches([]);
+                    }
+
+                    // Process top scorers (if available)
+                    // For now, we'll use an empty array as this data might not be available
+                    setTopScorers([]);
+                }
             } catch (error) {
                 console.error("Failed to fetch season data:", error);
+                notification.error({
+                    message: "Error",
+                    description: "Failed to load season data"
+                });
+            } finally {
+                setSeasonLoading(false);
             }
         };
 
         fetchSeasonData();
-    }, [league, selectedSeason, id]);
+    }, [selectedSeason]);
 
-    // Loading and null checks remain the same
+    // Handle season change
+    const handleSeasonChange = (value) => {
+        const selected = seasons.find(season => season.id === value);
+        setSelectedSeason(selected);
+    };
+
     if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -129,7 +209,7 @@ const LeagueDetailPage = () => {
             title: "Date",
             dataIndex: "date",
             key: "date",
-            sorter: (a, b) => new Date(a.date) - new Date(b.date)
+            sorter: (a, b) => new Date(a.rawDate) - new Date(b.rawDate)
         },
         {
             title: "Home Team",
@@ -158,8 +238,8 @@ const LeagueDetailPage = () => {
     const scorerColumns = [
         {
             title: "Rank",
-            dataIndex: "id",
-            key: "id",
+            key: "rank",
+            render: (_, __, index) => index + 1,
             sorter: (a, b) => a.id - b.id
         },
         {
@@ -258,40 +338,19 @@ const LeagueDetailPage = () => {
             title: "GF",
             dataIndex: "goalsFor",
             key: "goalsFor",
-            render: () => Math.floor(Math.random() * 30) + 10,
-            sorter: (a, b) => {
-                const aGF = Math.floor(Math.random() * 30) + 10;
-                const bGF = Math.floor(Math.random() * 30) + 10;
-                return aGF - bGF;
-            }
+            sorter: (a, b) => a.goalsFor - b.goalsFor
         },
         {
             title: "GA",
             dataIndex: "goalsAgainst",
             key: "goalsAgainst",
-            render: () => Math.floor(Math.random() * 20) + 5,
-            sorter: (a, b) => {
-                const aGA = Math.floor(Math.random() * 20) + 5;
-                const bGA = Math.floor(Math.random() * 20) + 5;
-                return aGA - bGA;
-            }
+            sorter: (a, b) => a.goalsAgainst - b.goalsAgainst
         },
         {
             title: "GD",
             dataIndex: "goalDifference",
             key: "goalDifference",
-            render: (_, record) => {
-                const gf = Math.floor(Math.random() * 30) + 10;
-                const ga = Math.floor(Math.random() * 20) + 5;
-                return gf - ga;
-            },
-            sorter: (a, b) => {
-                const aGF = Math.floor(Math.random() * 30) + 10;
-                const aGA = Math.floor(Math.random() * 20) + 5;
-                const bGF = Math.floor(Math.random() * 30) + 10;
-                const bGA = Math.floor(Math.random() * 20) + 5;
-                return (aGF - aGA) - (bGF - bGA);
-            }
+            sorter: (a, b) => a.goalDifference - b.goalDifference
         },
         {
             title: "Pts",
@@ -302,7 +361,26 @@ const LeagueDetailPage = () => {
         }
     ];
 
-    // The JSX return remains mostly the same, just ensuring we're using the updated column definitions
+    // Group matches by round for tabs
+    const matchesByRound = matches.reduce((groups, match) => {
+        const round = match.round || 1;
+        if (!groups[round]) groups[round] = [];
+        groups[round].push(match);
+        return groups;
+    }, {});
+
+    // Create match tabs
+    const matchTabs = Object.keys(matchesByRound).sort((a, b) => Number(a) - Number(b)).map(round => (
+        <TabPane tab={`Matchday ${round}`} key={round}>
+            <Table
+                columns={matchColumns}
+                dataSource={matchesByRound[round]}
+                rowKey="id"
+                pagination={false}
+            />
+        </TabPane>
+    ));
+
     return (
         <div style={{ padding: "30px" }}>
             <Row gutter={[16, 16]}>
@@ -311,12 +389,14 @@ const LeagueDetailPage = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Title level={2}>{league.name}</Title>
                             <Select
-                                value={selectedSeason}
+                                value={selectedSeason?.id}
                                 style={{ width: 150 }}
-                                onChange={value => setSelectedSeason(value)}
+                                onChange={handleSeasonChange}
+                                disabled={seasons.length === 0}
+                                loading={seasonLoading}
                             >
                                 {seasons.map(season => (
-                                    <Option key={season} value={season}>{season}</Option>
+                                    <Option key={season.id} value={season.id}>{season.name}</Option>
                                 ))}
                             </Select>
                         </div>
@@ -328,18 +408,28 @@ const LeagueDetailPage = () => {
                 {/* Main content area - left and center */}
                 <Col xs={24} md={17}>
                     <Card title="Clubs">
-                        <Table
-                            columns={clubColumns}
-                            dataSource={clubs}
-                            rowKey="id"
-                            pagination={false}
-                        />
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : clubs.length > 0 ? (
+                            <Table
+                                columns={clubColumns}
+                                dataSource={clubs}
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No clubs available for this season
+                            </div>
+                        )}
                     </Card>
 
                     <Card
-                        title="Latest Matchday"
+                        title="Latest Matches"
                         style={{ marginTop: 16 }}
-                        extra={
+                        extra={matches.length > 0 && (
                             <Button
                                 type="link"
                                 onClick={() => setMatchdayModalVisible(true)}
@@ -347,20 +437,30 @@ const LeagueDetailPage = () => {
                             >
                                 See All Matchdays
                             </Button>
-                        }
+                        )}
                     >
-                        <Table
-                            columns={matchColumns}
-                            dataSource={matches}
-                            rowKey="id"
-                            pagination={false}
-                        />
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : matches.length > 0 ? (
+                            <Table
+                                columns={matchColumns}
+                                dataSource={matches.slice(0, 5)} // Show only the latest 5 matches
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No matches available for this season
+                            </div>
+                        )}
                     </Card>
 
                     <Card
                         title="Top Goal Scorers"
                         style={{ marginTop: 16 }}
-                        extra={
+                        extra={topScorers.length > 0 && (
                             <Button
                                 type="link"
                                 onClick={() => setScorersModalVisible(true)}
@@ -368,14 +468,24 @@ const LeagueDetailPage = () => {
                             >
                                 See Full List
                             </Button>
-                        }
+                        )}
                     >
-                        <Table
-                            columns={scorerColumns}
-                            dataSource={topScorers}
-                            rowKey="id"
-                            pagination={false}
-                        />
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : topScorers.length > 0 ? (
+                            <Table
+                                columns={scorerColumns}
+                                dataSource={topScorers.slice(0, 5)} // Show only top 5 scorers
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No scorer statistics available
+                            </div>
+                        )}
                     </Card>
                 </Col>
 
@@ -383,7 +493,7 @@ const LeagueDetailPage = () => {
                 <Col xs={24} md={7}>
                     <Card
                         title="League Table"
-                        extra={
+                        extra={standings.length > 0 && (
                             <Button
                                 type="link"
                                 onClick={() => setStandingsModalVisible(true)}
@@ -391,65 +501,48 @@ const LeagueDetailPage = () => {
                             >
                                 Full Table
                             </Button>
-                        }
+                        )}
                     >
-                        <Table
-                            columns={standingColumns}
-                            dataSource={standings}
-                            rowKey="position"
-                            pagination={false}
-                            size="small"
-                        />
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : standings.length > 0 ? (
+                            <Table
+                                columns={standingColumns}
+                                dataSource={standings}
+                                rowKey="position"
+                                pagination={false}
+                                size="small"
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No standings available for this season
+                            </div>
+                        )}
                     </Card>
                 </Col>
             </Row>
 
             {/* Modals for detailed views */}
             <Modal
-                title={`${league.name} - All Matchdays (${selectedSeason})`}
+                title={`${league.name} - All Matches (${selectedSeason?.name})`}
                 open={matchdayModalVisible}
                 onCancel={() => setMatchdayModalVisible(false)}
                 width={800}
                 footer={null}
             >
-                <Tabs defaultActiveKey="1">
-                    <TabPane tab="Matchday 10" key="1">
-                        <Table
-                            columns={matchColumns}
-                            dataSource={matches}
-                            rowKey="id"
-                            pagination={false}
-                        />
-                    </TabPane>
-                    <TabPane tab="Matchday 9" key="2">
-                        <Table
-                            columns={matchColumns}
-                            dataSource={[
-                                { id: 4, homeTeam: 'Chelsea', awayTeam: 'Arsenal', score: '2-2', date: '2023-10-08' },
-                                { id: 5, homeTeam: 'Liverpool', awayTeam: 'Manchester City', score: '0-1', date: '2023-10-08' },
-                                { id: 6, homeTeam: 'Tottenham', awayTeam: 'Manchester United', score: '2-0', date: '2023-10-07' },
-                            ]}
-                            rowKey="id"
-                            pagination={false}
-                        />
-                    </TabPane>
-                    <TabPane tab="Matchday 8" key="3">
-                        <Table
-                            columns={matchColumns}
-                            dataSource={[
-                                { id: 7, homeTeam: 'Manchester United', awayTeam: 'Chelsea', score: '1-1', date: '2023-10-01' },
-                                { id: 8, homeTeam: 'Arsenal', awayTeam: 'Tottenham', score: '3-1', date: '2023-10-01' },
-                                { id: 9, homeTeam: 'Liverpool', awayTeam: 'West Ham', score: '2-0', date: '2023-09-30' },
-                            ]}
-                            rowKey="id"
-                            pagination={false}
-                        />
-                    </TabPane>
-                </Tabs>
+                {matchTabs.length > 0 ? (
+                    <Tabs defaultActiveKey="1">{matchTabs}</Tabs>
+                ) : (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        No match data available
+                    </div>
+                )}
             </Modal>
 
             <Modal
-                title={`${league.name} - Full Standings (${selectedSeason})`}
+                title={`${league.name} - Full Standings (${selectedSeason?.name})`}
                 open={standingsModalVisible}
                 onCancel={() => setStandingsModalVisible(false)}
                 width={1000}
@@ -457,24 +550,7 @@ const LeagueDetailPage = () => {
             >
                 <Table
                     columns={detailedStandingColumns}
-                    dataSource={[
-                        ...standings,
-                        { position: 6, team: 'Newcastle', played: 10, won: 5, drawn: 2, lost: 3, points: 17 },
-                        { position: 7, team: 'Brighton', played: 10, won: 5, drawn: 2, lost: 3, points: 17 },
-                        { position: 8, team: 'West Ham', played: 10, won: 4, drawn: 3, lost: 3, points: 15 },
-                        { position: 9, team: 'Aston Villa', played: 10, won: 4, drawn: 2, lost: 4, points: 14 },
-                        { position: 10, team: 'Crystal Palace', played: 10, won: 3, drawn: 4, lost: 3, points: 13 },
-                        { position: 11, team: 'Everton', played: 10, won: 3, drawn: 3, lost: 4, points: 12 },
-                        { position: 12, team: 'Leicester', played: 10, won: 3, drawn: 3, lost: 4, points: 12 },
-                        { position: 13, team: 'Brentford', played: 10, won: 2, drawn: 5, lost: 3, points: 11 },
-                        { position: 14, team: 'Leeds', played: 10, won: 2, drawn: 4, lost: 4, points: 10 },
-                        { position: 15, team: 'Southampton', played: 10, won: 2, drawn: 3, lost: 5, points: 9 },
-                        { position: 16, team: 'Wolves', played: 10, won: 2, drawn: 3, lost: 5, points: 9 },
-                        { position: 17, team: 'Fulham', played: 10, won: 2, drawn: 2, lost: 6, points: 8 },
-                        { position: 18, team: 'Bournemouth', played: 10, won: 1, drawn: 4, lost: 5, points: 7 },
-                        { position: 19, team: 'Nottingham Forest', played: 10, won: 1, drawn: 3, lost: 6, points: 6 },
-                        { position: 20, team: 'Norwich', played: 10, won: 0, drawn: 3, lost: 7, points: 3 },
-                    ]}
+                    dataSource={standings}
                     rowKey="position"
                     pagination={false}
                     scroll={{ x: 800 }}
@@ -482,7 +558,7 @@ const LeagueDetailPage = () => {
             </Modal>
 
             <Modal
-                title={`${league.name} - Top Scorers (${selectedSeason})`}
+                title={`${league.name} - Top Scorers (${selectedSeason?.name})`}
                 open={scorersModalVisible}
                 onCancel={() => setScorersModalVisible(false)}
                 width={800}
@@ -490,19 +566,7 @@ const LeagueDetailPage = () => {
             >
                 <Table
                     columns={scorerColumns}
-                    dataSource={[
-                        ...topScorers,
-                        { id: 6, name: 'Harry Kane', team: 'Tottenham', goals: 8 },
-                        { id: 7, name: 'Phil Foden', team: 'Manchester City', goals: 7 },
-                        { id: 8, name: 'Marcus Rashford', team: 'Manchester United', goals: 7 },
-                        { id: 9, name: 'Kevin De Bruyne', team: 'Manchester City', goals: 6 },
-                        { id: 10, name: 'Martin Ødegaard', team: 'Arsenal', goals: 6 },
-                        { id: 11, name: 'Kai Havertz', team: 'Chelsea', goals: 5 },
-                        { id: 12, name: 'Luis Diaz', team: 'Liverpool', goals: 5 },
-                        { id: 13, name: 'Callum Wilson', team: 'Newcastle', goals: 5 },
-                        { id: 14, name: 'Gabriel Jesus', team: 'Arsenal', goals: 4 },
-                        { id: 15, name: 'Jack Grealish', team: 'Manchester City', goals: 4 },
-                    ]}
+                    dataSource={topScorers}
                     rowKey="id"
                     pagination={false}
                 />

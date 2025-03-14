@@ -129,12 +129,14 @@ const AdminPlayerTable = () => {
         },
         {
             title: "Current Club",
-            render: (_, record) => {
-                return record.transferHistories && record.transferHistories[0] ?
-                    (typeof record.transferHistories[0].club === 'object' ?
-                        record.transferHistories[0].club.name : record.transferHistories[0].club) : "No information"
-            },
-            sorter: true
+            dataIndex: "currentClub",
+            sorter: (a, b) => {
+                const aClub = a.currentClub || '';
+                const bClub = b.currentClub || '';
+
+                // Properly return the comparison result
+                return aClub.localeCompare(bClub);
+            }
         },
         {
             title: "Market Value(millions Euro)",

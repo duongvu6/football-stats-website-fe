@@ -1,4 +1,3 @@
-// epl-web/src/components/client/player/player.table.jsx
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Table, Card, Alert, Button, Tag } from "antd";
@@ -30,7 +29,7 @@ const ClientPlayerTable = () => {
             if (position) filters.push(`Position "${position}"`);
             if (citizenship) filters.push(`Nationality "${citizenship}"`);
             if (transferType) filters.push(`Transfer Type "${transferType}"`);
-            if (club) filters.push(`Club ID "${club}"`);
+            if (club) filters.push(`Club "${club}"`);
 
             setFilterInfo(filterText + filters.join(", "));
         } else {
@@ -60,13 +59,10 @@ const ClientPlayerTable = () => {
                 filterParts.push(`transferHistories.club.id : ${club}`);
             }
 
-            // API query parameters
             const queryParams = {
                 page: params.current || pagination.current,
                 size: params.pageSize || pagination.pageSize,
-                filter: filterParts.length > 0 ? filterParts.join(' and ') : undefined,
-                sort: params.field && params.order ?
-                    `${params.field},${params.order === 'ascend' ? 'asc' : 'desc'}` : undefined
+                filter: filterParts.length > 0 ? filterParts.join(' and ') : undefined
             };
 
             const response = await fetchAllPlayersAPI(queryParams);
@@ -90,13 +86,17 @@ const ClientPlayerTable = () => {
         fetchPlayers();
     }, [position, citizenship, transferType, club]);
 
+    // Modified to handle only pagination changes, not sorting
     const handleTableChange = (newPagination, filters, sorter) => {
-        fetchPlayers({
-            current: newPagination.current,
-            pageSize: newPagination.pageSize,
-            field: sorter.field,
-            order: sorter.order
-        });
+        // Only fetch new data when pagination changes
+        if (newPagination.current !== pagination.current ||
+            newPagination.pageSize !== pagination.pageSize) {
+            fetchPlayers({
+                current: newPagination.current,
+                pageSize: newPagination.pageSize
+                // No sort parameters sent to API
+            });
+        }
     };
 
     const columns = [
@@ -105,19 +105,19 @@ const ClientPlayerTable = () => {
             dataIndex: "name",
             key: "name",
             render: (text, record) => <Link to={`/players/${record.id}`}>{text}</Link>,
-            sorter: true
+            sorter: (a, b) => a.name.localeCompare(b.name)
         },
         {
             title: "Age",
             dataIndex: "age",
             key: "age",
-            sorter: true
+            sorter: (a, b) => a.age - b.age
         },
         {
             title: "Shirt Number",
             dataIndex: "shirtNumber",
             key: "shirtNumber",
-            sorter: true
+            sorter: (a, b) => (a.shirtNumber || 0) - (b.shirtNumber || 0)
         },
         {
             title: "Citizenship",
@@ -137,7 +137,11 @@ const ClientPlayerTable = () => {
                     </span>
                 );
             },
-            sorter: true
+            sorter: (a, b) => {
+                const aStr = Array.isArray(a.citizenships) ? a.citizenships.join(', ') : '';
+                const bStr = Array.isArray(b.citizenships) ? b.citizenships.join(', ') : '';
+                return aStr.localeCompare(bStr);
+            }
         },
         {
             title: "Position",
@@ -157,34 +161,30 @@ const ClientPlayerTable = () => {
                     </span>
                 );
             },
-            sorter: true
+            sorter: (a, b) => {
+                const aStr = Array.isArray(a.positions) ? a.positions.join(', ') : '';
+                const bStr = Array.isArray(b.positions) ? b.positions.join(', ') : '';
+                return aStr.localeCompare(bStr);
+            }
         },
         {
             title: "Club",
+            dataIndex: "currentClub",
             key: "club",
-            render: (_, record) => {
-                if (!record.transferHistories || !record.transferHistories.length)
-                    return "No club";
+            sorter: (a, b) => {
+                const aClub = a.currentClub || '';
+                const bClub = b.currentClub || '';
 
-                const currentClub = record.transferHistories[0].club;
-                let clubName, clubId;
-
-                if (typeof currentClub === 'object' && currentClub) {
-                    clubName = currentClub.name;
-                    clubId = currentClub.id;
-                    return <Link to={`/players?club=${clubId}`}>{clubName}</Link>;
-                } else {
-                    return currentClub || "No club";
-                }
-            },
-            sorter: true
+                // Properly return the comparison result
+                return aClub.localeCompare(bClub);
+            }
         },
         {
-            title: "Market Value",
+            title: "Market Value(millions Euro)",
             dataIndex: "marketValue",
             key: "marketValue",
-            render: (value) => `${value} m€`,
-            sorter: true
+            render: (value) => `${value}`,
+            sorter: (a, b) => (a.marketValue || 0) - (b.marketValue || 0)
         }
     ];
 
