@@ -19,9 +19,28 @@ const registerUserAPI = (fullName,email,password) =>{
     return  axios.post(URL_BACKEND,data);
 }
 
-const fetchAllPlayersAPI = (current, pageSize) => {
-    const URL_BACKEND = `/api/v1/players?page=${current}&size=${pageSize}&sortTransferHistory=true`;
-    return axios.get(URL_BACKEND);
+const fetchAllPlayersAPI = (currentOrParams, pageSize) => {
+    // Check if first parameter is an object (params) or a number (current page)
+    if (typeof currentOrParams === 'object') {
+        const params = currentOrParams;
+        let url = `/api/v1/players?sortTransferHistory=true`;
+
+        // Add pagination parameters
+        if (params.page) url += `&page=${params.page}`;
+        if (params.size) url += `&size=${params.size}`;
+
+        // Add filter if present
+        if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
+
+        // Add sort if present
+        if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
+
+        return axios.get(url);
+    } else {
+        // Original implementation for backward compatibility
+        const URL_BACKEND = `/api/v1/players?page=${currentOrParams}&size=${pageSize}&sortTransferHistory=true`;
+        return axios.get(URL_BACKEND);
+    }
 }
 const fetchAllPlayersNoPaginationAPI = () => {
     const URL_BACKEND = `/api/v1/players`;
@@ -69,13 +88,51 @@ const deleteTransferAPI = (id) => {
     const URL_BACKEND = `/api/v1/transfers/${id}`;
     return axios.delete(URL_BACKEND);
 }
-const fetchAllClubsWithPaginationAPI = (current, pageSize) => {
-    const URL_BACKEND = `/api/v1/clubs?page=${current}&size=${pageSize}`;
-    return axios.get(URL_BACKEND);
+const fetchAllClubsWithPaginationAPI = (currentOrParams, pageSize) => {
+    // Check if first parameter is an object (params) or a number (current page)
+    if (typeof currentOrParams === 'object') {
+        const params = currentOrParams;
+        let url = `/api/v1/clubs?`;
+
+        // Add pagination parameters
+        if (params.page) url += `&page=${params.page}`;
+        if (params.size) url += `&size=${params.size}`;
+
+        // Add filter if present
+        if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
+
+        // Add sort if present
+        if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
+
+        return axios.get(url);
+    } else {
+        // Original implementation
+        const URL_BACKEND = `/api/v1/clubs?page=${currentOrParams}&size=${pageSize}`;
+        return axios.get(URL_BACKEND);
+    }
 }
-const fetchAllCoachesAPI = (current, pageSize) => {
-    const URL_BACKEND = `/api/v1/coaches?page=${current}&size=${pageSize}&sortTransferHistory=true`;
-    return axios.get(URL_BACKEND);
+const fetchAllCoachesAPI = (currentOrParams, pageSize) => {
+    // Check if first parameter is an object (params) or a number (current page)
+    if (typeof currentOrParams === 'object') {
+        const params = currentOrParams;
+        let url = `/api/v1/coaches?sortTransferHistory=true`;
+
+        // Add pagination parameters
+        if (params.page) url += `&page=${params.page}`;
+        if (params.size) url += `&size=${params.size}`;
+
+        // Add filter if present
+        if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
+
+        // Add sort if present
+        if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
+
+        return axios.get(url);
+    } else {
+        // Original implementation
+        const URL_BACKEND = `/api/v1/coaches?page=${currentOrParams}&size=${pageSize}&sortTransferHistory=true`;
+        return axios.get(URL_BACKEND);
+    }
 }
 const fetchCoachDetailAPI = (id) => {
     const URL_BACKEND = `/api/v1/coaches/${id}?sortCoachClubs=true`;
@@ -113,9 +170,28 @@ const deleteCoachClubAPI = (id) => {
     return axios.delete(URL_BACKEND);
 };
 
-const fetchAllLeaguesAPI = (current, pageSize) => {
-    const URL_BACKEND = `/api/v1/leagues?page=${current}&size=${pageSize}`;
-    return axios.get(URL_BACKEND);
+const fetchAllLeaguesAPI = (currentOrParams, pageSize) => {
+    // Check if first parameter is an object (params) or a number (current page)
+    if (typeof currentOrParams === 'object') {
+        const params = currentOrParams;
+        let url = `/api/v1/leagues?`;
+
+        // Add pagination parameters
+        if (params.page) url += `&page=${params.page}`;
+        if (params.size) url += `&size=${params.size}`;
+
+        // Add filter if present
+        if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
+
+        // Add sort if present
+        if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
+
+        return axios.get(url);
+    } else {
+        // Original implementation
+        const URL_BACKEND = `/api/v1/leagues?page=${currentOrParams}&size=${pageSize}`;
+        return axios.get(URL_BACKEND);
+    }
 }
 
 const createLeagueAPI = (leagueData) => {

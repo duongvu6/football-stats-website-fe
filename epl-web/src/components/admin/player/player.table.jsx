@@ -1,18 +1,63 @@
-// epl-web/src/components/admin/player/player.table.jsx
 import { useState } from "react";
-import { Button, Space } from "antd";
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Space, Table, Card } from "antd";
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import CreatePlayerModal from "./player.create.jsx";
 import EditPlayerModal from "./player.edit.jsx";
 import DeletePlayerButton from "./player.delete.jsx";
-import BasePlayerTable from "../../shared/player/base.player.table.jsx";
-import GenericTableContainer from "../../shared/generic/generic.table.container.jsx";
+import { fetchAllPlayersAPI } from "../../../services/api.service.js";
+import { Link } from "react-router-dom";
 
 const AdminPlayerTable = () => {
     // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentPlayer, setCurrentPlayer] = useState(null);
+    const [data, setData] = useState([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10,
+        total: 0
+    });
+    const [loading, setLoading] = useState(false);
+
+    // Fetch data function
+    const fetchData = async (params = {}) => {
+        setLoading(true);
+        try {
+            const response = await fetchAllPlayersAPI({
+                page: params.current || pagination.current,
+                size: params.pageSize || pagination.pageSize,
+                sort: params.field && params.order ? `${params.field},${params.order === 'ascend' ? 'asc' : 'desc'}` : undefined
+            });
+
+            if (response.data && response.data.result) {
+                setData(response.data.result);
+                setPagination({
+                    current: response.data.meta.page,
+                    pageSize: response.data.meta.pageSize,
+                    total: response.data.meta.total
+                });
+            }
+        } catch (error) {
+            console.error("Failed to fetch players:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load data initially
+    useState(() => {
+        fetchData();
+    }, []);
+
+    const handleTableChange = (newPagination, filters, sorter) => {
+        fetchData({
+            current: newPagination.current,
+            pageSize: newPagination.pageSize,
+            field: sorter.field,
+            order: sorter.order
+        });
+    };
 
     const showCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -25,28 +70,76 @@ const AdminPlayerTable = () => {
 
     const handleCreateSuccess = () => {
         setIsCreateModalOpen(false);
-        // For create, we might want to go to the last page where new item is added
-        // But since we don't know which page that is, let's just reload current page
-        baseTableProps.loadData(true); // true means keep current page
+        fetchData({ current: 1 }); // Go to first page to see new item
     };
 
     const handleEditSuccess = () => {
         setIsEditModalOpen(false);
-        // For edit, we definitely want to keep the user on the same page
-        baseTableProps.loadData(true); // true means keep current page
+        fetchData({ current: pagination.current }); // Stay on current page
     };
 
     const handleDeleteSuccess = () => {
-        // For delete, we might want to go to previous page if this was the last item
-        // But for simplicity, just stay on current page
-        baseTableProps.loadData(true); // true means keep current page
+        fetchData({ current: pagination.current }); // Stay on current page
     };
 
-    // Define adminColumns BEFORE using it in BasePlayerTable
-    const adminColumns = [
+    // Table columns
+    const columns = [
+        {
+            title: "#",
+            render: (_, __, index) => {
+                return (pagination.current - 1) * pagination.pageSize + index + 1;
+            },
+            width: 60
+        },
         {
             title: "ID",
             dataIndex: "id",
+        },
+        {
+            title: "Name",
+            dataIndex: "name",
+            render: (text, record) => <Link to={`/admin/players/${record.id}`}>{text}</Link>,
+            sorter: true
+        },
+        {
+            title: "Age",
+            dataIndex: "age",
+            sorter: true
+        },
+        {
+            title: "Shirt Number",
+            dataIndex: "shirtNumber",
+            sorter: true
+        },
+        {
+            title: "Citizenship",
+            dataIndex: "citizenships",
+            render: (citizenships) => {
+                return Array.isArray(citizenships) ? citizenships.join(', ') : citizenships;
+            },
+            sorter: true
+        },
+        {
+            title: "Position",
+            dataIndex: "positions",
+            render: (positions) => {
+                return Array.isArray(positions) ? positions.join(', ') : positions;
+            },
+            sorter: true
+        },
+        {
+            title: "Current Club",
+            render: (_, record) => {
+                return record.transferHistories && record.transferHistories[0] ?
+                    (typeof record.transferHistories[0].club === 'object' ?
+                        record.transferHistories[0].club.name : record.transferHistories[0].club) : "No information"
+            },
+            sorter: true
+        },
+        {
+            title: "Market Value(millions Euro)",
+            dataIndex: "marketValue",
+            sorter: true
         },
         {
             title: "Actions",
@@ -67,30 +160,41 @@ const AdminPlayerTable = () => {
         },
     ];
 
-    // Use the base table with correct URL prefix for admin - AFTER adminColumns is defined
-    const baseTableProps = BasePlayerTable({
-        extraColumns: adminColumns,
-        urlPrefix: '/admin/players/',
-    });
-
     return (
         <>
-            <GenericTableContainer
-                tableProps={baseTableProps.tableProps}
+            <Card
                 title="Player Table"
-                showAddButton={true}
-                onAddClick={showCreateModal}
-                addButtonText="Add Player"
-            />
+                extra={
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={showCreateModal}
+                    >
+                        Add Player
+                    </Button>
+                }
+            >
+                <Table
+                    columns={columns}
+                    dataSource={data}
+                    rowKey="id"
+                    pagination={{
+                        ...pagination,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+                    }}
+                    loading={loading}
+                    onChange={handleTableChange}
+                />
+            </Card>
 
-            {/* Create Player Modal */}
             <CreatePlayerModal
                 isOpen={isCreateModalOpen}
                 onCancel={() => setIsCreateModalOpen(false)}
                 onSuccess={handleCreateSuccess}
             />
 
-            {/* Edit Player Modal */}
             <EditPlayerModal
                 isOpen={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}

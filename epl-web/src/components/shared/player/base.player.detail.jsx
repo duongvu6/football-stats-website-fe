@@ -1,6 +1,7 @@
-// epl-web/src/components/shared/player/base.player.detail.jsx
 import { useEffect, useState } from "react";
 import { fetchPlayerDetailAPI } from "../../../services/api.service.js";
+import { Link } from "react-router-dom";
+import { Tag } from "antd";
 
 const BasePlayerDetail = ({
                               playerId,
@@ -53,12 +54,12 @@ const BasePlayerDetail = ({
     }
 
     // Process transfer history to add fromClub
-    const transferHistories = player.transferHistories ? [...player.transferHistories].map((transfer, index, array) => {
+    const transferHistories = player.transferHistories ? [...player.transferHistories].map((transfer) => {
         const fromClub = transfer.previousClub;
 
         // Extract club information properly
         let clubName = transfer.club;
-        let clubId = transfer.club;
+        let clubId = null;
 
         // If club is an object with name and id properties
         if (typeof transfer.club === 'object' && transfer.club !== null) {
@@ -85,16 +86,33 @@ const BasePlayerDetail = ({
             title: "Left",
             dataIndex: "fromClub",
             key: "fromClub",
+            render: (club) => {
+                if (!club) return "-";
+                if (typeof club === 'object' && club.name) {
+                    return <Link to={`/clubs?club=${club.id}`}>{club.name}</Link>;
+                }
+                return club;
+            }
         },
         {
             title: "Joined",
             dataIndex: "club",
             key: "club",
+            render: (_, record) => {
+                if (typeof record.club === 'object' && record.club && record.club.id) {
+                    return <Link to={`/clubs?club=${record.club.id}`}>{record.club.name}</Link>;
+                }
+                if (record.clubId) {
+                    return <Link to={`/clubs?club=${record.clubId}`}>{record.clubName}</Link>;
+                }
+                return record.clubName || "-";
+            }
         },
         {
             title: "Transfer Type",
             dataIndex: "type",
             key: "type",
+            render: (type) => <Link to={`/players?transferType=${encodeURIComponent(type)}`}>{type}</Link>
         },
         {
             title: "Market Value (millions Euro)",
@@ -115,15 +133,54 @@ const BasePlayerDetail = ({
         value: typeof item.value === 'function' ? item.value(player) : item.value
     }));
 
-    // Enhanced base description items with more player information
+    // Create clickable components for filterable attributes
+    const makePositionLinks = (positions) => {
+        if (!positions) return "-";
+        if (!Array.isArray(positions)) positions = [positions];
+
+        return positions.map((pos, index) => (
+            <Tag key={index} color="blue">
+                <Link to={`/players?position=${encodeURIComponent(pos)}`}>{pos}</Link>
+            </Tag>
+        ));
+    };
+
+    const makeCitizenshipLinks = (citizenships) => {
+        if (!citizenships) return "-";
+        if (!Array.isArray(citizenships)) citizenships = [citizenships];
+
+        return citizenships.map((country, index) => (
+            <Tag key={index} color="green">
+                <Link to={`/players?citizenship=${encodeURIComponent(country)}`}>{country}</Link>
+            </Tag>
+        ));
+    };
+
+    const makeClubLink = () => {
+        if (!player.transferHistories || player.transferHistories.length === 0) return "No information";
+
+        const latestTransfer = player.transferHistories[0];
+        let clubName, clubId;
+
+        if (typeof latestTransfer.club === 'object' && latestTransfer.club) {
+            clubName = latestTransfer.club.name;
+            clubId = latestTransfer.club.id;
+            return <Link to={`/clubs?club=${clubId}`}>{clubName}</Link>;
+        } else {
+            clubName = latestTransfer.club;
+            return clubName || "No information";
+        }
+    };
+
+    // Enhanced base description items with clickable links
     const baseDescriptionItems = [
         { label: "Name", value: player.name },
         { label: "Age", value: player.age },
         { label: "Date of Birth", value: formatDate(player.dob) },
         { label: "Shirt Number", value: player.shirtNumber },
-        { label: "Citizenship", value: Array.isArray(player.citizenships) ? player.citizenships.join(', ') : player.citizenships },
-        { label: "Position", value: Array.isArray(player.positions) ? player.positions.join(', ') : player.positions },
-        { label: "Current Club", value: player.transferHistories && player.transferHistories[0] ? player.transferHistories[0].club : "No information" },
+        { label: "Citizenship", value: makeCitizenshipLinks(player.citizenships) },
+        { label: "Position", value: makePositionLinks(player.positions) },
+        { label: "Current Club", value: makeClubLink() },
         { label: "Market Value (millions Euro)", value: player.marketValue },
         ...processedExtraItems
     ];
