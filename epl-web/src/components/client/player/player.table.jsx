@@ -1,10 +1,18 @@
+// epl-web/src/components/client/player/player.table.jsx
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Table, Card, Alert, Button, Tag } from "antd";
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
 
 const ClientPlayerTable = () => {
+    // Get filter parameters from URL search parameters
     const [searchParams] = useSearchParams();
+    const position = searchParams.get('position');
+    const citizenship = searchParams.get('citizenship');
+    const transferType = searchParams.get('transferType');
+    const club = searchParams.get('club');
+
+    // State variables
     const [filterInfo, setFilterInfo] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,13 +22,7 @@ const ClientPlayerTable = () => {
         total: 0
     });
 
-    // Extract filter parameters from URL
-    const position = searchParams.get('position');
-    const citizenship = searchParams.get('citizenship');
-    const transferType = searchParams.get('transferType');
-    const club = searchParams.get('club');
-
-    // Determine if we have any filters active
+    // Update filter info when URL parameters change
     useEffect(() => {
         if (position || citizenship || transferType || club) {
             let filterText = "Filtering by: ";
@@ -37,10 +39,11 @@ const ClientPlayerTable = () => {
         }
     }, [position, citizenship, transferType, club]);
 
+    // Function to fetch players with filters
     const fetchPlayers = async (params = {}) => {
         setLoading(true);
         try {
-            // Build filter query for Spring Filter
+            // Build filter query
             let filterParts = [];
 
             if (position) {
@@ -59,6 +62,7 @@ const ClientPlayerTable = () => {
                 filterParts.push(`transferHistories.club.id : ${club}`);
             }
 
+            // API query parameters
             const queryParams = {
                 page: params.current || pagination.current,
                 size: params.pageSize || pagination.pageSize,
@@ -82,23 +86,23 @@ const ClientPlayerTable = () => {
         }
     };
 
+    // Load players when filters change
     useEffect(() => {
         fetchPlayers();
     }, [position, citizenship, transferType, club]);
 
-    // Modified to handle only pagination changes, not sorting
-    const handleTableChange = (newPagination, filters, sorter) => {
-        // Only fetch new data when pagination changes
+    // Handle pagination changes
+    const handleTableChange = (newPagination) => {
         if (newPagination.current !== pagination.current ||
             newPagination.pageSize !== pagination.pageSize) {
             fetchPlayers({
                 current: newPagination.current,
                 pageSize: newPagination.pageSize
-                // No sort parameters sent to API
             });
         }
     };
 
+    // Table columns with sort functionality
     const columns = [
         {
             title: "Name",
@@ -174,16 +178,14 @@ const ClientPlayerTable = () => {
             sorter: (a, b) => {
                 const aClub = a.currentClub || '';
                 const bClub = b.currentClub || '';
-
-                // Properly return the comparison result
                 return aClub.localeCompare(bClub);
             }
         },
         {
-            title: "Market Value(millions Euro)",
+            title: "Market Value",
             dataIndex: "marketValue",
             key: "marketValue",
-            render: (value) => `${value}`,
+            render: (value) => `${value} m€`,
             sorter: (a, b) => (a.marketValue || 0) - (b.marketValue || 0)
         }
     ];

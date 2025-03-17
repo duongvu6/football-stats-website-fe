@@ -1,38 +1,44 @@
-import { useState } from "react";
+// epl-web/src/components/admin/player/player.table.jsx
+import { useState, useEffect } from "react";
 import { Button, Space, Table, Card } from "antd";
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
+import { fetchAllPlayersAPI } from "../../../services/api.service.js";
 import CreatePlayerModal from "./player.create.jsx";
 import EditPlayerModal from "./player.edit.jsx";
 import DeletePlayerButton from "./player.delete.jsx";
-import { fetchAllPlayersAPI } from "../../../services/api.service.js";
-import { Link } from "react-router-dom";
 
 const AdminPlayerTable = () => {
-    // Modal states
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [currentPlayer, setCurrentPlayer] = useState(null);
-    const [data, setData] = useState([]);
+    // State variables
+    const [players, setPlayers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         current: 1,
         pageSize: 10,
         total: 0
     });
-    const [loading, setLoading] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
 
-    // Fetch data function
-    const fetchData = async (params = {}) => {
+    // Load players when component mounts
+    useEffect(() => {
+        loadPlayers();
+    }, []);
+
+    // Function to load players from API
+    const loadPlayers = async (page = pagination.current, pageSize = pagination.pageSize) => {
         setLoading(true);
         try {
             const response = await fetchAllPlayersAPI({
-                page: params.current || pagination.current,
-                size: params.pageSize || pagination.pageSize,
-                sort: params.field && params.order ? `${params.field},${params.order === 'ascend' ? 'asc' : 'desc'}` : undefined
+                page: page,
+                size: pageSize
             });
 
             if (response.data && response.data.result) {
-                setData(response.data.result);
+                setPlayers(response.data.result);
                 setPagination({
+                    ...pagination,
                     current: response.data.meta.page,
                     pageSize: response.data.meta.pageSize,
                     total: response.data.meta.total
@@ -45,50 +51,44 @@ const AdminPlayerTable = () => {
         }
     };
 
-    // Load data initially
-    useState(() => {
-        fetchData();
-    }, []);
-
-    const handleTableChange = (newPagination, filters, sorter) => {
-        fetchData({
-            current: newPagination.current,
-            pageSize: newPagination.pageSize,
-            field: sorter.field,
-            order: sorter.order
-        });
+    // Handle table pagination or sorting change
+    const handleTableChange = (newPagination) => {
+        loadPlayers(newPagination.current, newPagination.pageSize);
     };
 
+    // Open create player modal
     const showCreateModal = () => {
         setIsCreateModalOpen(true);
     };
 
+    // Open edit player modal
     const showEditModal = (player) => {
         setCurrentPlayer(player);
         setIsEditModalOpen(true);
     };
 
+    // After successfully creating a player
     const handleCreateSuccess = () => {
         setIsCreateModalOpen(false);
-        fetchData({ current: 1 }); // Go to first page to see new item
+        loadPlayers(1); // Go to first page to see new player
     };
 
+    // After successfully editing a player
     const handleEditSuccess = () => {
         setIsEditModalOpen(false);
-        fetchData({ current: pagination.current }); // Stay on current page
+        loadPlayers(pagination.current); // Reload current page
     };
 
+    // After successfully deleting a player
     const handleDeleteSuccess = () => {
-        fetchData({ current: pagination.current }); // Stay on current page
+        loadPlayers(pagination.current); // Reload current page
     };
 
-    // Table columns
+    // Table columns configuration
     const columns = [
         {
             title: "#",
-            render: (_, __, index) => {
-                return (pagination.current - 1) * pagination.pageSize + index + 1;
-            },
+            render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
             width: 60
         },
         {
@@ -99,33 +99,37 @@ const AdminPlayerTable = () => {
             title: "Name",
             dataIndex: "name",
             render: (text, record) => <Link to={`/admin/players/${record.id}`}>{text}</Link>,
-            sorter: true
+            sorter: (a, b) => a.name.localeCompare(b.name)
         },
         {
             title: "Age",
             dataIndex: "age",
-            sorter: true
+            sorter: (a, b) => a.age - b.age
         },
         {
             title: "Shirt Number",
             dataIndex: "shirtNumber",
-            sorter: true
+            sorter: (a, b) => (a.shirtNumber || 0) - (b.shirtNumber || 0)
         },
         {
             title: "Citizenship",
             dataIndex: "citizenships",
-            render: (citizenships) => {
-                return Array.isArray(citizenships) ? citizenships.join(', ') : citizenships;
-            },
-            sorter: true
+            render: (citizenships) => Array.isArray(citizenships) ? citizenships.join(', ') : citizenships,
+            sorter: (a, b) => {
+                const aStr = Array.isArray(a.citizenships) ? a.citizenships.join(', ') : '';
+                const bStr = Array.isArray(b.citizenships) ? b.citizenships.join(', ') : '';
+                return aStr.localeCompare(bStr);
+            }
         },
         {
             title: "Position",
             dataIndex: "positions",
-            render: (positions) => {
-                return Array.isArray(positions) ? positions.join(', ') : positions;
-            },
-            sorter: true
+            render: (positions) => Array.isArray(positions) ? positions.join(', ') : positions,
+            sorter: (a, b) => {
+                const aStr = Array.isArray(a.positions) ? a.positions.join(', ') : '';
+                const bStr = Array.isArray(b.positions) ? b.positions.join(', ') : '';
+                return aStr.localeCompare(bStr);
+            }
         },
         {
             title: "Current Club",
@@ -133,15 +137,13 @@ const AdminPlayerTable = () => {
             sorter: (a, b) => {
                 const aClub = a.currentClub || '';
                 const bClub = b.currentClub || '';
-
-                // Properly return the comparison result
                 return aClub.localeCompare(bClub);
             }
         },
         {
             title: "Market Value(millions Euro)",
             dataIndex: "marketValue",
-            sorter: true
+            sorter: (a, b) => (a.marketValue || 0) - (b.marketValue || 0)
         },
         {
             title: "Actions",
@@ -178,12 +180,11 @@ const AdminPlayerTable = () => {
             >
                 <Table
                     columns={columns}
-                    dataSource={data}
+                    dataSource={players}
                     rowKey="id"
                     pagination={{
                         ...pagination,
                         showSizeChanger: true,
-                        showQuickJumper: true,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
                     }}
                     loading={loading}

@@ -8,29 +8,33 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
+    // Close modal and reset form
     const onCancel = () => {
         setIsOpen(false);
         form.resetFields();
-    }
+    };
 
+    // Submit form data to create new transfer
     const handleSubmit = async () => {
         try {
+            // Validate form fields
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Check if this is a special transfer type
+            // Special transfer types don't need a club
             const isSpecialTransferType = ["End of contract", "Retired", "Contract terminated"].includes(values.type);
 
             // Create a new transfer object
             const newTransfer = {
                 player: player.id,
                 date: values.date.format('YYYY-MM-DD'),
-                club: isSpecialTransferType ? null : values.club, // Set club to null for special types
+                club: isSpecialTransferType ? null : values.club,
                 type: values.type,
                 fee: values.fee,
-                playerValue: values.playerValue || player.playerValue // Use form value or player's current value
+                playerValue: values.playerValue || player.marketValue
             };
-            // Add API call to create transfer
+
+            // Call API to create transfer
             const res = await createTransferHistoryAPI(newTransfer);
 
             if (res && res.data) {
@@ -41,7 +45,7 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
             } else {
                 notification.error({
                     message: "Failed to create transfer",
-                    description: JSON.stringify(res.message)
+                    description: res.message || "An unknown error occurred"
                 });
             }
         } catch (error) {
@@ -52,7 +56,7 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
         } finally {
             setSubmitting(false);
         }
-    }
+    };
 
     return (
         <Modal
@@ -73,15 +77,13 @@ const CreateTransferModal = ({ player, isOpen, setIsOpen, onSuccess }) => {
                 </Button>,
             ]}
             width={600}
-            destroyOnClose={true}
         >
             <TransferForm
                 form={form}
-                formName="createTransfer"
-                player={player} // Pass the player object to the form
+                player={player}
             />
         </Modal>
     );
-}
+};
 
 export default CreateTransferModal;

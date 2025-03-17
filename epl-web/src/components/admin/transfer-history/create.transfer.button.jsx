@@ -1,26 +1,29 @@
-import {Button, Form, message, Modal} from "antd";
+// epl-web/src/components/admin/transfer-history/create.transfer.button.jsx
+import { useState } from "react";
+import { Button } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
-import {useState} from "react";
 import CreateTransferModal from "./create.transfer.modal.jsx";
 
 const CreateTransferButton = ({ player, onSuccess }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const onOpen = () => {
-        setIsOpen(true);
-    }
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <>
             <Button
                 type="primary"
                 icon={<PlusOutlined />}
-                onClick={onOpen}
+                onClick={() => setIsModalOpen(true)}
             >
                 Add Transfer
             </Button>
-            <CreateTransferModal isOpen={isOpen} setIsOpen={setIsOpen} player={player} onSuccess={onSuccess}/>
-        </>
 
+            <CreateTransferModal
+                player={player}
+                isOpen={isModalOpen}
+                setIsOpen={setIsModalOpen}
+                onSuccess={onSuccess}
+            />
+        </>
     );
 };
 
