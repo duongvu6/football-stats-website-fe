@@ -1,50 +1,114 @@
 // epl-web/src/components/admin/coach/coach.detail.jsx
-import {useParams} from "react-router-dom";
-import BaseCoachDetail from "../../shared/coach/base.coach.detail.jsx";
-import {Descriptions, Spin} from "antd";
-import CreateCoachClubButton from "../coach-club/create.coach-club.button.jsx"; // Fixed path
-import CoachClubHistoryTable from "../coach-club/coach-club.history.table.jsx"; // Fixed path
+import { useEffect, useState } from "react";
+import { Descriptions, Spin } from "antd";
+import { useParams } from "react-router-dom";
+import { fetchCoachDetailAPI } from "../../../services/api.service.js";
+import CoachClubHistoryTable from "../coach-club/coach-club.history.table.jsx";
+import CreateCoachClubButton from "../coach-club/create.coach-club.button.jsx";
 
 const AdminCoachDetail = () => {
     const { id } = useParams();
+    const [coach, setCoach] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const {
-        loading,
-        coach,
-        coachClubs,
-        descriptionItems,
-        transferColumns,
-        loadCoachDetail
-    } = BaseCoachDetail({
-        coachId: id,
-        extraDescriptionItems: [
-            { label: "ID", value: coach => coach?.id }
-        ]
-    });
+    // Load coach details when component mounts
+    useEffect(() => {
+        loadCoachDetail();
+    }, [id]);
 
-    if (loading) {
+    // Function to load coach details from API
+    const loadCoachDetail = async () => {
+        setLoading(true);
+        try {
+            const response = await fetchCoachDetailAPI(id);
+            if (response.data) {
+                setCoach(response.data);
+            }
+        } catch (error) {
+            console.error("Error loading coach detail:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    // Show loading spinner while data is being fetched
+    if (loading || !coach) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
-                <Spin />
+                <Spin size="large" />
             </div>
         );
     }
 
+    // Prepare coach club history columns
+    const coachClubColumns = [
+        {
+            title: "Start Date",
+            dataIndex: "startDate",
+            key: "startDate",
+            render: date => formatDate(date)
+        },
+        {
+            title: "End Date",
+            dataIndex: "endDate",
+            key: "endDate",
+            render: date => date ? formatDate(date) : "Present"
+        },
+        {
+            title: "Club",
+            key: "club",
+            render: (_, record) => {
+                if (typeof record.club === 'object' && record.club) {
+                    return record.club.name;
+                }
+                return record.club || "-";
+            }
+        },
+        {
+            title: "Type",
+            dataIndex: "type",
+            key: "type"
+        }
+    ];
+
     return (
         <div style={{ padding: "30px" }}>
             <Descriptions title="Head Coach Details" bordered>
-                {descriptionItems.map((item, index) => (
-                    <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
-                ))}
+                <Descriptions.Item label="ID">{coach.id}</Descriptions.Item>
+                <Descriptions.Item label="Name">{coach.name}</Descriptions.Item>
+                <Descriptions.Item label="Age">{coach.age}</Descriptions.Item>
+                <Descriptions.Item label="Date of Birth">{formatDate(coach.dob)}</Descriptions.Item>
+                <Descriptions.Item label="Citizenship">
+                    {Array.isArray(coach.citizenships) ? coach.citizenships.join(', ') : coach.citizenships}
+                </Descriptions.Item>
+                <Descriptions.Item label="Current Club">
+                    {coach.coachClubs && coach.coachClubs.length > 0 ?
+                        (typeof coach.coachClubs[0].club === 'object' ?
+                            coach.coachClubs[0].club.name : coach.coachClubs[0].club) :
+                        "No club"}
+                </Descriptions.Item>
             </Descriptions>
+
             <div style={{ marginTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                     <h3 style={{ margin: 0 }}>Clubs History</h3>
                     <CreateCoachClubButton coach={coach} onSuccess={loadCoachDetail}/>
                 </div>
+
                 <CoachClubHistoryTable
-                    coachClubColumns={transferColumns}
-                    coachClubs={coachClubs}
+                    coachClubColumns={coachClubColumns}
+                    coachClubs={coach.coachClubs || []}
                     coach={coach}
                     onSuccess={loadCoachDetail}
                     isAdmin={true}

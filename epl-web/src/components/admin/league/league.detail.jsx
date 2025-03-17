@@ -1,7 +1,6 @@
 // epl-web/src/components/admin/league/league.detail.jsx
 import { Descriptions, Spin } from "antd";
 import { useParams } from "react-router-dom";
-import BaseLeagueDetail from "../../shared/league/base.league.detail.jsx";
 import LeagueSeasonTable from "../league-season/league.season.table.jsx";
 import CreateLeagueSeasonButton from "../league-season/create.league-season.button.jsx";
 
