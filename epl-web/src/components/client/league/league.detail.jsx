@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal, notification } from "antd";
 import { BarChartOutlined, CalendarOutlined, TrophyOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import { fetchLeagueDetailAPI, fetchLeagueSeasonDetailAPI, fetchMatchesBySeasonAPI } from "../../../services/api.service.js";
+import {
+    fetchLeagueDetailAPI,
+    fetchLeagueSeasonDetailAPI,
+    fetchMatchesBySeasonAPI, getTopAssistsAPI,
+    getTopGoalScorerAPI, getTopRedCardsAPI, getTopYellowCardsAPI
+} from "../../../services/api.service.js";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -17,16 +22,19 @@ const LeagueDetailPage = () => {
     const [clubs, setClubs] = useState([]);
     const [matches, setMatches] = useState([]);
     const [topScorers, setTopScorers] = useState([]);
+    const [topAssists, setTopAssists] = useState([]);
+    const [topYellowCards, setTopYellowCards] = useState([]);
+    const [topRedCards, setTopRedCards] = useState([]);
     const [standings, setStandings] = useState([]);
     const [seasonLoading, setSeasonLoading] = useState(false);
     const { id } = useParams();
 
-    // Modal states
+    
     const [matchdayModalVisible, setMatchdayModalVisible] = useState(false);
     const [standingsModalVisible, setStandingsModalVisible] = useState(false);
     const [scorersModalVisible, setScorersModalVisible] = useState(false);
 
-    // Fetch league details when component mounts
+    
     useEffect(() => {
         const fetchLeagueDetail = async () => {
             setLoading(true);
@@ -36,7 +44,7 @@ const LeagueDetailPage = () => {
                 if (res.data) {
                     setLeague(res.data);
 
-                    // Extract seasons from league data
+                    
                     if (res.data.leagueSeasons && res.data.leagueSeasons.length > 0) {
                         const seasonsList = res.data.leagueSeasons.map(season => ({
                             id: season.id,
@@ -44,7 +52,7 @@ const LeagueDetailPage = () => {
                         }));
                         setSeasons(seasonsList);
 
-                        // Select the first season by default
+                        
                         if (seasonsList.length > 0) {
                             setSelectedSeason(seasonsList[0]);
                         }
@@ -64,32 +72,32 @@ const LeagueDetailPage = () => {
         fetchLeagueDetail();
     }, [id]);
 
-    // Fetch season data when selected season changes
+    
     useEffect(() => {
         const fetchSeasonData = async () => {
             if (!selectedSeason) return;
 
             setSeasonLoading(true);
             try {
-                // Fetch the league season details
+                
                 const res = await fetchLeagueSeasonDetailAPI(selectedSeason.id);
 
                 if (res.data) {
                     const seasonDetail = res.data;
                     setSeasonData(seasonDetail);
 
-                    // Process clubs data
+                    
                     if (seasonDetail.clubSeasonTables && seasonDetail.clubSeasonTables.length > 0) {
-                        // Format club data for display
+                        
                         const clubData = seasonDetail.clubSeasonTables.map(clubTable => ({
                             id: clubTable.club.id,
                             name: clubTable.club.name,
                             stadium: clubTable.club.stadiumName || 'Unknown Stadium',
-                            manager: 'TBD' // This might need to be fetched from another API
+                            manager: clubTable.club.currentCoach == null ? "No Manager" : clubTable.club.currentCoach.name
                         }));
                         setClubs(clubData);
 
-                        // Format standings data
+                        
                         const standingsData = [...seasonDetail.clubSeasonTables]
                             .sort((a, b) => b.points - a.points || b.diff - a.diff)
                             .map((clubTable, index) => ({
@@ -110,7 +118,7 @@ const LeagueDetailPage = () => {
                         setStandings([]);
                     }
 
-                    // Fetch matches data for the season using dedicated matches API
+                    
                     try {
                         const matchesRes = await fetchMatchesBySeasonAPI(selectedSeason.id);
                         if (matchesRes.data && (matchesRes.data.result || Array.isArray(matchesRes.data))) {
@@ -128,7 +136,7 @@ const LeagueDetailPage = () => {
                                 rawDate: match.date
                             }));
 
-                            // Sort matches by date (newest first) for initial display
+                            
                             const sortedMatches = [...formattedMatches].sort((a, b) =>
                                 new Date(b.rawDate) - new Date(a.rawDate)
                             );
@@ -141,10 +149,57 @@ const LeagueDetailPage = () => {
                         console.error("Failed to fetch matches:", matchError);
                         setMatches([]);
                     }
+                    try {
+                        const res = await getTopGoalScorerAPI(selectedSeason.id);
+                        if (res.data) {
+                            setTopScorers(res.data);
+                        }
+                    } catch (topScorerError) {
+                        notification.error({
+                            message: "Failed to get top goal scorers",
+                            description: topScorerError.message
+                        });
+                        setTopScorers([]);
+                    }
+                    try {
+                        const res = await getTopAssistsAPI(selectedSeason.id);
+                        if (res.data) {
+                            setTopAssists(res.data);
+                        }
+                    } catch (error) {
+                        notification.error({
+                            message: "Failed to get top goal assists",
+                            description: error.message
+                        });
+                        setTopAssists([]);
+                    }
+                    try {
+                        const res = await getTopYellowCardsAPI(selectedSeason.id);
+                        if (res.data) {
+                            setTopYellowCards(res.data);
+                        }
+                    } catch (error) {
+                        notification.error({
+                            message: "Failed to get top yellow cards",
+                            description: error.message
+                        });
+                        setTopYellowCards([]);
+                    }
+                    try {
+                        const res = await getTopRedCardsAPI(selectedSeason.id);
+                        if (res.data) {
+                            setTopRedCards(res.data);
+                        }
+                    } catch (error) {
+                        notification.error({
+                            message: "Failed to get top red cards",
+                            description: error.message
+                        });
+                        setTopRedCards([]);
+                    }
+                    
+                    
 
-                    // Process top scorers (if available)
-                    // For now, we'll use an empty array as this data might not be available
-                    setTopScorers([]);
                 }
             } catch (error) {
                 console.error("Failed to fetch season data:", error);
@@ -160,7 +215,7 @@ const LeagueDetailPage = () => {
         fetchSeasonData();
     }, [selectedSeason]);
 
-    // Handle season change
+    
     const handleSeasonChange = (value) => {
         const selected = seasons.find(season => season.id === value);
         setSelectedSeason(selected);
@@ -182,7 +237,7 @@ const LeagueDetailPage = () => {
         );
     }
 
-    // Define table columns with sorters
+    
     const clubColumns = [
         {
             title: "Club",
@@ -244,14 +299,14 @@ const LeagueDetailPage = () => {
         },
         {
             title: "Player",
-            dataIndex: "name",
+            dataIndex: "playerName",
             key: "name",
             sorter: (a, b) => a.name.localeCompare(b.name)
         },
         {
-            title: "Team",
-            dataIndex: "team",
-            key: "team",
+            title: "Club",
+            dataIndex: "currentClub",
+            key: "currentClub",
             sorter: (a, b) => a.team.localeCompare(b.team)
         },
         {
@@ -261,8 +316,48 @@ const LeagueDetailPage = () => {
             sorter: (a, b) => a.goals - b.goals,
             defaultSortOrder: 'descend'
         },
+        {
+            title: "Assists",
+            dataIndex: "assists",
+            key: "assists",
+            sorter: (a, b) => a.assists - b.assists,
+            defaultSortOrder: 'descend'
+        }
     ];
 
+
+    const cardColumns = [
+        {
+            title: "Rank",
+            key: "rank",
+            render: (_, __, index) => index + 1,
+            sorter: (a, b) => a.id - b.id
+        },
+        {
+            title: "Player",
+            dataIndex: "playerName",
+            key: "name",
+            sorter: (a, b) => a.name.localeCompare(b.name)
+        },
+        {
+            title: "Club",
+            dataIndex: "currentClub",
+            key: "currentClub",
+            sorter: (a, b) => a.team.localeCompare(b.team)
+        },
+        {
+            title: "Yellow Cards",
+            dataIndex: "yellowCards",
+            key: "yellowCards",
+            // sorter: (a, b) => a.yellowCards - b.yellowCards,
+            // defaultSortOrder: 'descend'
+        },
+        {
+            title: "Red Cards",
+            dataIndex: "redCards",
+            key: "redCards",
+        }
+    ];
     const standingColumns = [
         {
             title: "Pos",
@@ -295,7 +390,7 @@ const LeagueDetailPage = () => {
         }
     ];
 
-    // Extended columns for detailed views
+    
     const detailedStandingColumns = [
         {
             title: "Pos",
@@ -361,7 +456,7 @@ const LeagueDetailPage = () => {
         }
     ];
 
-    // Group matches by round for tabs
+    
     const matchesByRound = matches.reduce((groups, match) => {
         const round = match.round || 1;
         if (!groups[round]) groups[round] = [];
@@ -369,7 +464,7 @@ const LeagueDetailPage = () => {
         return groups;
     }, {});
 
-    // Create match tabs
+    
     const matchTabs = Object.keys(matchesByRound).sort((a, b) => Number(a) - Number(b)).map(round => (
         <TabPane tab={`Matchday ${round}`} key={round}>
             <Table
@@ -446,7 +541,7 @@ const LeagueDetailPage = () => {
                         ) : matches.length > 0 ? (
                             <Table
                                 columns={matchColumns}
-                                dataSource={matches.slice(0, 5)} // Show only the latest 5 matches
+                                dataSource={matches.slice(0, 5)} 
                                 rowKey="id"
                                 pagination={false}
                             />
@@ -477,13 +572,104 @@ const LeagueDetailPage = () => {
                         ) : topScorers.length > 0 ? (
                             <Table
                                 columns={scorerColumns}
-                                dataSource={topScorers.slice(0, 5)} // Show only top 5 scorers
+                                dataSource={topScorers.slice(0, 5)} 
                                 rowKey="id"
                                 pagination={false}
                             />
                         ) : (
                             <div style={{ textAlign: 'center', padding: '20px' }}>
                                 No scorer statistics available
+                            </div>
+                        )}
+                    </Card>
+
+                    <Card
+                        title="Top Assists"
+                        style={{ marginTop: 16 }}
+                        extra={topAssists.length > 0 && (
+                            <Button
+                                type="link"
+                                onClick={() => setScorersModalVisible(true)}
+                                icon={<ArrowRightOutlined />}
+                            >
+                                See Full List
+                            </Button>
+                        )}
+                    >
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : topAssists.length > 0 ? (
+                            <Table
+                                columns={scorerColumns}
+                                dataSource={topAssists.slice(0, 5)}
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No assist statistics available
+                            </div>
+                        )}
+                    </Card>
+                    <Card
+                        title="Top Yellow Cards"
+                        style={{ marginTop: 16 }}
+                        extra={topYellowCards.length > 0 && (
+                            <Button
+                                type="link"
+                                onClick={() => setScorersModalVisible(true)}
+                                icon={<ArrowRightOutlined />}
+                            >
+                                See Full List
+                            </Button>
+                        )}
+                    >
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : topYellowCards.length > 0 ? (
+                            <Table
+                                columns={cardColumns}
+                                dataSource={topYellowCards.slice(0, 5)}
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No assist statistics available
+                            </div>
+                        )}
+                    </Card>
+                    <Card
+                        title="Top Red Cards"
+                        style={{ marginTop: 16 }}
+                        extra={topRedCards.length > 0 && (
+                            <Button
+                                type="link"
+                                onClick={() => setScorersModalVisible(true)}
+                                icon={<ArrowRightOutlined />}
+                            >
+                                See Full List
+                            </Button>
+                        )}
+                    >
+                        {seasonLoading ? (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                <Spin />
+                            </div>
+                        ) : topRedCards.length > 0 ? (
+                            <Table
+                                columns={cardColumns}
+                                dataSource={topRedCards.slice(0, 5)}
+                                rowKey="id"
+                                pagination={false}
+                            />
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No red cards statistics available
                             </div>
                         )}
                     </Card>

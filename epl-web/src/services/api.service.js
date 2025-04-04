@@ -111,6 +111,22 @@ const fetchAllClubsWithPaginationAPI = (currentOrParams, pageSize) => {
         return axios.get(URL_BACKEND);
     }
 }
+const fetchClubDetailAPI = (id) => {
+    const URL_BACKEND = `/api/v1/clubs/${id}`;
+    return axios.get(URL_BACKEND);
+}
+const createClubAPI = (data) => {
+    const URL_BACKEND = `/api/v1/clubs`;
+    return axios.post(URL_BACKEND, data);
+}
+const editClubAPI = (data) => {
+    const URL_BACKEND = `/api/v1/clubs`;
+    return axios.put(URL_BACKEND, data);
+}
+const deleteClubAPI = (id) => {
+    const URL_BACKEND = `/api/v1/clubs/${id}`;
+    return axios.delete(URL_BACKEND);
+}
 const fetchAllCoachesAPI = (currentOrParams, pageSize) => {
     // Check if first parameter is an object (params) or a number (current page)
     if (typeof currentOrParams === 'object') {
@@ -250,7 +266,7 @@ const deleteClubSeasonTableAPI = (id) => {
 
 // Match API endpoints
 const fetchMatchesBySeasonAPI = (seasonId) => {
-    const URL_BACKEND = `/api/v1/matches?filter=season.id:${seasonId}&sort=round,asc`;
+    const URL_BACKEND = `/api/v1/matches?filter=season:${seasonId}&sort=round,asc`;
     return axios.get(URL_BACKEND);
 };
 
@@ -276,7 +292,7 @@ const deleteMatchAPI = (id) => {
 
 // Match Action API endpoints
 const fetchMatchActionsAPI = (matchId) => {
-    const URL_BACKEND = `/api/v1/match-actions?filter=match.id:${matchId}`;
+    const URL_BACKEND = `/api/v1/match-actions?filter=match:${matchId}`;
     return axios.get(URL_BACKEND);
 };
 
@@ -295,6 +311,23 @@ const deleteMatchActionAPI = (id) => {
     return axios.delete(URL_BACKEND);
 };
 
+const getTopGoalScorerAPI = (seasonId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/top-goal-scorers`;
+    return axios.get(URL_BACKEND);
+}
+
+const getTopAssistsAPI = (seasonId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/top-assists`;
+    return axios.get(URL_BACKEND);
+}
+const getTopYellowCardsAPI = (seasonId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/top-yellow-cards`;
+    return axios.get(URL_BACKEND);
+}
+const getTopRedCardsAPI = (seasonId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/top-red-cards`;
+    return axios.get(URL_BACKEND);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -309,6 +342,10 @@ export {
     updateTransferAPI,
     deleteTransferAPI,
     fetchAllClubsWithPaginationAPI,
+    fetchClubDetailAPI,
+    createClubAPI,
+    editClubAPI,
+    deleteClubAPI,
     fetchAllCoachesAPI,
     fetchCoachDetailAPI,
     createCoachAPI,
@@ -339,9 +376,10 @@ export {
     createMatchActionAPI,
     updateMatchActionAPI,
     deleteMatchActionAPI,
-    fetchAllPlayersNoPaginationAPI
-
-
-
+    fetchAllPlayersNoPaginationAPI,
+    getTopGoalScorerAPI,
+    getTopAssistsAPI,
+    getTopYellowCardsAPI,
+    getTopRedCardsAPI
 }
 

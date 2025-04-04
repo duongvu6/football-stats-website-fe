@@ -30,6 +30,7 @@ import LeagueDetailPage from "./components/client/league/league.detail.jsx";
 import AdminLeagueDetailPage from "./components/admin/league/league.detail.jsx";
 import LeagueSeasonDetail from "./pages/admin/league-season.detail.jsx";
 import MatchActionPage from "./components/admin/league-season/match/match.actions.jsx";
+import AdminClubDetail from "./components/admin/club/club.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -90,6 +91,14 @@ const router = createBrowserRouter([
 
             <PrivateRoute>
               <AdminClubPage/>
+            </PrivateRoute>
+        ),
+      },
+      {
+        path: "admin/clubs/:id",
+        element: (
+            <PrivateRoute>
+              <AdminClubDetail/>
             </PrivateRoute>
         ),
       },

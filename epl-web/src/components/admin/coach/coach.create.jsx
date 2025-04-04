@@ -1,7 +1,6 @@
 import {Button, Form, message, Modal} from "antd";
 import {useState} from "react";
-import {createCoachAPI, createPlayerAPI} from "../../../services/api.service.js";
-import PlayerForm from "../player/player.form.jsx";
+import {createCoachAPI} from "../../../services/api.service.js";
 import CoachForm from "./coach.form.jsx";
 
 const CreateCoachModal = ({ isOpen, onCancel, onSuccess }) => {

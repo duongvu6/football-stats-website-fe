@@ -28,7 +28,7 @@ const ClientLeagueTable = () => {
                     total: response.data.meta.total
                 });
             } else if (Array.isArray(response.data)) {
-                // Handle non-paginated response
+                
                 setLeagues(response.data);
                 setPagination(prev => ({
                     ...prev,
@@ -47,7 +47,7 @@ const ClientLeagueTable = () => {
     }, []);
 
     const handleTableChange = (newPagination, filters, sorter) => {
-        // Only fetch new data when pagination changes
+        
         if (newPagination.current !== pagination.current ||
             newPagination.pageSize !== pagination.pageSize) {
             fetchLeagues({
