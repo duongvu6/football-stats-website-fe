@@ -328,6 +328,17 @@ const getTopRedCardsAPI = (seasonId) => {
     const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/top-red-cards`;
     return axios.get(URL_BACKEND);
 }
+
+const getClubSquadAPI = (clubId, seasonId) => {
+    const URL_BACKEND = `/api/v1/clubs/${clubId}/squad?seasonId=${seasonId}`;
+    return axios.get(URL_BACKEND);
+};
+
+const getClubTransfersAPI = (clubId, seasonId) => {
+    const URL_BACKEND = `/api/v1/clubs/${clubId}/transfers?seasonId=${seasonId}`;
+    return axios.get(URL_BACKEND);
+};
+
 export {
     loginAPI,
     registerUserAPI,
@@ -380,6 +391,8 @@ export {
     getTopGoalScorerAPI,
     getTopAssistsAPI,
     getTopYellowCardsAPI,
-    getTopRedCardsAPI
+    getTopRedCardsAPI,
+    getClubSquadAPI,
+    getClubTransfersAPI
 }
 

@@ -31,6 +31,7 @@ import AdminLeagueDetailPage from "./components/admin/league/league.detail.jsx";
 import LeagueSeasonDetail from "./pages/admin/league-season.detail.jsx";
 import MatchActionPage from "./components/admin/league-season/match/match.actions.jsx";
 import AdminClubDetail from "./components/admin/club/club.detail.jsx";
+import ClientClubSeasonDetail from "./components/client/club/club.detail.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -60,13 +61,6 @@ const router = createBrowserRouter([
       {
         path: "admin/players",
         element: (
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <AdminPlayerPage /> : <Navigate to="/players" />
-            //   )}
-            // </AuthContext.Consumer>
-
-            //another way
             <PrivateRoute>
               <AdminPlayerPage/>
             </PrivateRoute>
@@ -83,11 +77,6 @@ const router = createBrowserRouter([
       {
         path: "admin/clubs",
         element: (
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <AdminClubPage /> : <Navigate to="/clubs" />
-            //   )}
-            // </AuthContext.Consumer>
 
             <PrivateRoute>
               <AdminClubPage/>
@@ -103,14 +92,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "clubs/:id",
+        element: (
+            <ClientClubSeasonDetail/>
+        ),
+      },
+      {
         path: "admin/coaches",
         element: (
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <AdminCoachPage /> : <Navigate to="/coaches" />
-            //   )}
-            // </AuthContext.Consumer>
-
             <PrivateRoute>
               <AdminCoachPage/>
             </PrivateRoute>
@@ -119,12 +108,6 @@ const router = createBrowserRouter([
       {
         path: "admin/coaches/:id",
         element: (
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <AdminCoachPage /> : <Navigate to="/coaches" />
-            //   )}
-            // </AuthContext.Consumer>
-
             <PrivateRoute>
               <AdminCoachDetail/>
             </PrivateRoute>
@@ -133,23 +116,12 @@ const router = createBrowserRouter([
       {
         path: "clubs",
         element: (
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <Navigate to="/admin/clubs" /> : <ClubPage />
-            //   )}
-            // </AuthContext.Consumer>
-
             <ClubPage/>
         ),
       },
       {
         path: "coaches",
         element:(
-            // <AuthContext.Consumer>
-            //   {({ user }) => (
-            //       user.role === "ADMIN" ? <Navigate to="/admin/coaches" /> :  <CoachPage />
-            //   )}
-            // </AuthContext.Consumer>
             <CoachPage/>
         )
       },
