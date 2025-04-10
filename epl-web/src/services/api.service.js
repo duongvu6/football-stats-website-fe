@@ -342,6 +342,19 @@ const getClubSeasonsAPI = (clubId) => {
     const URL_BACKEND = `/api/v1/clubs/${clubId}/seasons`;
     return axios.get(URL_BACKEND);
 }
+
+// Get club top scorers for a specific season
+const getClubTopScorersAPI = (seasonId, clubId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/clubs/${clubId}/top-goal-scorers`;
+    return axios.get(URL_BACKEND);
+};
+
+// Get club top assists for a specific season
+const getClubTopAssistsAPI = (seasonId, clubId) => {
+    const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/clubs/${clubId}/top-assists`;
+    return axios.get(URL_BACKEND);
+};
+
 export {
     loginAPI,
     registerUserAPI,
@@ -397,6 +410,8 @@ export {
     getTopRedCardsAPI,
     getClubSquadAPI,
     getClubTransfersAPI,
-    getClubSeasonsAPI
+    getClubSeasonsAPI,
+    getClubTopScorersAPI,
+    getClubTopAssistsAPI
 }
 

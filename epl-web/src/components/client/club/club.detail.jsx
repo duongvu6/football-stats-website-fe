@@ -10,7 +10,10 @@ import {
     fetchClubDetailAPI,
     getClubSeasonsAPI,
     getClubSquadAPI,
-    getClubTransfersAPI
+    getClubTransfersAPI,
+    getClubTopScorersAPI,
+    getClubTopAssistsAPI,
+    fetchLeagueSeasonDetailAPI
 } from "../../../services/api.service.js";
 
 const { TabPane } = Tabs;
@@ -23,12 +26,17 @@ const ClientClubDetail = () => {
     const [loading, setLoading] = useState(true);
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState(null);
-
+    
     const [squadList, setSquadList] = useState([]);
     const [transfers, setTransfers] = useState([]);
     const [arrivals, setArrivals] = useState([]);
     const [departures, setDepartures] = useState([]);
+    const [topScorers, setTopScorers] = useState([]);
+    const [topAssists, setTopAssists] = useState([]);
+    const [leagueTableData, setLeagueTableData] = useState([]);
     const [dataLoading, setDataLoading] = useState(false);
+    const [statsLoading, setStatsLoading] = useState(false);
+    const [leagueTableLoading, setLeagueTableLoading] = useState(false);
 
     // Load club details and available seasons
     useEffect(() => {
@@ -78,6 +86,7 @@ const ClientClubDetail = () => {
 
         const fetchSeasonData = async () => {
             setDataLoading(true);
+            setStatsLoading(true);
             try {
                 // Fetch squad list for the selected season
                 const squadResponse = await getClubSquadAPI(id, selectedSeason.id);
@@ -119,6 +128,62 @@ const ClientClubDetail = () => {
                     setArrivals([]);
                     setDepartures([]);
                 }
+
+                // Fetch top scorers for the club in this season
+                try {
+                    const scorersResponse = await getClubTopScorersAPI(selectedSeason.id, id);
+                    if (scorersResponse.data) {
+                        setTopScorers(scorersResponse.data);
+                    } else {
+                        setTopScorers([]);
+                    }
+                } catch (error) {
+                    console.error("Error loading top scorers:", error);
+                    setTopScorers([]);
+                }
+
+                // Fetch top assists for the club in this season
+                try {
+                    const assistsResponse = await getClubTopAssistsAPI(selectedSeason.id, id);
+                    if (assistsResponse.data) {
+                        setTopAssists(assistsResponse.data);
+                    } else {
+                        setTopAssists([]);
+                    }
+                } catch (error) {
+                    console.error("Error loading top assists:", error);
+                    setTopAssists([]);
+                }
+
+                // Fetch league season data for standings
+                setLeagueTableLoading(true);
+                try {
+                    const leagueSeasonResponse = await fetchLeagueSeasonDetailAPI(selectedSeason.id);
+                    if (leagueSeasonResponse.data && leagueSeasonResponse.data.clubSeasonTables) {
+                        // Sort by position or points
+                        const sortedData = [...leagueSeasonResponse.data.clubSeasonTables]
+                            .sort((a, b) => {
+                                // Sort by ranked property if available, otherwise points
+                                if (a.ranked && b.ranked) return a.ranked - b.ranked;
+                                return b.points - a.points || b.diff - a.diff;
+                            })
+                            .map((item, index) => ({
+                                ...item,
+                                position: item.ranked || index + 1,
+                                played: item.numWins + item.numDraws + item.numLosses,
+                                isCurrentClub: item.club.id === parseInt(id)
+                            }));
+                        setLeagueTableData(sortedData);
+                    } else {
+                        setLeagueTableData([]);
+                    }
+                } catch (error) {
+                    console.error("Error fetching league standings:", error);
+                    setLeagueTableData([]);
+                } finally {
+                    setLeagueTableLoading(false);
+                }
+
             } catch (error) {
                 console.error("Error fetching season data:", error);
                 notification.error({
@@ -127,6 +192,7 @@ const ClientClubDetail = () => {
                 });
             } finally {
                 setDataLoading(false);
+                setStatsLoading(false);
             }
         };
 
@@ -274,6 +340,117 @@ const ClientClubDetail = () => {
             key: "fee",
             render: (fee) => fee ? `${fee} m€` : "Free",
             sorter: (a, b) => (a.fee || 0) - (b.fee || 0)
+        }
+    ];
+
+    // Stats table columns
+    const statsColumns = [
+        {
+            title: "Rank",
+            key: "rank",
+            width: 70,
+            render: (_, __, index) => index + 1
+        },
+        {
+            title: "Player",
+            dataIndex: "playerName",
+            key: "player",
+            render: (text, record) => (
+                <Link to={`/players/${record.playerId}`}>{text}</Link>
+            )
+        },
+        {
+            title: "Goals",
+            dataIndex: "goals",
+            key: "goals",
+            width: 90,
+            sorter: (a, b) => a.goals - b.goals,
+            defaultSortOrder: 'descend'
+        }
+    ];
+
+    const assistsColumns = [
+        {
+            title: "Rank",
+            key: "rank",
+            width: 70,
+            render: (_, __, index) => index + 1
+        },
+        {
+            title: "Player",
+            dataIndex: "playerName",
+            key: "player",
+            render: (text, record) => (
+                <Link to={`/players/${record.playerId}`}>{text}</Link>
+            )
+        },
+        {
+            title: "Assists",
+            dataIndex: "assists",
+            key: "assists",
+            width: 90,
+            sorter: (a, b) => a.assists - b.assists,
+            defaultSortOrder: 'descend'
+        }
+    ];
+
+    // League table columns
+    const leagueTableColumns = [
+        {
+            title: "Position",
+            dataIndex: "position",
+            key: "position",
+            width: 70,
+            sorter: (a, b) => a.position - b.position
+        },
+        {
+            title: "Club",
+            dataIndex: "club",
+            key: "club",
+            render: (club) => club.name,
+            sorter: (a, b) => a.club.name.localeCompare(b.club.name)
+        },
+        {
+            title: "Played",
+            dataIndex: "played",
+            key: "played",
+            width: 90,
+            sorter: (a, b) => a.played - b.played
+        },
+        {
+            title: "Wins",
+            dataIndex: "numWins",
+            key: "wins",
+            width: 90,
+            sorter: (a, b) => a.numWins - b.numWins
+        },
+        {
+            title: "Draws",
+            dataIndex: "numDraws",
+            key: "draws",
+            width: 90,
+            sorter: (a, b) => a.numDraws - b.numDraws
+        },
+        {
+            title: "Losses",
+            dataIndex: "numLosses",
+            key: "losses",
+            width: 90,
+            sorter: (a, b) => a.numLosses - b.numLosses
+        },
+        {
+            title: "Points",
+            dataIndex: "points",
+            key: "points",
+            width: 90,
+            sorter: (a, b) => a.points - b.points
+        },
+        {
+            title: "Goal Difference",
+            dataIndex: "diff",
+            key: "diff",
+            width: 90,
+            sorter: (a, b) => a.diff - b.diff
         }
     ];
 
@@ -428,6 +605,79 @@ const ClientClubDetail = () => {
                                 </Card>
                             </Col>
                         </Row>
+                    </TabPane>
+
+                    <TabPane tab="Statistics" key="statistics">
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Card title="Top Scorers">
+                                    {statsLoading ? (
+                                        <div style={{ textAlign: "center", padding: "20px" }}>
+                                            <Spin />
+                                        </div>
+                                    ) : topScorers.length > 0 ? (
+                                        <Table
+                                            dataSource={topScorers}
+                                            columns={statsColumns}
+                                            rowKey="playerId"
+                                            pagination={false}
+                                            size="small"
+                                        />
+                                    ) : (
+                                        <div style={{ textAlign: "center", padding: "20px" }}>
+                                            No goal scorer data available for this season
+                                        </div>
+                                    )}
+                                </Card>
+                            </Col>
+                            <Col span={12}>
+                                <Card title="Top Assists">
+                                    {statsLoading ? (
+                                        <div style={{ textAlign: "center", padding: "20px" }}>
+                                            <Spin />
+                                        </div>
+                                    ) : topAssists.length > 0 ? (
+                                        <Table
+                                            dataSource={topAssists}
+                                            columns={assistsColumns}
+                                            rowKey="playerId"
+                                            pagination={false}
+                                            size="small"
+                                        />
+                                    ) : (
+                                        <div style={{ textAlign: "center", padding: "20px" }}>
+                                            No assist data available for this season
+                                        </div>
+                                    )}
+                                </Card>
+                            </Col>
+                        </Row>
+                    </TabPane>
+
+                    <TabPane tab="League Table" key="leagueTable">
+                        <Card title="League Table">
+                            {leagueTableLoading ? (
+                                <div style={{ textAlign: "center", padding: "20px" }}>
+                                    <Spin />
+                                </div>
+                            ) : leagueTableData.length > 0 ? (
+                                <Table
+                                    dataSource={leagueTableData}
+                                    columns={leagueTableColumns}
+                                    rowKey="club.id"
+                                    pagination={false}
+                                    size="small"
+                                    rowClassName={(record) => record.isCurrentClub ? 'highlight-row' : ''}
+                                    onRow={(record) => ({
+                                        style: record.isCurrentClub ? { backgroundColor: '#f0f7ff', fontWeight: 'bold' } : {}
+                                    })}
+                                />
+                            ) : (
+                                <div style={{ textAlign: "center", padding: "20px" }}>
+                                    No league table data available for this season
+                                </div>
+                            )}
+                        </Card>
                     </TabPane>
                 </Tabs>
             ) : (
