@@ -338,7 +338,10 @@ const getClubTransfersAPI = (clubId, seasonId) => {
     const URL_BACKEND = `/api/v1/clubs/${clubId}/transfers?seasonId=${seasonId}`;
     return axios.get(URL_BACKEND);
 };
-
+const getClubSeasonsAPI = (clubId) => {
+    const URL_BACKEND = `/api/v1/clubs/${clubId}/seasons`;
+    return axios.get(URL_BACKEND);
+}
 export {
     loginAPI,
     registerUserAPI,
@@ -393,6 +396,7 @@ export {
     getTopYellowCardsAPI,
     getTopRedCardsAPI,
     getClubSquadAPI,
-    getClubTransfersAPI
+    getClubTransfersAPI,
+    getClubSeasonsAPI
 }
 

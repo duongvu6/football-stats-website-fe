@@ -1,110 +1,153 @@
-// epl-web/src/components/client/club/club.season.detail.jsx
+// epl-web/src/components/client/club/club.detail.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Spin, Tabs, Table, Tag, Select, Typography, Descriptions, Avatar, Row, Col, Divider } from "antd";
-import { fetchClubDetailAPI } from "../../../services/api.service.js";
+import {
+    Card, Spin, Tabs, Table, Tag, Select, Typography, Descriptions,
+    Avatar, Row, Col, Divider, notification, Empty
+} from "antd";
 import { Link } from "react-router-dom";
-import axios from "../../../services/axios.customize";
+import {
+    fetchClubDetailAPI,
+    getClubSeasonsAPI,
+    getClubSquadAPI,
+    getClubTransfersAPI
+} from "../../../services/api.service.js";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-const ClientClubSeasonDetail = () => {
+const ClientClubDetail = () => {
     const { id } = useParams();
     const [club, setClub] = useState(null);
     const [loading, setLoading] = useState(true);
     const [seasons, setSeasons] = useState([]);
     const [selectedSeason, setSelectedSeason] = useState(null);
-    const [seasonId, setSeasonId] = useState(null);
 
     const [squadList, setSquadList] = useState([]);
     const [transfers, setTransfers] = useState([]);
     const [arrivals, setArrivals] = useState([]);
     const [departures, setDepartures] = useState([]);
     const [dataLoading, setDataLoading] = useState(false);
-    // Load club details on initial render
+
+    // Load club details and available seasons
     useEffect(() => {
-        const fetchClubDetail = async () => {
+        const fetchClubData = async () => {
             setLoading(true);
             try {
-                const response = await fetchClubDetailAPI(id);
-                if (response.data) {
-                    setClub(response.data);
+                // Get club details
+                const clubResponse = await fetchClubDetailAPI(id);
+                if (clubResponse.data) {
+                    setClub(clubResponse.data);
+                }
 
-                    // Get seasons from the club's competition history
-                    if (response.data.seasons && response.data.seasons.length > 0) {
-                        const seasonsList = response.data.seasons.map(season => ({
-                            id: season.id,
-                            name: `${season.name} (${season.league.name})`,
-                            leagueId: season.league.id
-                        }));
+                // Get seasons for this club
+                const seasonResponse = await getClubSeasonsAPI(id);
+                if (seasonResponse.data) {
+                    const seasonsList = seasonResponse.data.map(season => ({
+                        id: season.id,
+                        name: season.name,
+                        leagueId: season.league?.id,
+                        leagueName: season.league?.name
+                    }));
 
-                        setSeasons(seasonsList);
+                    setSeasons(seasonsList);
 
-                        // Set the first season as default
-                        if (seasonsList.length > 0) {
-                            setSelectedSeason(seasonsList[0]);
-                            setSeasonId(seasonsList[0].id);
-                        }
+                    // Set the first season as default if available
+                    if (seasonsList.length > 0) {
+                        setSelectedSeason(seasonsList[0]);
                     }
                 }
             } catch (error) {
-                console.error("Error fetching club details:", error);
+                console.error("Error fetching club data:", error);
+                notification.error({
+                    message: "Error",
+                    description: "Failed to load club information"
+                });
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchClubDetail();
+        fetchClubData();
     }, [id]);
 
-    // Load season-specific data when season changes
+    // Load season-specific data when selected season changes
     useEffect(() => {
-        if (!seasonId) return;
+        if (!selectedSeason) return;
 
         const fetchSeasonData = async () => {
             setDataLoading(true);
-
             try {
                 // Fetch squad list for the selected season
-                const squadResponse = await axios.get(`/api/v1/clubs/${id}/squad?seasonId=${seasonId}`);
-                if (squadResponse.data && squadResponse.data.data) {
-                    setSquadList(squadResponse.data.data);
+                const squadResponse = await getClubSquadAPI(id, selectedSeason.id);
+                if (squadResponse.data) {
+                    setSquadList(squadResponse.data);
+                } else {
+                    setSquadList([]);
                 }
 
                 // Fetch transfers for the selected season
-                const transferResponse = await axios.get(`/api/v1/clubs/${id}/transfers?seasonId=${seasonId}`);
-                if (transferResponse.data && transferResponse.data.data) {
-                    const transferData = transferResponse.data.data;
-                    setTransfers(transferData);
+                const transferResponse = await getClubTransfersAPI(id, selectedSeason.id);
+                if (transferResponse.data) {
+                    setTransfers(transferResponse.data);
 
-                    // Separate transfers into arrivals and departures
-                    const arrivals = transferData.filter(transfer =>
-                        transfer.club === club.name && transfer.previousClub !== club.name
-                    );
+                    // Process and separate transfers into arrivals and departures
+                    // Check if club name is available
+                    if (club && club.name) {
+                        const clubName = club.name;
 
-                    const departures = transferData.filter(transfer =>
-                        transfer.previousClub === club.name && transfer.club !== club.name
-                    );
+                        // Arrivals: transfers TO this club (destination is this club)
+                        const arrivalsData = transferResponse.data.filter(transfer =>
+                            transfer.club === clubName ||
+                            (transfer.club && transfer.club.id === parseInt(id))
+                        );
+                        setArrivals(arrivalsData);
 
-                    setArrivals(arrivals);
-                    setDepartures(departures);
+                        // Departures: transfers FROM this club (source is this club)
+                        const departuresData = transferResponse.data.filter(transfer =>
+                            transfer.previousClub === clubName ||
+                            (transfer.previousClub && transfer.previousClub.id === parseInt(id))
+                        );
+                        setDepartures(departuresData);
+                    } else {
+                        setArrivals([]);
+                        setDepartures([]);
+                    }
+                } else {
+                    setTransfers([]);
+                    setArrivals([]);
+                    setDepartures([]);
                 }
             } catch (error) {
                 console.error("Error fetching season data:", error);
+                notification.error({
+                    message: "Error",
+                    description: "Failed to load season data"
+                });
             } finally {
                 setDataLoading(false);
             }
         };
 
         fetchSeasonData();
-    }, [seasonId, id, club]);
+    }, [selectedSeason, id, club]);
 
+    // Handle season selection change
     const handleSeasonChange = (value) => {
         const selected = seasons.find(season => season.id === value);
         setSelectedSeason(selected);
-        setSeasonId(value);
+    };
+
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
     // Define columns for the squad table
@@ -113,73 +156,64 @@ const ClientClubSeasonDetail = () => {
             title: "Name",
             dataIndex: "name",
             key: "name",
-            render: (text, record) => <Link to={`/players/${record.id}`}>{text}</Link>,
+            render: (text, record) => (
+                <Link to={`/players/${record.id}`}>{text}</Link>
+            ),
             sorter: (a, b) => a.name.localeCompare(b.name)
-        },
-        {
-            title: "Age",
-            dataIndex: "age",
-            key: "age",
-            width: 80,
-            sorter: (a, b) => a.age - b.age
-        },
-        {
-            title: "#",
-            dataIndex: "shirtNumber",
-            key: "shirtNumber",
-            width: 70,
-            sorter: (a, b) => (a.shirtNumber || 0) - (b.shirtNumber || 0)
         },
         {
             title: "Position",
             dataIndex: "positions",
             key: "positions",
-            render: (positions) => {
-                if (!positions) return "-";
-                const posArray = Array.isArray(positions) ? positions : [positions];
-                return (
-                    <span>
-                        {posArray.map(pos => (
-                            <Tag key={pos} color="blue" style={{marginRight: "5px"}}>
-                                <Link to={`/players?position=${encodeURIComponent(pos)}`}>
-                                    {pos}
-                                </Link>
-                            </Tag>
-                        ))}
-                    </span>
-                );
-            },
+            render: positions => (
+                <span>
+                    {positions && positions.map(position => (
+                        <Tag color="blue" key={position}>
+                            <Link to={`/players?position=${encodeURIComponent(position)}`}>
+                                {position}
+                            </Link>
+                        </Tag>
+                    ))}
+                </span>
+            ),
             sorter: (a, b) => {
-                const aStr = Array.isArray(a.positions) ? a.positions.join(', ') : '';
-                const bStr = Array.isArray(b.positions) ? b.positions.join(', ') : '';
-                return aStr.localeCompare(bStr);
+                const aPos = a.positions && a.positions.length > 0 ? a.positions[0] : '';
+                const bPos = b.positions && b.positions.length > 0 ? b.positions[0] : '';
+                return aPos.localeCompare(bPos);
             }
         },
         {
             title: "Nationality",
             dataIndex: "citizenships",
             key: "citizenships",
-            render: (citizenships) => {
-                if (!citizenships) return "-";
-                const nationArray = Array.isArray(citizenships) ? citizenships : [citizenships];
-                return (
-                    <span>
-                        {nationArray.map(country => (
-                            <Tag key={country} color="green" style={{marginRight: "5px"}}>
-                                <Link to={`/players?citizenship=${encodeURIComponent(country)}`}>
-                                    {country}
-                                </Link>
-                            </Tag>
-                        ))}
-                    </span>
-                );
+            render: citizenships => (
+                <span>
+                    {citizenships && citizenships.map(country => (
+                        <Tag color="green" key={country}>
+                            <Link to={`/players?citizenship=${encodeURIComponent(country)}`}>
+                                {country}
+                            </Link>
+                        </Tag>
+                    ))}
+                </span>
+            ),
+            sorter: (a, b) => {
+                const aStr = Array.isArray(a.citizenships) ? a.citizenships.join(', ') : '';
+                const bStr = Array.isArray(b.citizenships) ? b.citizenships.join(', ') : '';
+                return aStr.localeCompare(bStr);
             }
+        },
+        {
+            title: "Age",
+            dataIndex: "age",
+            key: "age",
+            sorter: (a, b) => a.age - b.age
         },
         {
             title: "Market Value",
             dataIndex: "marketValue",
             key: "marketValue",
-            render: (value) => `${value} m€`,
+            render: (value) => value ? `${value} m€` : "-",
             sorter: (a, b) => a.marketValue - b.marketValue
         }
     ];
@@ -190,57 +224,61 @@ const ClientClubSeasonDetail = () => {
             title: "Date",
             dataIndex: "date",
             key: "date",
-            render: (date) => new Date(date).toLocaleDateString(),
+            render: (date) => formatDate(date),
             sorter: (a, b) => new Date(a.date) - new Date(b.date)
         },
         {
             title: "Player",
             dataIndex: "player",
             key: "player",
-            render: (text) => <span>{text}</span>,
+            render: (player, record) => (
+                <Link to={`/players/${record.playerId}`}>{player}</Link>
+            ),
             sorter: (a, b) => a.player.localeCompare(b.player)
         },
         {
             title: "From",
             dataIndex: "previousClub",
             key: "from",
-            render: (text) => text || "-"
+            render: (prevClub) => prevClub || "Free Agent",
+            sorter: (a, b) => (a.previousClub || "").localeCompare(b.previousClub || "")
         },
         {
             title: "To",
             dataIndex: "club",
-            key: "to"
+            key: "to",
+            render: (toClub) => toClub || "Free Agent",
+            sorter: (a, b) => (a.club || "").localeCompare(b.club || "")
         },
         {
             title: "Type",
             dataIndex: "type",
             key: "type",
-            render: (text) => {
+            render: (type) => {
                 let color = 'blue';
-                if (text === 'Free Transfer') color = 'purple';
-                if (text === 'Loan') color = 'orange';
-                if (text === 'End of loan') color = 'cyan';
-                return <Tag color={color}>{text}</Tag>;
+                if (type === 'Signed') color = 'green';
+                if (type === 'Released') color = 'red';
+                if (type === 'Loan') color = 'orange';
+
+                return (
+                    <Tag color={color}>
+                        {type}
+                    </Tag>
+                );
             },
-            filters: [
-                { text: 'Permanent', value: 'Permanent' },
-                { text: 'Free Transfer', value: 'Free Transfer' },
-                { text: 'Loan', value: 'Loan' },
-                { text: 'End of loan', value: 'End of loan' }
-            ],
-            onFilter: (value, record) => record.type === value
+            sorter: (a, b) => a.type.localeCompare(b.type)
         },
         {
             title: "Fee",
             dataIndex: "fee",
             key: "fee",
-            render: (fee) => `${fee} m€`,
-            sorter: (a, b) => a.fee - b.fee
+            render: (fee) => fee ? `${fee} m€` : "Free",
+            sorter: (a, b) => (a.fee || 0) - (b.fee || 0)
         }
     ];
 
-    // Show loading spinner while fetching initial data
-    if (loading || !club) {
+    // Show loading spinner while data is being fetched
+    if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
                 <Spin size="large" />
@@ -248,14 +286,23 @@ const ClientClubSeasonDetail = () => {
         );
     }
 
+    if (!club) {
+        return (
+            <div style={{ textAlign: "center", padding: "50px" }}>
+                <Empty description="Club not found" />
+            </div>
+        );
+    }
+
     return (
         <div style={{ padding: "30px" }}>
+            {/* Club Header */}
             <Card>
                 <Row gutter={16} align="middle">
-                    {/* Club Logo/Image */}
-                    <Col span={4}>
+                    {/* Club Logo/Avatar */}
+                    <Col span={4} style={{ textAlign: "center" }}>
                         {club.logo ? (
-                            <Avatar src={club.logo} size={100} />
+                            <img src={club.logo} alt={club.name} style={{ maxWidth: 100, maxHeight: 100 }} />
                         ) : (
                             <Avatar size={100}>{club.name.charAt(0)}</Avatar>
                         )}
@@ -280,7 +327,9 @@ const ClientClubSeasonDetail = () => {
                             disabled={seasons.length === 0}
                         >
                             {seasons.map(season => (
-                                <Option key={season.id} value={season.id}>{season.name}</Option>
+                                <Option key={season.id} value={season.id}>
+                                    {season.name} {season.leagueName ? `(${season.leagueName})` : ''}
+                                </Option>
                             ))}
                         </Select>
                     </Col>
@@ -289,7 +338,7 @@ const ClientClubSeasonDetail = () => {
 
             <Divider />
 
-            {/* Render season-specific data */}
+            {/* Season-specific data */}
             {selectedSeason ? (
                 <Tabs defaultActiveKey="squad">
                     <TabPane tab="Squad" key="squad">
@@ -390,4 +439,4 @@ const ClientClubSeasonDetail = () => {
     );
 };
 
-export default ClientClubSeasonDetail;
+export default ClientClubDetail;
