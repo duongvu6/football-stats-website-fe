@@ -18,8 +18,6 @@ const CreateCoachClubModal = ({ coach, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Check if this is a special type that doesn't require a club
-            const isNoClubType = values.type === "Retired";
             console.log("Form values on submit:", values);
 
             // Create a new coach club object
@@ -27,8 +25,7 @@ const CreateCoachClubModal = ({ coach, isOpen, setIsOpen, onSuccess }) => {
                 headCoach: coach.id,
                 startDate: values.startDate.format('YYYY-MM-DD'),
                 endDate: values.endDate ? values.endDate.format('YYYY-MM-DD') : null,
-                club: isNoClubType ? null : values.club,
-                type: values.type // Ensure type is preserved
+                club: values.club
             };
 
             console.log("Creating new coach club:", newCoachClub);

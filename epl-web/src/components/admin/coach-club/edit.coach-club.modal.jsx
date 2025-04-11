@@ -27,16 +27,11 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
                 console.log("Using clubId property:", clubId);
             }
 
-            // Make sure we preserve the original type, defaulting to "Appointed" only if undefined
-            const type = coachClub.type || "Appointed";
-            console.log("Using type:", type);
-
             // Set form values
             form.setFieldsValue({
                 startDate: coachClub.startDate ? dayjs(coachClub.startDate) : null,
                 endDate: coachClub.endDate ? dayjs(coachClub.endDate) : null,
-                club: clubId,
-                type: type
+                club: clubId
             });
         }
     }, [isOpen, coachClub, form]);
@@ -51,19 +46,15 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Check if this is a special type that doesn't require a club
-            const isNoClubType = values.type === "Retired";
             console.log("Form values on submit:", values);
-            console.log("Is no club type:", isNoClubType);
 
             // Create a coach club object with the structure expected by the API
             const coachClubData = {
                 id: coachClub.id,
                 startDate: values.startDate.format('YYYY-MM-DD'),
                 endDate: values.endDate ? values.endDate.format('YYYY-MM-DD') : null,
-                type: values.type, // Make sure type is preserved
                 headCoach: coach.id,
-                club: isNoClubType ? null : Number(values.club)
+                club: Number(values.club)
             };
 
             console.log("Submitting coach club data:", coachClubData);

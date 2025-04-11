@@ -106,16 +106,6 @@ const ClientCoachDetail = () => {
                 }
                 return record.club || "-";
             }
-        },
-        {
-            title: "Type",
-            dataIndex: "type",
-            key: "type",
-            render: (type) => (
-                <Link to={`/coaches?appointmentType=${encodeURIComponent(type)}`}>
-                    {type}
-                </Link>
-            )
         }
     ];
 

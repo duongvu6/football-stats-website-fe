@@ -74,11 +74,6 @@ const AdminCoachDetail = () => {
                 }
                 return record.club || "-";
             }
-        },
-        {
-            title: "Type",
-            dataIndex: "type",
-            key: "type"
         }
     ];
 
