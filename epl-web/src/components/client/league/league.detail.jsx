@@ -29,10 +29,12 @@ const LeagueDetailPage = () => {
     const [seasonLoading, setSeasonLoading] = useState(false);
     const { id } = useParams();
 
-    
     const [matchdayModalVisible, setMatchdayModalVisible] = useState(false);
     const [standingsModalVisible, setStandingsModalVisible] = useState(false);
     const [scorersModalVisible, setScorersModalVisible] = useState(false);
+    const [assistsModalVisible, setAssistsModalVisible] = useState(false);
+    const [yellowCardsModalVisible, setYellowCardsModalVisible] = useState(false);
+    const [redCardsModalVisible, setRedCardsModalVisible] = useState(false);
 
     
     useEffect(() => {
@@ -589,7 +591,7 @@ const LeagueDetailPage = () => {
                         extra={topAssists.length > 0 && (
                             <Button
                                 type="link"
-                                onClick={() => setScorersModalVisible(true)}
+                                onClick={() => setAssistsModalVisible(true)}
                                 icon={<ArrowRightOutlined />}
                             >
                                 See Full List
@@ -619,7 +621,7 @@ const LeagueDetailPage = () => {
                         extra={topYellowCards.length > 0 && (
                             <Button
                                 type="link"
-                                onClick={() => setScorersModalVisible(true)}
+                                onClick={() => setYellowCardsModalVisible(true)}
                                 icon={<ArrowRightOutlined />}
                             >
                                 See Full List
@@ -649,7 +651,7 @@ const LeagueDetailPage = () => {
                         extra={topRedCards.length > 0 && (
                             <Button
                                 type="link"
-                                onClick={() => setScorersModalVisible(true)}
+                                onClick={() => setRedCardsModalVisible(true)}
                                 icon={<ArrowRightOutlined />}
                             >
                                 See Full List
@@ -753,6 +755,51 @@ const LeagueDetailPage = () => {
                 <Table
                     columns={scorerColumns}
                     dataSource={topScorers}
+                    rowKey="id"
+                    pagination={false}
+                />
+            </Modal>
+
+            <Modal
+                title={`${league.name} - Top Assists (${selectedSeason?.name})`}
+                open={assistsModalVisible}
+                onCancel={() => setAssistsModalVisible(false)}
+                width={800}
+                footer={null}
+            >
+                <Table
+                    columns={scorerColumns}
+                    dataSource={topAssists}
+                    rowKey="id"
+                    pagination={false}
+                />
+            </Modal>
+
+            <Modal
+                title={`${league.name} - Top Yellow Cards (${selectedSeason?.name})`}
+                open={yellowCardsModalVisible}
+                onCancel={() => setYellowCardsModalVisible(false)}
+                width={800}
+                footer={null}
+            >
+                <Table
+                    columns={cardColumns}
+                    dataSource={topYellowCards}
+                    rowKey="id"
+                    pagination={false}
+                />
+            </Modal>
+
+            <Modal
+                title={`${league.name} - Top Red Cards (${selectedSeason?.name})`}
+                open={redCardsModalVisible}
+                onCancel={() => setRedCardsModalVisible(false)}
+                width={800}
+                footer={null}
+            >
+                <Table
+                    columns={cardColumns}
+                    dataSource={topRedCards}
                     rowKey="id"
                     pagination={false}
                 />

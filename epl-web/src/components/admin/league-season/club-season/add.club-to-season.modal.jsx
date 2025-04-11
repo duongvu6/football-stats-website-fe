@@ -146,13 +146,6 @@ const AddClubToSeasonModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) =>
                 </Form.Item>
 
                 <Form.Item
-                    name="ranked"
-                    label="Position"
-                >
-                    <InputNumber min={0} style={{ width: '100%' }} />
-                </Form.Item>
-
-                <Form.Item
                     name="numWins"
                     label="Wins"
                 >

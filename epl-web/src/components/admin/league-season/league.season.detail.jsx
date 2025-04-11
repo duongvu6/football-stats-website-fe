@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { fetchLeagueSeasonDetailAPI } from "../../../services/api.service.js";
 import ClubSeasonTable from "./club-season/club.season.table.jsx";
 import MatchTable from "./match/match.table.jsx";
-// import MatchTable from "./match/match.table.jsx";
 
 const LeagueSeasonDetail = () => {
     const { id } = useParams();
@@ -34,6 +33,20 @@ const LeagueSeasonDetail = () => {
         loadLeagueSeasonDetail();
     }, [id]);
 
+    // Define tab items for Tabs component
+    const tabItems = [
+        {
+            key: "clubs",
+            label: "Clubs",
+            children: <ClubSeasonTable leagueSeason={leagueSeason} />
+        },
+        {
+            key: "matches",
+            label: "Matches",
+            children: <MatchTable leagueSeason={leagueSeason} />
+        }
+    ];
+
     if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -45,14 +58,7 @@ const LeagueSeasonDetail = () => {
     return (
         <div style={{ padding: "30px" }}>
             <h2>Season: {leagueSeason?.name} ({leagueSeason?.league?.name})</h2>
-            <Tabs defaultActiveKey="clubs">
-                <Tabs.TabPane tab="Clubs" key="clubs">
-                    <ClubSeasonTable leagueSeason={leagueSeason} />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab="Matches" key="matches">
-                    <MatchTable leagueSeason={leagueSeason} />
-                </Tabs.TabPane>
-            </Tabs>
+            <Tabs defaultActiveKey="clubs" items={tabItems} />
         </div>
     );
 };

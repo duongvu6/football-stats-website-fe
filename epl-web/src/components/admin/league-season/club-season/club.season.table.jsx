@@ -9,8 +9,10 @@ const ClubSeasonTable = ({ leagueSeason }) => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentClubSeason, setCurrentClubSeason] = useState(null);
 
-    // Use clubSeasonTables directly from the leagueSeason object
-    const clubSeasons = leagueSeason?.clubSeasonTables || [];
+    // Use clubSeasonTables directly from the leagueSeason object and pre-sort by ranked
+    const clubSeasons = leagueSeason?.clubSeasonTables 
+        ? [...leagueSeason.clubSeasonTables].sort((a, b) => a.ranked - b.ranked)
+        : [];
 
     const handleUpdateClubSeason = (clubSeason) => {
         setCurrentClubSeason(clubSeason);
@@ -30,6 +32,7 @@ const ClubSeasonTable = ({ leagueSeason }) => {
             dataIndex: "ranked",
             key: "ranked",
             sorter: (a, b) => a.ranked - b.ranked,
+            defaultSortOrder: 'ascend'
         },
         {
             title: "Club",
@@ -85,7 +88,6 @@ const ClubSeasonTable = ({ leagueSeason }) => {
             dataIndex: "points",
             key: "points",
             sorter: (a, b) => b.points - a.points,
-            defaultSortOrder: 'descend'
         },
         {
             title: "Actions",

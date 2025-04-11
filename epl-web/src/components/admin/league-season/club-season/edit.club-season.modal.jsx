@@ -98,14 +98,6 @@ const EditClubSeasonModal = ({ clubSeason, isOpen, setIsOpen, onSuccess }) => {
                 layout="vertical"
             >
                 <Form.Item
-                    name="ranked"
-                    label="Position"
-                    rules={[{ required: true, message: "Please enter position" }]}
-                >
-                    <InputNumber min={1} style={{ width: '100%' }} />
-                </Form.Item>
-
-                <Form.Item
                     name="numWins"
                     label="Wins"
                     rules={[{ required: true, message: "Please enter wins" }]}
