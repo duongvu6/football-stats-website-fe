@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Table, Card, Alert, Button, Tag } from "antd";
+import {Table, Card, Alert, Button, Tag, Image} from "antd";
 import { fetchAllCoachesAPI } from "../../../services/api.service.js";
 
 const ClientCoachTable = () => {
@@ -84,6 +84,21 @@ const ClientCoachTable = () => {
     };
 
     const columns = [
+        {
+            title: "Image",
+            dataIndex: "imageUrl",
+            width: 80,
+            render: (imageUrl) => (
+                <Image
+                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/coach/${imageUrl}` : null}
+                    alt="Head coach"
+                    width={50}
+                    height={50}
+                    style={{ objectFit: 'cover', borderRadius: '50%' }}
+                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                />
+            )
+        },
         {
             title: "Name",
             dataIndex: "name",

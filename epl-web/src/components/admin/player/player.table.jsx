@@ -92,7 +92,7 @@ const AdminPlayerTable = () => {
             width: 80,
             render: (imageUrl) => (
                 <Image
-                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/storage/player/${imageUrl}` : null}
+                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/player/${imageUrl}` : null}
                     alt="Player"
                     width={50}
                     height={50}

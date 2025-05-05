@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Descriptions, Spin, Tag, Table } from "antd";
+import {Descriptions, Spin, Tag, Table, Card, Row, Col, Image} from "antd";
 import { useParams, Link } from "react-router-dom";
 import { fetchCoachDetailAPI } from "../../../services/api.service.js";
 
@@ -104,18 +104,31 @@ const ClientCoachDetail = () => {
 
     return (
         <div style={{ padding: "30px" }}>
-            {/* Coach Details */}
-            <Descriptions title="Coach Details" bordered>
-                <Descriptions.Item label="Name">{coach.name}</Descriptions.Item>
-                <Descriptions.Item label="Age">{coach.age}</Descriptions.Item>
-                <Descriptions.Item label="Date of Birth">{formatDate(coach.dob)}</Descriptions.Item>
-                <Descriptions.Item label="Citizenship">
-                    {makeCitizenshipLinks(coach.citizenships)}
-                </Descriptions.Item>
-                <Descriptions.Item label="Current Club">
-                    {getCurrentClub()}
-                </Descriptions.Item>
-            </Descriptions>
+            <Card>
+                <Row gutter={24}>
+                    <Col span={6} style={{ textAlign: 'center' }}>
+                        <Image
+                            src={coach.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/coach/${coach.imageUrl}` : null}
+                            alt={coach.name}
+                            style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+                            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                        />
+                    </Col>
+                    <Col span={18}>
+                        <Descriptions title="Coach Details" bordered>
+                            <Descriptions.Item label="Name">{coach.name}</Descriptions.Item>
+                            <Descriptions.Item label="Age">{coach.age}</Descriptions.Item>
+                            <Descriptions.Item label="Date of Birth">{formatDate(coach.dob)}</Descriptions.Item>
+                            <Descriptions.Item label="Citizenship">
+                                {makeCitizenshipLinks(coach.citizenships)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Current Club">
+                                {getCurrentClub()}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    </Col>
+                </Row>
+            </Card>
 
             {/* Coach Club History using Ant Design Table */}
             <div style={{ marginTop: "30px" }}>
