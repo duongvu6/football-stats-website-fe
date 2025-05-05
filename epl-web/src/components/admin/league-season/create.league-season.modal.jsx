@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/create.league-season.modal.jsx
+
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState } from "react";
 import LeagueSeasonForm from "./league.season.form.jsx";
@@ -18,7 +18,6 @@ const CreateLeagueSeasonModal = ({ league, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Create a new league season object
             const newLeagueSeason = {
                 league: league.id,
                 name: values.name,
@@ -26,7 +25,6 @@ const CreateLeagueSeasonModal = ({ league, isOpen, setIsOpen, onSuccess }) => {
                 endDate: values.endDate.format('YYYY-MM-DD')
             };
 
-            // Call API to create league season
             const res = await createLeagueSeasonAPI(newLeagueSeason);
 
             if (res && res.data) {

@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/player/player.edit.jsx
+
 import { Modal, Form, Button, message } from "antd";
 import { useState, useEffect } from "react";
 import { updatePlayerAPI } from "../../../services/api.service.js";
@@ -8,7 +8,6 @@ const EditPlayerModal = ({ isOpen, onCancel, onSuccess, player }) => {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
             form.resetFields();
@@ -20,7 +19,6 @@ const EditPlayerModal = ({ isOpen, onCancel, onSuccess, player }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Format the date for the API
             const formattedValues = {
                 ...values,
                 dob: values.dob ? values.dob.format('YYYY-MM-DD') : null,
@@ -32,7 +30,7 @@ const EditPlayerModal = ({ isOpen, onCancel, onSuccess, player }) => {
             const res = await updatePlayerAPI(formattedValues);
             if (res.data) {
                 message.success("Player updated successfully");
-                // Call onSuccess to trigger table reload
+
                 onSuccess();
                 onCancel(); // Close the modal
             } else {

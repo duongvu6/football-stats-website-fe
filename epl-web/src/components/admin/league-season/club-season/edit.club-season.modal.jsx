@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/club-season/edit.club-season.modal.jsx
+
 import { Button, Form, InputNumber, message, Modal, notification } from "antd";
 import { useState, useEffect } from "react";
 import { updateClubSeasonTableAPI } from "../../../../services/api.service.js";
@@ -31,10 +31,8 @@ const EditClubSeasonModal = ({ clubSeason, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Calculate goal difference
             const goalDiff = values.goalScores - values.goalConceded;
 
-            // Create the club season data structure for the update
             const clubSeasonData = {
                 id: clubSeason.id,
                 season: clubSeason.season.id,
@@ -49,7 +47,6 @@ const EditClubSeasonModal = ({ clubSeason, isOpen, setIsOpen, onSuccess }) => {
                 diff: goalDiff
             };
 
-            // Call API to update club season
             const res = await updateClubSeasonTableAPI(clubSeasonData);
 
             if (res && res.data) {

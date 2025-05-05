@@ -1,5 +1,5 @@
 import axios from "./axios.customize";
-// import axios from "axios";
+
 const loginAPI = (email, password) => {
     const URL_BACKEND = "/api/v1/auth/login";
     const data = {
@@ -20,24 +20,21 @@ const registerUserAPI = (fullName,email,password) =>{
 }
 
 const fetchAllPlayersAPI = (currentOrParams, pageSize) => {
-    // Check if first parameter is an object (params) or a number (current page)
+
     if (typeof currentOrParams === 'object') {
         const params = currentOrParams;
         let url = `/api/v1/players?sortTransferHistory=true`;
 
-        // Add pagination parameters
         if (params.page) url += `&page=${params.page}`;
         if (params.size) url += `&size=${params.size}`;
 
-        // Add filter if present
         if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
 
-        // Add sort if present
         if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
 
         return axios.get(url);
     } else {
-        // Original implementation for backward compatibility
+
         const URL_BACKEND = `/api/v1/players?page=${currentOrParams}&size=${pageSize}&sortTransferHistory=true`;
         return axios.get(URL_BACKEND);
     }
@@ -47,7 +44,6 @@ const fetchAllPlayersNoPaginationAPI = () => {
     return axios.get(URL_BACKEND);
 }
 
-// Add these to existing export functions
 const createPlayerAPI = (playerData) => {
     const URL_BACKEND = "/api/v1/players";
     return axios.post(URL_BACKEND, playerData);
@@ -89,24 +85,21 @@ const deleteTransferAPI = (id) => {
     return axios.delete(URL_BACKEND);
 }
 const fetchAllClubsWithPaginationAPI = (currentOrParams, pageSize) => {
-    // Check if first parameter is an object (params) or a number (current page)
+
     if (typeof currentOrParams === 'object') {
         const params = currentOrParams;
         let url = `/api/v1/clubs?`;
 
-        // Add pagination parameters
         if (params.page) url += `&page=${params.page}`;
         if (params.size) url += `&size=${params.size}`;
 
-        // Add filter if present
         if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
 
-        // Add sort if present
         if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
 
         return axios.get(url);
     } else {
-        // Original implementation
+
         const URL_BACKEND = `/api/v1/clubs?page=${currentOrParams}&size=${pageSize}`;
         return axios.get(URL_BACKEND);
     }
@@ -128,24 +121,21 @@ const deleteClubAPI = (id) => {
     return axios.delete(URL_BACKEND);
 }
 const fetchAllCoachesAPI = (currentOrParams, pageSize) => {
-    // Check if first parameter is an object (params) or a number (current page)
+
     if (typeof currentOrParams === 'object') {
         const params = currentOrParams;
         let url = `/api/v1/coaches?sortTransferHistory=true`;
 
-        // Add pagination parameters
         if (params.page) url += `&page=${params.page}`;
         if (params.size) url += `&size=${params.size}`;
 
-        // Add filter if present
         if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
 
-        // Add sort if present
         if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
 
         return axios.get(url);
     } else {
-        // Original implementation
+
         const URL_BACKEND = `/api/v1/coaches?page=${currentOrParams}&size=${pageSize}&sortTransferHistory=true`;
         return axios.get(URL_BACKEND);
     }
@@ -170,7 +160,7 @@ const deleteCoachAPI = (id) => {
     const URL_BACKEND = `/api/v1/coaches/${id}`;
     return axios.delete(URL_BACKEND);
 }
-// Coach Club API endpoints
+
 const createCoachClubAPI = (data) => {
     const URL_BACKEND = `/api/v1/coach-clubs`;
     return axios.post(URL_BACKEND, data);
@@ -187,24 +177,21 @@ const deleteCoachClubAPI = (id) => {
 };
 
 const fetchAllLeaguesAPI = (currentOrParams, pageSize) => {
-    // Check if first parameter is an object (params) or a number (current page)
+
     if (typeof currentOrParams === 'object') {
         const params = currentOrParams;
         let url = `/api/v1/leagues?`;
 
-        // Add pagination parameters
         if (params.page) url += `&page=${params.page}`;
         if (params.size) url += `&size=${params.size}`;
 
-        // Add filter if present
         if (params.filter) url += `&filter=${encodeURIComponent(params.filter)}`;
 
-        // Add sort if present
         if (params.sort) url += `&sort=${encodeURIComponent(params.sort)}`;
 
         return axios.get(url);
     } else {
-        // Original implementation
+
         const URL_BACKEND = `/api/v1/leagues?page=${currentOrParams}&size=${pageSize}`;
         return axios.get(URL_BACKEND);
     }
@@ -244,7 +231,6 @@ const deleteLeagueSeasonAPI = (id) => {
     return axios.delete(URL_BACKEND);
 }
 
-// League Season detailed API endpoints
 const fetchLeagueSeasonDetailAPI = (id) => {
     const URL_BACKEND = `/api/v1/league-seasons/${id}`;
     return axios.get(URL_BACKEND);
@@ -264,7 +250,6 @@ const deleteClubSeasonTableAPI = (id) => {
     return axios.delete(URL_BACKEND);
 }
 
-// Match API endpoints
 const fetchMatchesBySeasonAPI = (seasonId) => {
     const URL_BACKEND = `/api/v1/matches?filter=season:${seasonId}&sort=round,asc`;
     return axios.get(URL_BACKEND);
@@ -290,7 +275,6 @@ const deleteMatchAPI = (id) => {
     return axios.delete(URL_BACKEND);
 };
 
-// Match Action API endpoints
 const fetchMatchActionsAPI = (matchId) => {
     const URL_BACKEND = `/api/v1/match-actions?filter=match:${matchId}`;
     return axios.get(URL_BACKEND);
@@ -343,13 +327,11 @@ const getClubSeasonsAPI = (clubId) => {
     return axios.get(URL_BACKEND);
 }
 
-// Get club top scorers for a specific season
 const getClubTopScorersAPI = (seasonId, clubId) => {
     const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/clubs/${clubId}/top-goal-scorers`;
     return axios.get(URL_BACKEND);
 };
 
-// Get club top assists for a specific season
 const getClubTopAssistsAPI = (seasonId, clubId) => {
     const URL_BACKEND = `/api/v1/league-seasons/${seasonId}/clubs/${clubId}/top-assists`;
     return axios.get(URL_BACKEND);

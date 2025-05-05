@@ -16,7 +16,6 @@ const AdminClubTable = () => {
     });
     const [loading, setLoading] = useState(false);
 
-    // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentClub, setCurrentClub] = useState(null);

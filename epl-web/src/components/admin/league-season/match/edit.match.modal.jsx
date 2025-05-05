@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/match/edit.match.modal.jsx
+
 import { Button, Form, Select, InputNumber, message, Modal, notification, DatePicker } from "antd";
 import { useState, useEffect } from "react";
 import { updateMatchAPI } from "../../../../services/api.service.js";
@@ -11,10 +11,9 @@ const EditMatchModal = ({ match, isOpen, setIsOpen, onSuccess }) => {
 
     useEffect(() => {
         if (isOpen && match && match.season) {
-            // Reset form fields
+
             form.resetFields();
 
-            // Set form values from match data
             form.setFieldsValue({
                 round: match.round,
                 homeClub: match.host.id,
@@ -24,7 +23,6 @@ const EditMatchModal = ({ match, isOpen, setIsOpen, onSuccess }) => {
                 date: match.date ? dayjs(match.date) : null
             });
 
-            // Extract clubs from the season's club tables if available
             if (match.season.clubSeasonTables && match.season.clubSeasonTables.length > 0) {
                 const clubOptions = match.season.clubSeasonTables.map(ct => ({
                     label: ct.club.name,
@@ -33,7 +31,7 @@ const EditMatchModal = ({ match, isOpen, setIsOpen, onSuccess }) => {
 
                 setClubs(clubOptions);
             } else {
-                // Fallback: at least include the current home and away clubs
+
                 setClubs([
                     { label: match.host.name, value: match.host.id },
                     { label: match.away.name, value: match.away.id }
@@ -51,7 +49,6 @@ const EditMatchModal = ({ match, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Create match update data
             const matchData = {
                 id: match.id,
                 season: match.season.id,
@@ -63,7 +60,6 @@ const EditMatchModal = ({ match, isOpen, setIsOpen, onSuccess }) => {
                 date: values.date.format('YYYY-MM-DDTHH:mm:ss')
             };
 
-            // Call API to update match
             const res = await updateMatchAPI(matchData);
 
             if (res && res.data) {

@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/club-season/add.club-to-season.button.jsx
+
 import { Button } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from "react";

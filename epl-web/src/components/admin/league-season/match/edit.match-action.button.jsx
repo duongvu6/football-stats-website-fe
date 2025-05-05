@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/match/edit.match-action.button.jsx
+
 import { Button, Form, Modal, Select, InputNumber, message, notification } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -22,7 +22,7 @@ const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
 
     useEffect(() => {
         if (isOpen && matchAction) {
-            // Set form values
+
             form.setFieldsValue({
                 action: matchAction.action,
                 minute: matchAction.minute,
@@ -34,18 +34,16 @@ const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
     const loadPlayers = async () => {
         setLoadingPlayers(true);
         try {
-            // Use the non-paginated API to get all players
+
             const res = await fetchAllPlayersNoPaginationAPI();
 
             if (res.data) {
                 console.log("Players API response:", res.data);
 
-                // Handle both array and paginated results
                 const allPlayers = Array.isArray(res.data)
                     ? res.data
                     : (res.data.result || []);
 
-                // Get host and away club identifiers from match
                 const hostClubId = match.host.id;
                 const hostClubName = match.host.name;
                 const awayClubId = match.away.id;
@@ -53,7 +51,6 @@ const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
 
                 console.log(`Host club: ${hostClubName} (${hostClubId}), Away club: ${awayClubName} (${awayClubId})`);
 
-                // Filter players from relevant clubs with more flexible matching
                 const matchPlayers = allPlayers.filter(player => {
                     if (!player.transferHistories || !player.transferHistories.length) {
                         return false;
@@ -62,16 +59,14 @@ const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
                     const latestTransfer = player.transferHistories[0];
                     let playerClub = latestTransfer.club;
 
-                    // If club is an object, get its ID or name
                     if (typeof playerClub === 'object' && playerClub) {
-                        // Try to match by ID first, then by name
+
                         return playerClub.id === hostClubId || playerClub.id === awayClubId ||
                             playerClub.name === hostClubName || playerClub.name === awayClubName;
                     }
 
-                    // If club is a string, try to match by name or partial name
                     if (typeof playerClub === 'string') {
-                        // Check if club string matches or contains host/away name
+
                         return playerClub === hostClubName || playerClub === awayClubName ||
                             hostClubName.includes(playerClub) || awayClubName.includes(playerClub) ||
                             playerClub.includes(hostClubName) || playerClub.includes(awayClubName);
@@ -82,18 +77,16 @@ const EditMatchActionButton = ({ matchAction, match, onSuccess }) => {
 
                 console.log(`Found ${matchPlayers.length} players matching the clubs`);
 
-                // Format players for the dropdown with improved determination of club
                 const formattedPlayers = matchPlayers.map(player => {
                     const latestTransfer = player.transferHistories[0];
                     let playerClub = latestTransfer.club;
                     let clubName, isHomeTeam;
 
-                    // Determine club name and whether it's home team
                     if (typeof playerClub === 'object' && playerClub) {
                         clubName = playerClub.name;
                         isHomeTeam = playerClub.id === hostClubId || playerClub.name === hostClubName;
                     } else if (typeof playerClub === 'string') {
-                        // Try to determine if it's home or away team
+
                         isHomeTeam = playerClub === hostClubName ||
                             hostClubName.includes(playerClub) ||
                             playerClub.includes(hostClubName);

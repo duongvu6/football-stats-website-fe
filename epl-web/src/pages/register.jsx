@@ -5,7 +5,7 @@ const RegisterPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const onFinish = async (values) =>{
-        // call apivalues.
+
         const res =  await registerUserAPI(
             values.fullName,
             values.email,
@@ -31,7 +31,7 @@ const RegisterPage = () => {
             form={form}
             layout="vertical"
             onFinish={onFinish}
-            //   onFinishFailed={onFinishFailed}
+
             autoComplete="off"
             style={{margin:"30px"}}
         >

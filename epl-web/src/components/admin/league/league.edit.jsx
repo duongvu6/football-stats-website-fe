@@ -7,7 +7,6 @@ const EditLeagueModal = ({ isOpen, onCancel, onSuccess, league }) => {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
             form.resetFields();

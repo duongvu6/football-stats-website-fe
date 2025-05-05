@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach-clubs/delete.coach-club.button.jsx
+
 import { Button, Popconfirm, message, notification } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { deleteCoachClubAPI } from "../../../services/api.service.js";

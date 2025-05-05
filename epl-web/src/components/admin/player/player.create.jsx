@@ -12,7 +12,6 @@ const CreatePlayerModal = ({ isOpen, onCancel, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Format the date for the API
             const formattedValues = {
                 ...values,
                 dob: values.dob ? values.dob.format('YYYY-MM-DD') : null

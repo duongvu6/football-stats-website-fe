@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/club-season/add.club-to-season.modal.jsx
+
 import { Button, Form, Select, InputNumber, message, Modal, notification } from "antd";
 import { useState, useEffect } from "react";
 import { fetchAllClubsAPI, createClubSeasonTableAPI } from "../../../../services/api.service.js";
@@ -9,7 +9,6 @@ const AddClubToSeasonModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) =>
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // Fetch clubs when modal opens
     useEffect(() => {
         if (isOpen) {
             fetchClubs();
@@ -22,11 +21,10 @@ const AddClubToSeasonModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) =>
         try {
             const res = await fetchAllClubsAPI();
             if (res && res.data) {
-                // Handle both array response and paginated response
+
                 const clubsArray = Array.isArray(res.data) ? res.data :
                     (res.data.result ? res.data.result : []);
 
-                // Filter out clubs that are already in the season
                 const existingClubIds = leagueSeason.clubSeasonTables?.map(ct => ct.club.id) || [];
                 const filteredClubs = clubsArray.filter(club => !existingClubIds.includes(club.id));
 
@@ -58,7 +56,6 @@ const AddClubToSeasonModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) =>
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Create the club season data structure
             const clubSeasonData = {
                 season: leagueSeason.id,
                 club: values.club,
@@ -72,7 +69,6 @@ const AddClubToSeasonModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) =>
                 diff: (values.goalScores || 0) - (values.goalConceded || 0)
             };
 
-            // Call API to create club season
             const res = await createClubSeasonTableAPI(clubSeasonData);
 
             if (res && res.data) {

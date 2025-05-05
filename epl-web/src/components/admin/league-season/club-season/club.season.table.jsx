@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/club-season/club.season.table.jsx
+
 import { Table, Button, Space } from "antd";
 import { useState } from "react";
 import AddClubToSeasonButton from "./add.club-to-season.button.jsx";
@@ -9,7 +9,6 @@ const ClubSeasonTable = ({ leagueSeason }) => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentClubSeason, setCurrentClubSeason] = useState(null);
 
-    // Use clubSeasonTables directly from the leagueSeason object and pre-sort by ranked
     const clubSeasons = leagueSeason?.clubSeasonTables 
         ? [...leagueSeason.clubSeasonTables].sort((a, b) => a.ranked - b.ranked)
         : [];
@@ -19,7 +18,6 @@ const ClubSeasonTable = ({ leagueSeason }) => {
         setEditModalVisible(true);
     };
 
-    // This refresh function will be called after mutations
     const onSuccess = () => {
         if (leagueSeason.onRefresh) {
             leagueSeason.onRefresh();

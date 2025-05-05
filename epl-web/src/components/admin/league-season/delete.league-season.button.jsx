@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/delete.league-season.button.jsx
+
 import { Button, Popconfirm, message, notification } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import { deleteLeagueSeasonAPI } from "../../../services/api.service.js";

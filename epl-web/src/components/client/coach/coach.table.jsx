@@ -14,11 +14,9 @@ const ClientCoachTable = () => {
         total: 0
     });
 
-    // Extract filter parameters from URL
     const citizenship = searchParams.get('citizenship');
     const club = searchParams.get('club');
 
-    // Determine if we have any filters active
     useEffect(() => {
         if (citizenship || club) {
             let filterText = "Filtering by: ";
@@ -36,7 +34,7 @@ const ClientCoachTable = () => {
     const fetchCoaches = async (params = {}) => {
         setLoading(true);
         try {
-            // Build Spring Filter compliant filter string
+
             let filterParts = [];
 
             if (citizenship) {
@@ -47,7 +45,6 @@ const ClientCoachTable = () => {
                 filterParts.push(`coachClubs.club.id : ${club}`);
             }
 
-            // API query parameters
             const queryParams = {
                 page: params.current || pagination.current,
                 size: params.pageSize || pagination.pageSize,
@@ -75,9 +72,8 @@ const ClientCoachTable = () => {
         fetchCoaches();
     }, [citizenship, club]);
 
-    // Handle pagination changes
     const handleTableChange = (newPagination, filters, sorter) => {
-        // Only fetch new data when pagination changes
+
         if (newPagination.current !== pagination.current ||
             newPagination.pageSize !== pagination.pageSize) {
             fetchCoaches({

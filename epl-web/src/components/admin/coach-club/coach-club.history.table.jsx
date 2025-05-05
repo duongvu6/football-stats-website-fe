@@ -1,10 +1,10 @@
-// epl-web/src/components/admin/coach-clubs/coach-club.history.table.jsx
+
 import { Table, Space } from "antd";
 import EditCoachClubButton from "./edit.coach-club.button.jsx";
 import DeleteCoachClubButton from "./delete.coach-club.button.jsx";
 
 const CoachClubHistoryTable = ({ coachClubColumns, coachClubs, coach, onSuccess, isAdmin = false }) => {
-    // Add actions column for admin view
+
     const columns = isAdmin
         ? [
             ...coachClubColumns,

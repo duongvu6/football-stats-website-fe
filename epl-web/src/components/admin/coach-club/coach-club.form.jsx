@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach-club/coach-club.form.jsx
+
 import { DatePicker, Form, Select } from "antd";
 import { useEffect, useState, useRef } from "react";
 import { fetchAllClubsAPI } from "../../../services/api.service.js";
@@ -9,7 +9,6 @@ const CoachClubForm = ({ form, initialValues = {}, formName = "coachClubForm", c
     const [loading, setLoading] = useState(false);
     const initialized = useRef(false);
 
-    // Fetch clubs only once when component mounts
     useEffect(() => {
         if (!initialized.current) {
             fetchClubs();
@@ -17,13 +16,11 @@ const CoachClubForm = ({ form, initialValues = {}, formName = "coachClubForm", c
         }
     }, []);
 
-    // Set initial values when they change
     useEffect(() => {
         if (initialValues && Object.keys(initialValues).length > 0) {
             const startDate = initialValues.startDate ? dayjs(initialValues.startDate) : null;
             const endDate = initialValues.endDate ? dayjs(initialValues.endDate) : null;
 
-            // Extract club ID correctly
             let clubId = initialValues.club;
             if (typeof initialValues.club === 'object' && initialValues.club !== null) {
                 clubId = initialValues.club.id;
@@ -31,7 +28,6 @@ const CoachClubForm = ({ form, initialValues = {}, formName = "coachClubForm", c
                 clubId = initialValues.clubId;
             }
 
-            // Set form values
             form.setFieldsValue({
                 startDate: startDate,
                 endDate: endDate,
@@ -54,7 +50,6 @@ const CoachClubForm = ({ form, initialValues = {}, formName = "coachClubForm", c
                 }));
                 setClubs(clubOptions);
 
-                // If initialValues has a club name string instead of ID, try to find ID
                 if (initialValues && typeof initialValues.club === 'string') {
                     const matchingClub = clubsArray.find(club => club.name === initialValues.club);
                     if (matchingClub) {

@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/edit.league-season.modal.jsx
+
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState, useEffect } from "react";
 import LeagueSeasonForm from "./league.season.form.jsx";
@@ -8,7 +8,6 @@ const EditLeagueSeasonModal = ({ league, leagueSeason, isOpen, setIsOpen, onSucc
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    // Initialize form with league season data when modal opens
     useEffect(() => {
         if (isOpen && leagueSeason) {
             form.resetFields();
@@ -25,7 +24,6 @@ const EditLeagueSeasonModal = ({ league, leagueSeason, isOpen, setIsOpen, onSucc
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Create the updated league season object
             const updatedLeagueSeason = {
                 id: leagueSeason.id,
                 name: values.name,
@@ -34,7 +32,6 @@ const EditLeagueSeasonModal = ({ league, leagueSeason, isOpen, setIsOpen, onSucc
                 league: league.id
             };
 
-            // Call API to update league season
             const res = await updateLeagueSeasonAPI(updatedLeagueSeason);
 
             if (res && res.data) {

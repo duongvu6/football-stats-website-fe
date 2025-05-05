@@ -17,7 +17,7 @@ const Header = () => {
     const res = await logoutAPI();
     console.log(res);
     if (res.data) {
-      // clear data
+
       localStorage.removeItem("access_token");
       let logoutUser = {
         email: "",
@@ -27,7 +27,7 @@ const Header = () => {
       };
       setUser(logoutUser);
       message.success("Logout successfully");
-      // redirect to home
+
       navigate("/");
     } else {
       if (res.message) {
@@ -63,13 +63,13 @@ const Header = () => {
       key: "coaches",
       icon: <CoachIcon />,
     },
-    // ...(user.role === "ADMIN" ? [
-    //   {
-    //     label: <Link to={"/admin"}>Admin Dashboard</Link>,
-    //     key: "admin",
-    //     icon: <AdminIcon />
-    //   }
-    // ] : []),
+
+
+
+
+
+
+
     {
       label: <Link to={user.role === "ADMIN" ? "/admin/leagues" : "/leagues"}>Leagues</Link>,
       key: "leagues",

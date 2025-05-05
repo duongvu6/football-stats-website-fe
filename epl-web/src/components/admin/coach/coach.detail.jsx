@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach/coach.detail.jsx
+
 import { useEffect, useState } from "react";
 import { Descriptions, Spin } from "antd";
 import { useParams } from "react-router-dom";
@@ -11,12 +11,10 @@ const AdminCoachDetail = () => {
     const [coach, setCoach] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Load coach details when component mounts
     useEffect(() => {
         loadCoachDetail();
     }, [id]);
 
-    // Function to load coach details from API
     const loadCoachDetail = async () => {
         setLoading(true);
         try {
@@ -31,7 +29,6 @@ const AdminCoachDetail = () => {
         }
     };
 
-    // Format date for display
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -42,7 +39,6 @@ const AdminCoachDetail = () => {
         });
     };
 
-    // Show loading spinner while data is being fetched
     if (loading || !coach) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -51,7 +47,6 @@ const AdminCoachDetail = () => {
         );
     }
 
-    // Prepare coach club history columns
     const coachClubColumns = [
         {
             title: "Start Date",

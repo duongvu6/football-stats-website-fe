@@ -1,4 +1,4 @@
-// epl-web/src/pages/client/players.jsx
+
 import ClientPlayerTable from "../../components/client/player/player.table.jsx";
 
 const PlayerPage = () => {

@@ -2,7 +2,7 @@ import { Form, Input } from "antd";
 import { useEffect } from "react";
 
 const LeagueForm = ({ form, initialValues = {}, formName = "leagueForm" }) => {
-    // Initialize form with values if in edit mode
+
     useEffect(() => {
         if (initialValues && Object.keys(initialValues).length > 0) {
             form.setFieldsValue({

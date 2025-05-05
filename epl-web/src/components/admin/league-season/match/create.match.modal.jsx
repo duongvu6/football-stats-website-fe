@@ -10,7 +10,7 @@ const CreateMatchModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) => {
 
     useEffect(() => {
         if (isOpen && leagueSeason) {
-            // Extract clubs from the league season's clubSeasonTables
+
             if (leagueSeason.clubSeasonTables && leagueSeason.clubSeasonTables.length > 0) {
                 const clubOptions = leagueSeason.clubSeasonTables.map(ct => ({
                     label: ct.club.name,
@@ -20,7 +20,6 @@ const CreateMatchModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) => {
                 setClubs(clubOptions);
             }
 
-            // Reset form
             form.resetFields();
         }
     }, [isOpen, leagueSeason, form]);
@@ -35,7 +34,6 @@ const CreateMatchModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Create match data object
             const matchData = {
                 season: leagueSeason.id,
                 host: values.homeClub,
@@ -46,7 +44,6 @@ const CreateMatchModal = ({ leagueSeason, isOpen, setIsOpen, onSuccess }) => {
                 date: values.date ? values.date.format('YYYY-MM-DDTHH:mm:ss') : dayjs().format('YYYY-MM-DDTHH:mm:ss')
             };
 
-            // Call API to create match
             const res = await createMatchAPI(matchData);
 
             if (res && res.data) {

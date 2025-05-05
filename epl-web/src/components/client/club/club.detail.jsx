@@ -1,4 +1,4 @@
-// epl-web/src/components/client/club/club.detail.jsx
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -38,18 +38,16 @@ const ClientClubDetail = () => {
     const [statsLoading, setStatsLoading] = useState(false);
     const [leagueTableLoading, setLeagueTableLoading] = useState(false);
 
-    // Load club details and available seasons
     useEffect(() => {
         const fetchClubData = async () => {
             setLoading(true);
             try {
-                // Get club details
+
                 const clubResponse = await fetchClubDetailAPI(id);
                 if (clubResponse.data) {
                     setClub(clubResponse.data);
                 }
 
-                // Get seasons for this club
                 const seasonResponse = await getClubSeasonsAPI(id);
                 if (seasonResponse.data) {
                     const seasonsList = seasonResponse.data.map(season => ({
@@ -61,7 +59,6 @@ const ClientClubDetail = () => {
 
                     setSeasons(seasonsList);
 
-                    // Set the first season as default if available
                     if (seasonsList.length > 0) {
                         setSelectedSeason(seasonsList[0]);
                     }
@@ -80,7 +77,6 @@ const ClientClubDetail = () => {
         fetchClubData();
     }, [id]);
 
-    // Load season-specific data when selected season changes
     useEffect(() => {
         if (!selectedSeason) return;
 
@@ -88,7 +84,7 @@ const ClientClubDetail = () => {
             setDataLoading(true);
             setStatsLoading(true);
             try {
-                // Fetch squad list for the selected season
+
                 const squadResponse = await getClubSquadAPI(id, selectedSeason.id);
                 if (squadResponse.data) {
                     setSquadList(squadResponse.data);
@@ -96,24 +92,20 @@ const ClientClubDetail = () => {
                     setSquadList([]);
                 }
 
-                // Fetch transfers for the selected season
                 const transferResponse = await getClubTransfersAPI(id, selectedSeason.id);
                 if (transferResponse.data) {
                     setTransfers(transferResponse.data);
 
-                    // Process and separate transfers into arrivals and departures
-                    // Check if club name is available
+
                     if (club && club.name) {
                         const clubName = club.name;
 
-                        // Arrivals: transfers TO this club (destination is this club)
                         const arrivalsData = transferResponse.data.filter(transfer =>
                             transfer.club === clubName ||
                             (transfer.club && transfer.club.id === parseInt(id))
                         );
                         setArrivals(arrivalsData);
 
-                        // Departures: transfers FROM this club (source is this club)
                         const departuresData = transferResponse.data.filter(transfer =>
                             transfer.previousClub === clubName ||
                             (transfer.previousClub && transfer.previousClub.id === parseInt(id))
@@ -129,7 +121,6 @@ const ClientClubDetail = () => {
                     setDepartures([]);
                 }
 
-                // Fetch top scorers for the club in this season
                 try {
                     const scorersResponse = await getClubTopScorersAPI(selectedSeason.id, id);
                     if (scorersResponse.data) {
@@ -142,7 +133,6 @@ const ClientClubDetail = () => {
                     setTopScorers([]);
                 }
 
-                // Fetch top assists for the club in this season
                 try {
                     const assistsResponse = await getClubTopAssistsAPI(selectedSeason.id, id);
                     if (assistsResponse.data) {
@@ -155,15 +145,14 @@ const ClientClubDetail = () => {
                     setTopAssists([]);
                 }
 
-                // Fetch league season data for standings
                 setLeagueTableLoading(true);
                 try {
                     const leagueSeasonResponse = await fetchLeagueSeasonDetailAPI(selectedSeason.id);
                     if (leagueSeasonResponse.data && leagueSeasonResponse.data.clubSeasonTables) {
-                        // Sort by position or points
+
                         const sortedData = [...leagueSeasonResponse.data.clubSeasonTables]
                             .sort((a, b) => {
-                                // Sort by ranked property if available, otherwise points
+
                                 if (a.ranked && b.ranked) return a.ranked - b.ranked;
                                 return b.points - a.points || b.diff - a.diff;
                             })
@@ -199,13 +188,11 @@ const ClientClubDetail = () => {
         fetchSeasonData();
     }, [selectedSeason, id, club]);
 
-    // Handle season selection change
     const handleSeasonChange = (value) => {
         const selected = seasons.find(season => season.id === value);
         setSelectedSeason(selected);
     };
 
-    // Format date for display
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -216,7 +203,6 @@ const ClientClubDetail = () => {
         });
     };
 
-    // Define columns for the squad table
     const squadColumns = [
         {
             title: "Name",
@@ -284,7 +270,6 @@ const ClientClubDetail = () => {
         }
     ];
 
-    // Define columns for the transfers table
     const transferColumns = [
         {
             title: "Date",
@@ -343,7 +328,6 @@ const ClientClubDetail = () => {
         }
     ];
 
-    // Stats table columns
     const statsColumns = [
         {
             title: "Rank",
@@ -394,7 +378,6 @@ const ClientClubDetail = () => {
         }
     ];
 
-    // League table columns
     const leagueTableColumns = [
         {
             title: "Position",
@@ -454,7 +437,6 @@ const ClientClubDetail = () => {
         }
     ];
 
-    // Show loading spinner while data is being fetched
     if (loading) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>

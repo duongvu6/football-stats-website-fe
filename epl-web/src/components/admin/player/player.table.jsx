@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/player/player.table.jsx
+
 import { useState, useEffect } from "react";
 import {Button, Space, Table, Card, Image} from "antd";
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import EditPlayerModal from "./player.edit.jsx";
 import DeletePlayerButton from "./player.delete.jsx";
 
 const AdminPlayerTable = () => {
-    // State variables
+
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -21,12 +21,10 @@ const AdminPlayerTable = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentPlayer, setCurrentPlayer] = useState(null);
 
-    // Load players when component mounts
     useEffect(() => {
         loadPlayers();
     }, []);
 
-    // Function to load players from API
     const loadPlayers = async (page = pagination.current, pageSize = pagination.pageSize) => {
         setLoading(true);
         try {
@@ -51,17 +49,14 @@ const AdminPlayerTable = () => {
         }
     };
 
-    // Handle table pagination or sorting change
     const handleTableChange = (newPagination) => {
         loadPlayers(newPagination.current, newPagination.pageSize);
     };
 
-    // Open create player modal
     const showCreateModal = () => {
         setIsCreateModalOpen(true);
     };
 
-    // Open edit player modal
     const showEditModal = (player) => {
         setCurrentPlayer(player);
         setIsEditModalOpen(true);
@@ -72,18 +67,15 @@ const AdminPlayerTable = () => {
         loadPlayers(1); // Go to first page to see new player
     };
 
-    // After successfully editing a player
     const handleEditSuccess = () => {
         setIsEditModalOpen(false);
         loadPlayers(pagination.current); // Reload current page
     };
 
-    // After successfully deleting a player
     const handleDeleteSuccess = () => {
         loadPlayers(pagination.current); // Reload current page
     };
 
-    // Table columns configuration
     const columns = [
         {
             title: "#",

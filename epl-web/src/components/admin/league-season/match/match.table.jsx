@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/match/match.table.jsx
+
 import { Table, Button, Space, Tag, Tabs } from "antd";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -20,7 +20,6 @@ const MatchTable = ({ leagueSeason }) => {
                 const matchData = res.data.result;
                 setMatches(matchData);
 
-                // Group matches by round
                 const groups = {};
                 matchData.forEach(match => {
                     const round = match.round || 1;
@@ -110,12 +109,10 @@ const MatchTable = ({ leagueSeason }) => {
         },
     ];
 
-    // If there are no matches or still loading
     if (loading) {
         return <div>Loading matches...</div>;
     }
 
-    // Create tab items for each round
     const roundTabs = Object.keys(roundGroups).sort((a, b) => Number(a) - Number(b)).map(round => ({
         key: round,
         label: `Round ${round}`,

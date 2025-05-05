@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/league.season.table.jsx
+
 import { Table, Space } from "antd";
 import { Link } from "react-router-dom";
 import EditLeagueSeasonButton from "./edit.league-season.button.jsx";
@@ -11,7 +11,7 @@ const LeagueSeasonTable = ({
                                onSuccess,
                                isAdmin = false
                            }) => {
-    // Modify the name column to include a link
+
     const columnsWithLinks = seasonColumns.map(column => {
         if (column.key === "name") {
             return {
@@ -26,7 +26,6 @@ const LeagueSeasonTable = ({
         return column;
     });
 
-    // Add actions column for admin view
     const columns = isAdmin
         ? [
             ...columnsWithLinks,

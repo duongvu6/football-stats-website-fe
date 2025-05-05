@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/match/delete.match-action.button.jsx
+
 import { Button, Popconfirm, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteMatchActionAPI } from "../../../../services/api.service.js";

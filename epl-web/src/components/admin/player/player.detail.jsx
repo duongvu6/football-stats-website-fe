@@ -10,12 +10,10 @@ const AdminPlayerDetail = () => {
     const [player, setPlayer] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Load player details when component mounts
     useEffect(() => {
         loadPlayerDetail();
     }, [id]);
 
-    // Function to load player details from API
     const loadPlayerDetail = async () => {
         setLoading(true);
         try {
@@ -30,7 +28,6 @@ const AdminPlayerDetail = () => {
         }
     };
 
-    // Function to format dates
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -41,7 +38,6 @@ const AdminPlayerDetail = () => {
         });
     };
 
-    // Show loading spinner while data is being fetched
     if (loading || !player) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -50,7 +46,6 @@ const AdminPlayerDetail = () => {
         );
     }
 
-    // Create description items for player details
     const descriptionItems = [
         { label: "ID", value: player.id },
         { label: "Name", value: player.name },

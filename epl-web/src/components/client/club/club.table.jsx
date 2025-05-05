@@ -14,10 +14,8 @@ const ClientClubTable = () => {
         total: 0
     });
 
-    // Extract filter parameters from URL
     const country = searchParams.get('country');
 
-    // Determine if we have any filters active
     useEffect(() => {
         if (country) {
             setFilterInfo(`Filtering by: Country "${country}"`);
@@ -29,14 +27,13 @@ const ClientClubTable = () => {
     const fetchClubs = async (params = {}) => {
         setLoading(true);
         try {
-            // Build Spring Filter compliant filter string
+
             let filterParts = [];
 
             if (country) {
                 filterParts.push(`country : '${country}'`);
             }
 
-            // API query parameters
             const queryParams = {
                 page: params.current || pagination.current,
                 size: params.pageSize || pagination.pageSize,
@@ -64,9 +61,8 @@ const ClientClubTable = () => {
         fetchClubs();
     }, [country]);
 
-    // Handle pagination changes
     const handleTableChange = (newPagination, filters, sorter) => {
-        // Only fetch new data when pagination changes
+
         if (newPagination.current !== pagination.current ||
             newPagination.pageSize !== pagination.pageSize) {
             fetchClubs({

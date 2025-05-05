@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach-club/create.coach-club.modal.jsx
+
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState } from "react";
 import CoachClubForm from "./coach-club.form.jsx";
@@ -20,7 +20,6 @@ const CreateCoachClubModal = ({ coach, isOpen, setIsOpen, onSuccess }) => {
 
             console.log("Form values on submit:", values);
 
-            // Create a new coach club object
             const newCoachClub = {
                 headCoach: coach.id,
                 startDate: values.startDate.format('YYYY-MM-DD'),
@@ -30,7 +29,6 @@ const CreateCoachClubModal = ({ coach, isOpen, setIsOpen, onSuccess }) => {
 
             console.log("Creating new coach club:", newCoachClub);
 
-            // Add API call to create coach club
             const res = await createCoachClubAPI(newCoachClub);
 
             if (res && res.data) {

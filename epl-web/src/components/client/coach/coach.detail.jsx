@@ -1,4 +1,4 @@
-// epl-web/src/components/client/coach/coach.detail.jsx
+
 import { useEffect, useState } from "react";
 import { Descriptions, Spin, Tag, Table } from "antd";
 import { useParams, Link } from "react-router-dom";
@@ -9,12 +9,10 @@ const ClientCoachDetail = () => {
     const [coach, setCoach] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Load coach details when component mounts
     useEffect(() => {
         loadCoachDetail();
     }, [id]);
 
-    // Function to fetch coach details from API
     const loadCoachDetail = async () => {
         setLoading(true);
         try {
@@ -29,7 +27,6 @@ const ClientCoachDetail = () => {
         }
     };
 
-    // Format date for display
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -40,7 +37,6 @@ const ClientCoachDetail = () => {
         });
     };
 
-    // Create citizenship links
     const makeCitizenshipLinks = (citizenships) => {
         if (!citizenships) return "-";
         if (!Array.isArray(citizenships)) citizenships = [citizenships];
@@ -52,7 +48,6 @@ const ClientCoachDetail = () => {
         ));
     };
 
-    // Get current club name with link
     const getCurrentClub = () => {
         if (!coach.coachClubs || coach.coachClubs.length === 0) return "No club";
 
@@ -70,7 +65,6 @@ const ClientCoachDetail = () => {
         return currentClub.club || "No club";
     };
 
-    // Show loading spinner while data is being fetched
     if (loading || !coach) {
         return (
             <div style={{ textAlign: "center", padding: "50px" }}>
@@ -79,7 +73,6 @@ const ClientCoachDetail = () => {
         );
     }
 
-    // Define columns for the club history table
     const clubHistoryColumns = [
         {
             title: "Start Date",

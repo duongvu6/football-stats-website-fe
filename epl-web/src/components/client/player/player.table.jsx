@@ -1,18 +1,17 @@
-// epl-web/src/components/client/player/player.table.jsx
+
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import {Table, Card, Alert, Button, Tag, Image} from "antd";
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
 
 const ClientPlayerTable = () => {
-    // Get filter parameters from URL search parameters
+
     const [searchParams] = useSearchParams();
     const position = searchParams.get('position');
     const citizenship = searchParams.get('citizenship');
     const transferType = searchParams.get('transferType');
     const club = searchParams.get('club');
 
-    // State variables
     const [filterInfo, setFilterInfo] = useState(null);
     const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,7 +21,6 @@ const ClientPlayerTable = () => {
         total: 0
     });
 
-    // Update filter info when URL parameters change
     useEffect(() => {
         if (position || citizenship || transferType || club) {
             let filterText = "Filtering by: ";
@@ -39,11 +37,10 @@ const ClientPlayerTable = () => {
         }
     }, [position, citizenship, transferType, club]);
 
-    // Function to fetch players with filters
     const fetchPlayers = async (params = {}) => {
         setLoading(true);
         try {
-            // Build filter query
+
             let filterParts = [];
 
             if (position) {
@@ -62,7 +59,6 @@ const ClientPlayerTable = () => {
                 filterParts.push(`transferHistories.club.id : ${club}`);
             }
 
-            // API query parameters
             const queryParams = {
                 page: params.current || pagination.current,
                 size: params.pageSize || pagination.pageSize,
@@ -86,12 +82,10 @@ const ClientPlayerTable = () => {
         }
     };
 
-    // Load players when filters change
     useEffect(() => {
         fetchPlayers();
     }, [position, citizenship, transferType, club]);
 
-    // Handle pagination changes
     const handleTableChange = (newPagination) => {
         if (newPagination.current !== pagination.current ||
             newPagination.pageSize !== pagination.pageSize) {

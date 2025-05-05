@@ -8,7 +8,7 @@ const DeleteCoachButton = ({ coachId, onSuccess }) => {
             const res = await deleteCoachAPI(coachId);
             if (res.data) {
                 message.success("Coach deleted successfully");
-                // Call onSuccess to refresh data but stay on current page
+
                 onSuccess();
             } else {
                 message.error("Failed to delete player");

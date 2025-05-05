@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/transfer-history/delete.transfer.button.jsx
+
 import { Button, Popconfirm, message, notification } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 import {deleteTransferAPI, updatePlayerAPI} from "../../../services/api.service.js";
@@ -6,7 +6,7 @@ import {deleteTransferAPI, updatePlayerAPI} from "../../../services/api.service.
 const DeleteTransferButton = ({ player, transfer, onSuccess }) => {
     const handleDelete = async () => {
         try {
-            // Call API to update player with modified transfer history
+
             const res = await deleteTransferAPI(transfer.id);
 
             if (res.status === 200) {

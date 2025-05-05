@@ -3,12 +3,11 @@ import dayjs from "dayjs";
 import {DatePicker, Form, Input, InputNumber, Select} from "antd";
 
 const CoachForm = ({ form, initialValues = {}, formName = "coachForm" }) => {
-    // Initialize form with values if in edit mode
+
     useEffect(() => {
         if (initialValues && Object.keys(initialValues).length > 0) {
             console.log('Initial values received:', initialValues);
 
-            // Get date of birth from the correct field (.dob from backend)
             const dateOfBirth = initialValues.dob ? dayjs(initialValues.dob) : null;
 
             form.setFieldsValue({

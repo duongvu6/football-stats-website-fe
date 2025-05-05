@@ -7,7 +7,6 @@ const EditCoachModal = ({ isOpen, onCancel, onSuccess, coach }) => {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
             form.resetFields();
@@ -19,7 +18,6 @@ const EditCoachModal = ({ isOpen, onCancel, onSuccess, coach }) => {
             const values = await form.validateFields();
             setSubmitting(true);
 
-            // Format the date for the API
             const formattedValues = {
                 ...values,
                 dob: values.dob ? values.dob.format('YYYY-MM-DD') : null,
@@ -31,7 +29,7 @@ const EditCoachModal = ({ isOpen, onCancel, onSuccess, coach }) => {
             const res = await updateCoachAPI(formattedValues);
             if (res.data) {
                 message.success("Coach updated successfully");
-                // Call onSuccess to trigger table reload
+
                 onSuccess();
                 onCancel(); // Close the modal
             } else {

@@ -1,10 +1,10 @@
-// epl-web/src/components/admin/transfer-history/transfer.history.table.jsx
+
 import { Table, Space } from "antd";
 import EditTransferButton from "./edit.transfer.button.jsx";
 import DeleteTransferButton from "./delete.transfer.button.jsx";
 
 const TransferHistoryTable = ({ transferHistories, player, onSuccess, isAdmin = false }) => {
-    // Function to format dates
+
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -15,7 +15,6 @@ const TransferHistoryTable = ({ transferHistories, player, onSuccess, isAdmin = 
         });
     };
 
-    // Define base columns for the transfer table
     const baseColumns = [
         {
             title: "Date",
@@ -33,7 +32,7 @@ const TransferHistoryTable = ({ transferHistories, player, onSuccess, isAdmin = 
             title: "Joined",
             key: "club",
             render: (_, record) => {
-                // Handle different club data formats
+
                 if (typeof record.club === 'object' && record.club) {
                     return record.club.name;
                 }
@@ -57,7 +56,6 @@ const TransferHistoryTable = ({ transferHistories, player, onSuccess, isAdmin = 
         }
     ];
 
-    // Add actions column for admin view
     const columns = isAdmin
         ? [
             ...baseColumns,

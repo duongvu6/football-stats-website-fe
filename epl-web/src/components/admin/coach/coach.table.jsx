@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach/coach.table.jsx
+
 import { useState, useEffect } from "react";
 import { Button, Space, Table, Card } from "antd";
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import { fetchAllCoachesAPI } from "../../../services/api.service.js";
 import { Link } from "react-router-dom";
 
 const AdminCoachTable = () => {
-    // State variables
+
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentCoach, setCurrentCoach] = useState(null);
@@ -21,7 +21,6 @@ const AdminCoachTable = () => {
     });
     const [loading, setLoading] = useState(false);
 
-    // Fetch data function
     const fetchData = async (params = {}) => {
         setLoading(true);
         try {
@@ -46,7 +45,6 @@ const AdminCoachTable = () => {
         }
     };
 
-    // Load data initially
     useEffect(() => {
         fetchData();
     }, []);
@@ -83,7 +81,6 @@ const AdminCoachTable = () => {
         fetchData({ current: pagination.current });
     };
 
-    // Table columns
     const columns = [
         {
             title: "#",

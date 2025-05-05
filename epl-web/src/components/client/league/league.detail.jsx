@@ -351,8 +351,8 @@ const LeagueDetailPage = () => {
             title: "Yellow Cards",
             dataIndex: "yellowCards",
             key: "yellowCards",
-            // sorter: (a, b) => a.yellowCards - b.yellowCards,
-            // defaultSortOrder: 'descend'
+
+
         },
         {
             title: "Red Cards",

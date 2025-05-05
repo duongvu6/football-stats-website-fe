@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league/league.table.jsx
+
 import { useState, useEffect } from "react";
 import { Button, Space, Table, Card } from "antd";
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import EditLeagueModal from "./league.edit.jsx";
 import DeleteLeagueButton from "./league.delete.jsx";
 
 const AdminLeagueTable = () => {
-    // State variables
+
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentLeague, setCurrentLeague] = useState(null);
@@ -21,7 +21,6 @@ const AdminLeagueTable = () => {
     });
     const [loading, setLoading] = useState(false);
 
-    // Fetch data function
     const fetchData = async (params = {}) => {
         setLoading(true);
         try {
@@ -39,7 +38,7 @@ const AdminLeagueTable = () => {
                     total: response.data.meta.total
                 });
             } else if (Array.isArray(response.data)) {
-                // Handle non-paginated response
+
                 setData(response.data);
                 setPagination(prev => ({
                     ...prev,
@@ -53,7 +52,6 @@ const AdminLeagueTable = () => {
         }
     };
 
-    // Load data initially
     useEffect(() => {
         fetchData();
     }, []);
@@ -90,7 +88,6 @@ const AdminLeagueTable = () => {
         fetchData({ current: pagination.current });
     };
 
-    // Table columns
     const columns = [
         {
             title: "#",

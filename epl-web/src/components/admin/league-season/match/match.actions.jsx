@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/match/match.actions.jsx
+
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Table, Card, Row, Col, Typography, Spin, Space, Tag } from "antd";
@@ -24,7 +24,7 @@ const MatchActionPage = () => {
             }
 
             const actionsRes = await fetchMatchActionsAPI(id);
-            // Handle paginated response format
+
             if (actionsRes.data && actionsRes.data.result) {
                 setMatchActions(actionsRes.data.result);
             } else if (Array.isArray(actionsRes.data)) {
@@ -67,31 +67,26 @@ const MatchActionPage = () => {
         });
     };
 
-    // Determine player's team based on multiple possible data structures
     const determinePlayerTeam = (player) => {
         if (!player) return "Unknown";
 
-        // Get host and away club info for comparison
         const hostClubId = match.host.id;
         const hostClubName = match.host.name;
         const awayClubId = match.away.id;
         const awayClubName = match.away.name;
 
-        // Check if player has club as direct property
         if (player.club) {
             if (typeof player.club === 'object') {
-                // Compare by ID if available, then by name
+
                 if (player.club.id === hostClubId) return hostClubName;
                 if (player.club.id === awayClubId) return awayClubName;
 
-                // If ID comparison failed, try name
                 if (player.club.name === hostClubName) return hostClubName;
                 if (player.club.name === awayClubName) return awayClubName;
 
-                // Return club name as fallback
                 return player.club.name;
             } else if (typeof player.club === 'string') {
-                // String comparison or partial match
+
                 if (player.club === hostClubName || player.club.includes(hostClubName) || hostClubName.includes(player.club)) {
                     return hostClubName;
                 }
@@ -102,23 +97,20 @@ const MatchActionPage = () => {
             }
         }
 
-        // Check transfer histories if available
         if (player.transferHistories && player.transferHistories.length > 0) {
             const latestTransfer = player.transferHistories[0];
             if (latestTransfer.club) {
                 if (typeof latestTransfer.club === 'object') {
-                    // Compare by ID if available, then by name
+
                     if (latestTransfer.club.id === hostClubId) return hostClubName;
                     if (latestTransfer.club.id === awayClubId) return awayClubName;
 
-                    // If ID comparison failed, try name
                     if (latestTransfer.club.name === hostClubName) return hostClubName;
                     if (latestTransfer.club.name === awayClubName) return awayClubName;
 
-                    // Return club name as fallback
                     return latestTransfer.club.name;
                 } else if (typeof latestTransfer.club === 'string') {
-                    // String comparison or partial match
+
                     if (latestTransfer.club === hostClubName ||
                         latestTransfer.club.includes(hostClubName) ||
                         hostClubName.includes(latestTransfer.club)) {
@@ -134,7 +126,6 @@ const MatchActionPage = () => {
             }
         }
 
-        // If everything fails, check the player ID against match actions to find a likely team
         return "Unknown Team";
     };
 

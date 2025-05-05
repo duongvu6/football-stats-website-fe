@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league-season/league.season.detail.jsx
+
 import { Tabs, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ const LeagueSeasonDetail = () => {
         try {
             const res = await fetchLeagueSeasonDetailAPI(id);
             if (res.data) {
-                // Add onRefresh method to the leagueSeason object
+
                 setLeagueSeason({
                     ...res.data,
                     onRefresh: loadLeagueSeasonDetail
@@ -33,7 +33,6 @@ const LeagueSeasonDetail = () => {
         loadLeagueSeasonDetail();
     }, [id]);
 
-    // Define tab items for Tabs component
     const tabItems = [
         {
             key: "clubs",

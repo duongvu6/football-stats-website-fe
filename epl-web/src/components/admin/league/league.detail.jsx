@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/league/league.detail.jsx
+
 import { Descriptions, Spin, notification } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -18,7 +18,7 @@ const AdminLeagueDetail = () => {
             const response = await fetchLeagueDetailAPI(id);
             if (response.data) {
                 setLeague(response.data);
-                // Extract seasons if they exist
+
                 if (response.data.leagueSeasons && Array.isArray(response.data.leagueSeasons)) {
                     setLeagueSeasons(response.data.leagueSeasons);
                 } else {
@@ -36,12 +36,10 @@ const AdminLeagueDetail = () => {
         }
     };
 
-    // Load league details when component mounts or ID changes
     useEffect(() => {
         loadLeagueDetail();
     }, [id]);
 
-    // Season table columns
     const seasonColumns = [
         {
             title: "ID",
@@ -67,7 +65,6 @@ const AdminLeagueDetail = () => {
         }
     ];
 
-    // Format date function
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);

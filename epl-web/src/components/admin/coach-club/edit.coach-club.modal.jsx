@@ -1,4 +1,4 @@
-// epl-web/src/components/admin/coach-club/edit.coach-club.modal.jsx
+
 import { Button, Form, message, Modal, notification } from "antd";
 import { useState, useEffect } from "react";
 import CoachClubForm from "./coach-club.form.jsx";
@@ -9,15 +9,12 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    // Initialize form with coach club data when modal opens
     useEffect(() => {
         if (isOpen && coachClub) {
             console.log("Coach Club to edit:", coachClub);
 
-            // Reset form first
             form.resetFields();
 
-            // Extract club ID correctly when club is an object
             let clubId = coachClub.club;
             if (typeof coachClub.club === 'object' && coachClub.club !== null) {
                 clubId = coachClub.club.id;
@@ -27,7 +24,6 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
                 console.log("Using clubId property:", clubId);
             }
 
-            // Set form values
             form.setFieldsValue({
                 startDate: coachClub.startDate ? dayjs(coachClub.startDate) : null,
                 endDate: coachClub.endDate ? dayjs(coachClub.endDate) : null,
@@ -48,7 +44,6 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
 
             console.log("Form values on submit:", values);
 
-            // Create a coach club object with the structure expected by the API
             const coachClubData = {
                 id: coachClub.id,
                 startDate: values.startDate.format('YYYY-MM-DD'),
@@ -59,7 +54,6 @@ const EditCoachClubModal = ({ coach, coachClub, isOpen, setIsOpen, onSuccess }) 
 
             console.log("Submitting coach club data:", coachClubData);
 
-            // Call API to update coach club
             const res = await updateCoachClubAPI(coachClubData);
 
             if (res && res.data) {
