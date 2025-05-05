@@ -5,7 +5,7 @@ const RegisterPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const onFinish = async (values) =>{
-        // call apivalues.
+
         const res =  await registerUserAPI(
             values.fullName,
             values.email,
@@ -14,12 +14,12 @@ const RegisterPage = () => {
         if(res.data){
             notification.success({
                 message: "Register user",
-                description: "Đăng ký user thành công "
+                description: "Register user successfully "
             });
             navigate("/login");
         }else{
             notification.error({
-                message: "Register user error",
+                message: "Error while registering user!",
                 description: JSON.stringify(res.message)
             })
         }
@@ -31,11 +31,11 @@ const RegisterPage = () => {
             form={form}
             layout="vertical"
             onFinish={onFinish}
-            //   onFinishFailed={onFinishFailed}
+
             autoComplete="off"
             style={{margin:"30px"}}
         >
-            <h3 style={{textAlign:"center"}}>Đăng ký tài khoản</h3>
+            <h3 style={{textAlign:"center"}}>Register</h3>
             <Row justify={"center"}>
                 <Col xs={24} md = {8}>
                     <Form.Item
@@ -94,20 +94,9 @@ const RegisterPage = () => {
                             type="primary">
                             Register
                         </Button>
-
-                        {/* <Button
-                    onClick={() =>{
-                      form.setFieldsValue({
-                        email: "hoidanit@gmail.com",
-                        fullName: "eric"
-                      })
-                      console.log(">>> Check form :",  form.getFieldsValue())
-
-                    }}
-                    >Test</Button> */}
                     </div>
                     <Divider />
-                    <div>Đã có tài khoản ? <Link to={"/login"}>Đăng nhập tại đây</Link></div>
+                    <div>Already have account ? <Link to={"/login"}>Login here</Link></div>
                 </Col>
             </Row>
 

@@ -1,19 +1,31 @@
 import { Link, useRouteError } from "react-router-dom";
+import '../styles/error/error.css'
+import {Button, Result} from "antd";
+import Paragraph from "antd/es/typography/Paragraph.js";
+import {CloseCircleOutlined} from "@ant-design/icons";
 export default function ErrorPage() {
     const error = useRouteError();
     console.error(error);
     return (
-        <div id="error-page">
-            <h1>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
-            <p>
-                <i>{error.statusText || error.message}</i>
-            </p>
+
+        <>
             <div>
-                <Link to="/">
-                    <span>Back to homepage</span>
-                </Link>
+                <Result
+                    status="error"
+                    title="Oops!"
+                    subTitle="Sorry, an unexpected error has occurred."
+                    extra={[
+                        <Button><Link to={"/"}>Back to homepage</Link></Button>
+                    ]}
+                >
+                    <div className="desc">
+                        <Paragraph>
+                            <CloseCircleOutlined className="site-result-demo-error-icon" /> Error: {error.statusText || error.message}
+
+                        </Paragraph>
+                    </div>
+                </Result>
             </div>
-        </div>
+        </>
     );
 }
