@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
     Card, Spin, Tabs, Table, Tag, Select, Typography, Descriptions,
-    Avatar, Row, Col, Divider, notification, Empty
+    Avatar, Row, Col, Divider, notification, Empty, Image
 } from "antd";
 import { Link } from "react-router-dom";
 import {
@@ -458,13 +458,14 @@ const ClientClubDetail = () => {
             {/* Club Header */}
             <Card>
                 <Row gutter={16} align="middle">
-                    {/* Club Logo/Avatar */}
+                    {/* Club Logo */}
                     <Col span={4} style={{ textAlign: "center" }}>
-                        {club.logo ? (
-                            <img src={club.logo} alt={club.name} style={{ maxWidth: 100, maxHeight: 100 }} />
-                        ) : (
-                            <Avatar size={100}>{club.name.charAt(0)}</Avatar>
-                        )}
+                        <Image
+                            src={club.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/club/${club.imageUrl}` : null}
+                            alt={club.name}
+                            style={{ maxWidth: 150, maxHeight: 150 }}
+                            fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                        />
                     </Col>
 
                     {/* Club Basic Info */}
@@ -474,23 +475,6 @@ const ClientClubDetail = () => {
                             <Descriptions.Item label="Country">{club.country}</Descriptions.Item>
                             <Descriptions.Item label="Stadium">{club.stadiumName || 'N/A'}</Descriptions.Item>
                         </Descriptions>
-                    </Col>
-
-                    {/* Season Selector */}
-                    <Col span={4}>
-                        <Text strong>Season</Text>
-                        <Select
-                            style={{ width: '100%', marginTop: '8px' }}
-                            value={selectedSeason?.id}
-                            onChange={handleSeasonChange}
-                            disabled={seasons.length === 0}
-                        >
-                            {seasons.map(season => (
-                                <Option key={season.id} value={season.id}>
-                                    {season.name} {season.leagueName ? `(${season.leagueName})` : ''}
-                                </Option>
-                            ))}
-                        </Select>
                     </Col>
                 </Row>
             </Card>

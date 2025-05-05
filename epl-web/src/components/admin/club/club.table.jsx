@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Space, Table, Card } from "antd";
+import {Button, Space, Table, Card, Image} from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { fetchAllClubsWithPaginationAPI } from "../../../services/api.service.js";
 import { Link } from "react-router-dom";
@@ -78,6 +78,22 @@ const AdminClubTable = () => {
         {
             title: "ID",
             dataIndex: "id"
+        },
+        {
+            title: "Logo",
+            dataIndex: "imageUrl",
+            key: "logo",
+            width: 70,
+            render: (imageUrl) => (
+                <Image
+                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/club/${imageUrl}` : null}
+                    alt="Club Logo"
+                    width={50}
+                    height={50}
+                    style={{ objectFit: 'contain' }}
+                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                />
+            )
         },
         {
             title: "Name",

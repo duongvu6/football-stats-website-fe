@@ -1,11 +1,16 @@
 import { Button, Form, Input, Modal, message } from "antd";
 import { useState } from "react";
 import { createClubAPI } from "../../../services/api.service.js";
+import ImageUploader from "../../common/ImageUploader.jsx";
 
 const CreateClubModal = ({ isOpen, onCancel, onSuccess }) => {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
-
+    const [imageFileName, setImageFileName] = useState(null);
+    const handleImageUpload = (fileName) => {
+        setImageFileName(fileName);
+        form.setFieldsValue({ imageUrl: fileName });
+    };
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
@@ -69,6 +74,17 @@ const CreateClubModal = ({ isOpen, onCancel, onSuccess }) => {
                     label="Stadium Name"
                 >
                     <Input placeholder="Enter stadium name" />
+                </Form.Item>
+                <Form.Item
+                    name="imageUrl"
+                    label="Club Logo"
+                    tooltip="Upload a club logo (JPG or PNG format)"
+                >
+                    <ImageUploader
+                        entityType="club"
+                        initialImageUrl={imageFileName}
+                        onImageUpload={handleImageUpload}
+                    />
                 </Form.Item>
             </Form>
         </Modal>
