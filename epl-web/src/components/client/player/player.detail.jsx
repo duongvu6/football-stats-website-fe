@@ -4,7 +4,7 @@ import { Descriptions, Spin, Tag } from "antd";
 import { useParams, Link } from "react-router-dom";
 import { fetchPlayerDetailAPI } from "../../../services/api.service.js";
 import TransferHistoryTable from "../../admin/transfer-history/transfer.history.table.jsx";
-
+import { Row, Col, Image } from 'antd';
 const ClientPlayerDetail = () => {
     const { id } = useParams(); // Get player ID from URL
     const [player, setPlayer] = useState(null);
@@ -94,12 +94,24 @@ const ClientPlayerDetail = () => {
 
     return (
         <div style={{ padding: "30px" }}>
-            <Descriptions title="Player Details" bordered>
-                {descriptionItems.map((item, index) => (
-                    <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
-                ))}
-            </Descriptions>
-
+            <Row gutter={[24, 24]}>
+                <Col xs={24} md={6}>
+                    <Image
+                        src={player.imageUrl ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/storage/player/${player.imageUrl}` : null}
+                        alt={player.name}
+                        style={{ width: '100%', maxWidth: '300px', borderRadius: '8px', marginBottom: '20px' }}
+                        fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                    />
+                </Col>
+                <Col xs={24} md={18}>
+                    <Descriptions title="Player Details" bordered>
+                        {descriptionItems.map((item, index) => (
+                            <Descriptions.Item key={index} label={item.label}>{item.value}</Descriptions.Item>
+                        ))}
+                    </Descriptions>
+                </Col>
+            </Row>
+    
             <div style={{ marginTop: "30px" }}>
                 <h3>Transfer History</h3>
                 <TransferHistoryTable
