@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Card } from "antd";
+import {Table, Card, Image} from "antd";
 import { Link } from "react-router-dom";
 import { fetchAllLeaguesAPI } from "../../../services/api.service.js";
 
@@ -58,6 +58,22 @@ const ClientLeagueTable = () => {
     };
 
     const columns = [
+        {
+            title: "Logo",
+            dataIndex: "imageUrl",
+            key: "logo",
+            width: 80,
+            render: (imageUrl) => (
+                <Image
+                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL }/storage/league/${imageUrl}` : null}
+                    alt="League Logo"
+                    width={50}
+                    height={50}
+                    style={{ objectFit: 'contain' }}
+                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                />
+            )
+        },
         {
             title: "League",
             dataIndex: "name",

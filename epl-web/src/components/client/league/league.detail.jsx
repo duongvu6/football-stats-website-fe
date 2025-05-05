@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal, notification } from "antd";
+import {Card, Col, Row, Typography, Spin, Select, Table, Tabs, Button, Modal, notification, Image} from "antd";
 import { BarChartOutlined, CalendarOutlined, TrophyOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import {
     fetchLeagueDetailAPI,
@@ -483,20 +483,32 @@ const LeagueDetailPage = () => {
             <Row gutter={[16, 16]}>
                 <Col span={24}>
                     <Card>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Title level={2}>{league.name}</Title>
-                            <Select
-                                value={selectedSeason?.id}
-                                style={{ width: 150 }}
-                                onChange={handleSeasonChange}
-                                disabled={seasons.length === 0}
-                                loading={seasonLoading}
-                            >
-                                {seasons.map(season => (
-                                    <Option key={season.id} value={season.id}>{season.name}</Option>
-                                ))}
-                            </Select>
-                        </div>
+                        <Row gutter={[24, 24]}>
+                            <Col xs={24} sm={8} md={6} style={{ textAlign: 'center' }}>
+                                <Image
+                                    src={league.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/league/${league.imageUrl}` : null}
+                                    alt={league.name}
+                                    style={{ maxWidth: '150px', maxHeight: '150px' }}
+                                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                                />
+                            </Col>
+                            <Col xs={24} sm={16} md={18}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Title level={2}>{league.name}</Title>
+                                    <Select
+                                        value={selectedSeason?.id}
+                                        style={{ width: 150 }}
+                                        onChange={handleSeasonChange}
+                                        disabled={seasons.length === 0}
+                                        loading={seasonLoading}
+                                    >
+                                        {seasons.map(season => (
+                                            <Option key={season.id} value={season.id}>{season.name}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </Col>
+                        </Row>
                     </Card>
                 </Col>
             </Row>

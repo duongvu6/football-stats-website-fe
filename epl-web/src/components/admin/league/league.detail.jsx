@@ -1,5 +1,5 @@
 
-import { Descriptions, Spin, notification } from "antd";
+import {Descriptions, Spin, notification, Row, Col, Card, Image, Button} from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchLeagueDetailAPI } from "../../../services/api.service.js";
@@ -11,7 +11,11 @@ const AdminLeagueDetail = () => {
     const [loading, setLoading] = useState(true);
     const [league, setLeague] = useState(null);
     const [leagueSeasons, setLeagueSeasons] = useState([]);
-
+    const [isImageUploaderVisible, setIsImageUploaderVisible] = useState(false);
+    const handleImageUploadComplete = () => {
+        setIsImageUploaderVisible(false);
+        loadLeagueDetail(); // Reload league data to get the updated image
+    };
     const loadLeagueDetail = async () => {
         setLoading(true);
         try {
@@ -93,10 +97,26 @@ const AdminLeagueDetail = () => {
 
     return (
         <div style={{ padding: "30px" }}>
-            <Descriptions title="League Details" bordered>
-                <Descriptions.Item label="ID">{league.id}</Descriptions.Item>
-                <Descriptions.Item label="Name">{league.name}</Descriptions.Item>
-            </Descriptions>
+            <Row gutter={[24, 24]}>
+                <Col xs={24} md={6}>
+                    <Card>
+                        <div style={{ textAlign: 'center' }}>
+                            <Image
+                                src={league.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/league/${league.imageUrl}` : null}
+                                alt={league.name}
+                                style={{ maxWidth: '200px', maxHeight: '200px' }}
+                                fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                            />
+                        </div>
+                    </Card>
+                </Col>
+                <Col xs={24} md={18}>
+                    <Descriptions title="League Details" bordered>
+                        <Descriptions.Item label="ID">{league.id}</Descriptions.Item>
+                        <Descriptions.Item label="Name">{league.name}</Descriptions.Item>
+                    </Descriptions>
+                </Col>
+            </Row>
 
             <div style={{ marginTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
