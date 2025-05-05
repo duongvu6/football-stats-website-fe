@@ -87,8 +87,6 @@ const LeagueDetailPage = () => {
                 if (res.data) {
                     const seasonDetail = res.data;
                     setSeasonData(seasonDetail);
-
-                    
                     if (seasonDetail.clubSeasonTables && seasonDetail.clubSeasonTables.length > 0) {
                         
                         const clubData = seasonDetail.clubSeasonTables.map(clubTable => ({
