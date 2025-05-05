@@ -1,14 +1,14 @@
 import { Form, Input, InputNumber, Select, DatePicker } from "antd";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import dayjs from 'dayjs';
+import ImageUploader from "../../common/ImageUploader.jsx";
 
 const PlayerForm = ({ form, initialValues = {}, formName = "playerForm" }) => {
-    // Initialize form with values if in edit mode
+    const [imageFileName, setImageFileName] = useState(initialValues?.imageUrl || null);
     useEffect(() => {
         if (initialValues && Object.keys(initialValues).length > 0) {
             console.log('Initial values received:', initialValues);
 
-            // Get date of birth from the correct field (.dob from backend)
             const dateOfBirth = initialValues.dob ? dayjs(initialValues.dob) : null;
 
             form.setFieldsValue({
@@ -17,11 +17,16 @@ const PlayerForm = ({ form, initialValues = {}, formName = "playerForm" }) => {
                 marketValue: initialValues.marketValue,
                 shirtNumber: initialValues.shirtNumber,
                 citizenships: initialValues.citizenships,
-                positions: initialValues.positions
+                positions: initialValues.positions,
+                imageUrl: initialValues.imageUrl
             });
+            setImageFileName(initialValues.imageUrl);
         }
     }, [initialValues, form]);
-
+    const handleImageUpload = (fileName) => {
+        setImageFileName(fileName);
+        form.setFieldsValue({ imageUrl: fileName });
+    };
     return (
         <Form
             form={form}
@@ -86,6 +91,17 @@ const PlayerForm = ({ form, initialValues = {}, formName = "playerForm" }) => {
                     mode="tags"
                     style={{ width: '100%' }}
                     placeholder="Select positions"
+                />
+            </Form.Item>
+            <Form.Item
+                name="imageUrl"
+                label="Player Image"
+                tooltip="Upload a player photo (JPG or PNG format)"
+            >
+                <ImageUploader 
+                    entityType="player" 
+                    initialImageUrl={imageFileName} 
+                    onImageUpload={handleImageUpload}
                 />
             </Form.Item>
         </Form>

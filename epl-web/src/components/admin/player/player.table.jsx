@@ -1,6 +1,6 @@
 // epl-web/src/components/admin/player/player.table.jsx
 import { useState, useEffect } from "react";
-import { Button, Space, Table, Card } from "antd";
+import {Button, Space, Table, Card, Image} from "antd";
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import { fetchAllPlayersAPI } from "../../../services/api.service.js";
@@ -67,7 +67,6 @@ const AdminPlayerTable = () => {
         setIsEditModalOpen(true);
     };
 
-    // After successfully creating a player
     const handleCreateSuccess = () => {
         setIsCreateModalOpen(false);
         loadPlayers(1); // Go to first page to see new player
@@ -94,6 +93,21 @@ const AdminPlayerTable = () => {
         {
             title: "ID",
             dataIndex: "id",
+        },
+        {
+            title: "Image",
+            dataIndex: "imageUrl",
+            width: 80,
+            render: (imageUrl) => (
+                <Image
+                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/storage/player/${imageUrl}` : null}
+                    alt="Player"
+                    width={50}
+                    height={50}
+                    style={{ objectFit: 'cover', borderRadius: '50%' }}
+                    fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"
+                />
+            )
         },
         {
             title: "Name",
@@ -145,6 +159,7 @@ const AdminPlayerTable = () => {
             dataIndex: "marketValue",
             sorter: (a, b) => (a.marketValue || 0) - (b.marketValue || 0)
         },
+
         {
             title: "Actions",
             render: (_, record) => (
