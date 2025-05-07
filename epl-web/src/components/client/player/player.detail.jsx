@@ -89,7 +89,7 @@ const ClientPlayerDetail = () => {
             <Row gutter={[24, 24]}>
                 <Col xs={24} md={6}>
                     <Image
-                        src={player.imageUrl ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}/storage/player/${player.imageUrl}` : null}
+                        src={player.imageUrl}
                         alt={player.name}
                         style={{ width: '100%', maxWidth: '300px', borderRadius: '8px', marginBottom: '20px' }}
                         fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"

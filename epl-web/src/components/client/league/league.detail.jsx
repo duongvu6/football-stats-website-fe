@@ -484,7 +484,7 @@ const LeagueDetailPage = () => {
                         <Row gutter={[24, 24]}>
                             <Col xs={24} sm={8} md={6} style={{ textAlign: 'center' }}>
                                 <Image
-                                    src={league.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/league/${league.imageUrl}` : null}
+                                    src={league.imageUrl}
                                     alt={league.name}
                                     style={{ maxWidth: '150px', maxHeight: '150px' }}
                                     fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"

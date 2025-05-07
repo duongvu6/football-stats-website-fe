@@ -90,7 +90,7 @@ const ClientCoachTable = () => {
             width: 80,
             render: (imageUrl) => (
                 <Image
-                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/coach/${imageUrl}` : null}
+                    src={imageUrl}
                     alt="Head coach"
                     width={50}
                     height={50}

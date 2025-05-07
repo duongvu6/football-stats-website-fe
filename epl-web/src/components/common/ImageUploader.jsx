@@ -15,9 +15,7 @@ const ImageUploader = ({ entityType, onImageUpload, initialImageUrl }) => {
         }
     }, [initialImageUrl]);
 
-    const fullImageUrl = imageUrl
-        ? `${backendUrl}/storage/${entityType}/${imageUrl}`
-        : null;
+    const fullImageUrl = imageUrl;
 
     const customUpload = async (options) => {
         const { file, onSuccess, onError } = options;
@@ -43,8 +41,8 @@ const ImageUploader = ({ entityType, onImageUpload, initialImageUrl }) => {
             );
             console.log(response.data.data);
             if (response.data && response.data.statusCode === 200) {
-                setImageUrl(response.data.data.fileName);
-                onImageUpload(response.data.data.fileName);
+                setImageUrl(response.data.data.fileUrl);
+                onImageUpload(response.data.data.fileUrl);
                 message.success('Image uploaded successfully');
                 onSuccess(response, file);
             } else {

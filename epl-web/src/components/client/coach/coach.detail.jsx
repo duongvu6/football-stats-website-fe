@@ -108,7 +108,7 @@ const ClientCoachDetail = () => {
                 <Row gutter={24}>
                     <Col span={6} style={{ textAlign: 'center' }}>
                         <Image
-                            src={coach.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/coach/${coach.imageUrl}` : null}
+                            src={coach.imageUrl}
                             alt={coach.name}
                             style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
                             fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"

@@ -461,7 +461,7 @@ const ClientClubDetail = () => {
                     {/* Club Logo */}
                     <Col span={4} style={{ textAlign: "center" }}>
                         <Image
-                            src={club.imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/club/${club.imageUrl}` : null}
+                            src={club.imageUrl}
                             alt={club.name}
                             style={{ maxWidth: 150, maxHeight: 150 }}
                             fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCY"

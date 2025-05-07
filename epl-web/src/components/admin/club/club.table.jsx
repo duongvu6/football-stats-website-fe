@@ -86,7 +86,7 @@ const AdminClubTable = () => {
             width: 70,
             render: (imageUrl) => (
                 <Image
-                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL}/storage/club/${imageUrl}` : null}
+                    src={imageUrl}
                     alt="Club Logo"
                     width={50}
                     height={50}

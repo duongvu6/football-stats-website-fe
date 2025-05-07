@@ -65,7 +65,7 @@ const ClientLeagueTable = () => {
             width: 80,
             render: (imageUrl) => (
                 <Image
-                    src={imageUrl ? `${import.meta.env.VITE_BACKEND_URL }/storage/league/${imageUrl}` : null}
+                    src={imageUrl}
                     alt="League Logo"
                     width={50}
                     height={50}
